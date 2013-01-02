@@ -4,8 +4,12 @@
     <parent>
 		<artifactId>cyniApp-parent</artifactId>
         <groupId>org.cytoscape</groupId>
-        <version>1.0-beta1</version>
+        <version>1.0-beta2</version>
     </parent>
+
+    <properties>
+        <cyni.api.version>1.0-beta1</cyni.api.version>
+    </properties>
 
 	<groupId>org.cytoscape</groupId>
 	<artifactId>cyniApp-feature</artifactId>
@@ -47,11 +51,11 @@
 		<dependency>
 			<groupId>org.cytoscape</groupId>
 			<artifactId>cyni-api</artifactId>
-			<version>${project.version}</version>
+			<version>${cyni.api.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cytoscape</groupId>
-			<artifactId>cyni-impl</artifactId>
+			<artifactId>cyni-app</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
