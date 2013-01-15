@@ -153,10 +153,11 @@ public class BayesianMetric extends AbstractCyniMetric {
 	}
 	
 	private double doFactorial (double n){
-		double fact;
+		Double fact;
 		
-		if(mapFactorial.containsKey(n))
-			return mapFactorial.get(n);
+		fact = mapFactorial.get(n);
+		if(fact != null)
+			return fact;
 		else
 		{
 	        fact = n*doFactorial( n - 1 );

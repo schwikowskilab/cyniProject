@@ -81,14 +81,13 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 	private boolean reversalOption;
 	private Map<CyNode, CyNode> orig2NewNodeMap;
 	private Map<CyNode, CyNode> new2OrigNodeMap;
-	private double [] [] scoreAdd;
-	private double [] [] scoreDel;
+	private Operation [] [] scoreOperations;
 	private boolean [] [] nodeAscendantsReach;
 	private boolean [] [] nodeParentsMatrix;
 	private boolean [] [] edgeBlocked;
 	private CyCyniMetric selectedMetric;
 	private boolean removeNodes;
-	private PriorityQueue<Operation> scorePriorityQueue;
+	private TreeSet<Operation> scoreTree;
 
 
 	/**
@@ -203,7 +202,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		progress = progress + step;
 		taskMonitor.setProgress(progress);
 		
-		for (i = 0; i< nRows;i++){//( CyNode origNode : newNetwork.getNodeList()) {
+		for (i = 0; i< nRows;i++){
 			nodeParents.put(i, new ArrayList<Integer>());
 			/*if(!data.rowHasMissingValue(i))
 			{*/
@@ -212,11 +211,19 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			//}
 		}
 		
-		scorePriorityQueue = new PriorityQueue<Operation>(2*nRows, new Comparator<Operation>() {
+		scoreTree = new TreeSet<Operation>( new Comparator<Operation>() {
 			 public int compare(Operation op1, Operation op2) {
 				 if(op1.score > op2.score)
-					 return 1;
+					 return -1;
 				 if(op1.score < op2.score)
+					 return 1;
+				 if(op1.nodeChild > op2.nodeChild)
+					 return -1;
+				 if(op1.nodeChild < op2.nodeChild)
+					 return 1;
+				 if(op1.nodeParent > op2.nodeParent)
+					 return -1;
+				 if(op1.nodeParent < op2.nodeParent)
 					 return 1;
 				 return 0;
 			 }
@@ -261,10 +268,9 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			initParentsMap(newNetwork);
 			for ( i=0;i<nRows;i++) 
 			{
-				updateAscendantsOfNode(i,i);
+				updateAscendantsOfNode(i);
 			}
-				
-			for ( i = 0; i< nRows; i++) {		
+			for ( i = 0; i< nRows; i++) {	
 				if(isGraphCyclic( i))
 				{
 					SwingUtilities.invokeLater(new Runnable() {
@@ -281,8 +287,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			
 		}
 
-		scoreAdd = new double [nRows][nRows];
-		scoreDel = new double [nRows][nRows];
+		scoreOperations = new Operation [nRows][nRows];
 		
 		selectedMetric.resetParameters();
 		
@@ -303,22 +308,14 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			taskMonitor.setStatusMessage("Cache Initialized\nLooking for optimal solution by performing the following operations:\n" +
 					"Added edges: " + added + "\nRemoved edges: " + removed + "\nReversed edges: " + reversed  );
 			
-			findBestAddEdge(data, operationAdd);
-			findBestDeleteEdge(data, operationDelete);
+			chosenOperation=findBestOperation(data, operationAdd);
+			
 			if(reversalOption)
 				findBestReverseEdge(data, operationReverse);
 						
 			if (cancelled)
 				break;
 			
-			if(operationAdd.score >= operationDelete.score)
-			{
-				chosenOperation = operationAdd;
-			}
-			else
-			{
-				chosenOperation = operationDelete;
-			}
 			
 			if(reversalOption)
 			{
@@ -327,7 +324,6 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 					chosenOperation = operationReverse;
 				}
 			}
-			
 			if(chosenOperation.score > 0.0)
 			{
 				if(chosenOperation.type == "Add")
@@ -373,7 +369,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			progress = progress + step;
 			taskMonitor.setProgress(progress);
 		}
-		
+		scoreTree.clear();
 		
 		if (!cancelled)
 		{
@@ -396,14 +392,24 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		}
 	}
 	
-	private void updateAscendantsOfNode(int nodeToUpdate , int nextAscendant)
+	private void updateAscendantsOfNode(int nodeToUpdate )
 	{
-		nodeAscendantsReach[nodeToUpdate][nextAscendant] = true;
-		for(int node : nodeParents.get(nextAscendant))
+		ArrayList<Integer> ascendantsList = new ArrayList<Integer>(nodeParents.size());
+		int pos = -1;
+		int nodeToCheck = nodeToUpdate;
+		
+		while(pos != ascendantsList.size())
 		{
-			nodeAscendantsReach[nodeToUpdate][node] = true;
-			updateAscendantsOfNode(nodeToUpdate,node);
+			for(int node : nodeParents.get(nodeToCheck))
+			{
+				nodeAscendantsReach[nodeToUpdate][node] = true;
+				if(!ascendantsList.contains(node))
+					ascendantsList.add(node);
 			
+			}
+			pos++;
+			if(pos < ascendantsList.size())
+				nodeToCheck = ascendantsList.get(pos);
 		}
 		
 	}
@@ -413,7 +419,6 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		ArrayList<Integer> parentsList = new ArrayList<Integer>();
 		ArrayList<Integer> childsList = new ArrayList<Integer>();
 		int i;
-		
 		for(i=0;i<nodeParents.size();i++)
 		{
 			if(nodeAscendantsReach[i][child])
@@ -445,7 +450,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		childsList.add(child);
 		for(int c: childsList)
 		{
-			updateAscendantsOfNode(c,c);
+			updateAscendantsOfNode(c);
 		}
 	}
 	
@@ -477,6 +482,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
             {
                 if (nodeStart != nodeEnd) 
                 {
+                	
                 	executor.execute(new ThreadedGetMetric(data,nodeStart,nodeEnd,baseScores[nodeEnd]));
 				}
             }
@@ -499,15 +505,16 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 	    double baseScore ;
 	    // Create the thread pools
 	    ExecutorService executor = Executors.newFixedThreadPool(nThreads);
-		
 	    if(nodeParents.get(nodeEnd).size() > 0)
 			parents.addAll(nodeParents.get(nodeEnd));
 		else
 			parents.add(nodeEnd);
 	    baseScore = metric.getMetric(data, data, nodeEnd, parents);
-		 
+		
+	    removeElements(nodeEnd,nRows);
 		for (int nodeStart = 0; nodeStart < nRows; nodeStart++) {
             if (nodeStart != nodeEnd) {
+            	
 				executor.execute(new ThreadedGetMetric(data,nodeStart,nodeEnd,baseScore));
 			}
         }
@@ -518,115 +525,64 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
          } catch (Exception e) {}
 	}
 	
-	private void findBestOperation(CyniTable data, Operation operationAdd, Operation operationDel, Operation operationRev)
+	
+	private Operation findBestOperation(CyniTable data, Operation operation)
 	{
-		int nRows = data.nRows();
-		
-		for (int nodeChild = 0; nodeChild < nRows; nodeChild++) {
-			for (int nodeParent = 0; nodeParent < nRows; nodeParent++) {
-					
-				if(!nodeParents.get(nodeChild).contains(nodeParent))
+		boolean notFound = true;
+		ArrayList<Operation> opList = new ArrayList<Operation>();
+		Operation opTemp = new Operation();
+		while(notFound)
+		{
+			opTemp = scoreTree.pollFirst();
+			opList.add(opTemp);
+			if(opTemp.type == "Add")
+			{
+				if (nodeParents.get(opTemp.nodeChild).size() <= maxNumParents && !nodeAscendantsReach[opTemp.nodeParent][opTemp.nodeChild]) 
 				{
-					if (nodeParents.get(nodeChild).size() < maxNumParents) 
-					{
-						nodeParents.get(nodeChild).add(Integer.valueOf(nodeParent));
-						if(scoreAdd[nodeParent][nodeChild] > operationAdd.score)
-						{
-							if(!isGraphCyclic( nodeChild) )
-							{
-								operationAdd.score = scoreAdd[nodeParent][nodeChild];
-								operationAdd.nodeParent = nodeParent;
-								operationAdd.nodeChild = nodeChild;
-							}
-						}
-						nodeParents.get(nodeChild).remove(Integer.valueOf(nodeParent));
-					}
-				}
-				else
-				{
-					if(reversalOption)
-					{
-						nodeParents.get(nodeChild).remove(Integer.valueOf(nodeParent));
-						nodeParents.get(nodeParent).add(Integer.valueOf(nodeChild));
-						if((scoreDel[nodeParent][nodeChild] + scoreAdd[nodeChild][nodeParent]) > operationRev.score)
-						{	
-							if(!isGraphCyclic( nodeParent) )
-							{
-								operationRev.score = scoreDel[nodeParent][nodeChild] + scoreAdd[nodeChild][nodeParent];
-								operationRev.nodeParent = nodeParent;
-								operationRev.nodeChild = nodeChild;
-							}
-						}
-						nodeParents.get(nodeParent).remove(Integer.valueOf(nodeChild));
-						nodeParents.get(nodeChild).add(Integer.valueOf(nodeParent));		
-					}
-				}
-				if(scoreDel[nodeParent][nodeChild] > operationDel.score)
-				{
-					operationDel.score = scoreDel[nodeParent][nodeChild];
-					operationDel.nodeParent = nodeParent;
-					operationDel.nodeChild = nodeChild;
+					operation = opTemp;
+					notFound = false;
 				}
 			}
-		}
-				
-	}
-	
-	private void findBestAddEdge(CyniTable data, Operation operation)
-	{
-		int nRows = data.nRows();
-		
-		for (int nodeChild = 0; nodeChild < nRows; nodeChild++) {
-			if (nodeParents.get(nodeChild).size() <= maxNumParents) {
-				for (int nodeParent = 0; nodeParent < nRows; nodeParent++) {
-					//if(!nodeParents.get(nodeChild).contains(nodeParent))
-					if(!nodeParentsMatrix[nodeChild][nodeParent])
-					{
-						if(scoreAdd[nodeParent][nodeChild] > operation.score)
-						{
-							if(!nodeAscendantsReach[nodeParent][nodeChild] )
-							{
-								operation.score = scoreAdd[nodeParent][nodeChild];
-								operation.nodeParent = nodeParent;
-								operation.nodeChild = nodeChild;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	private void findBestDeleteEdge(CyniTable data, Operation operation)
-	{
-		int nRows = data.nRows();
-		
-		for (int nodeChild = 0; nodeChild < nRows; nodeChild++) {
-			for (int nodeParent : nodeParents.get(nodeChild)) {
-				if(scoreDel[nodeParent][nodeChild] > operation.score && !edgeBlocked[nodeParent][nodeChild])
+			if(opTemp.type == "Delete")
+			{
+				if(!edgeBlocked[opTemp.nodeParent][opTemp.nodeChild])
 				{
-					operation.score = scoreDel[nodeParent][nodeChild];
-					operation.nodeParent = nodeParent;
-					operation.nodeChild = nodeChild;
+					operation = opTemp;
+					notFound = false;
 				}
 			}
 		}
 		
+		scoreTree.addAll(opList);
+		return opTemp;
 	}
 	
+	private void removeElements(int nodeEnd, int nRows)
+	{
+		for (int nodeStart = 0; nodeStart < nRows; nodeStart++) {
+			if (nodeStart != nodeEnd)
+				scoreTree.remove(scoreOperations[nodeStart][nodeEnd]);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
 	private void findBestReverseEdge(CyniTable data, Operation operation)
 	{
 		int nRows = data.nRows();
+		int nodeParent;
+		ArrayList<Integer> tempList;
 		
 		for (int nodeChild = 0; nodeChild < nRows; nodeChild++) {
-			for (int nodeParent : nodeParents.get(nodeChild)) {
-				if((scoreDel[nodeParent][nodeChild] + scoreAdd[nodeChild][nodeParent]) > operation.score)
+			tempList = (ArrayList<Integer>)nodeParents.get(nodeChild).clone();
+			for (Iterator<Integer> it = tempList.iterator(); it.hasNext();) {
+				nodeParent = it.next();
+				if((scoreOperations[nodeParent][nodeChild].score + scoreOperations[nodeChild][nodeParent].score) > operation.score)
 				{	
 					nodeParents.get(nodeChild).remove(Integer.valueOf(nodeParent));
 					nodeParents.get(nodeParent).add(Integer.valueOf(nodeChild));
 					if(!isGraphCyclic( nodeParent) )
 					{
-						operation.score = scoreDel[nodeParent][nodeChild] + scoreAdd[nodeChild][nodeParent];
+						operation.score = scoreOperations[nodeParent][nodeChild].score + scoreOperations[nodeChild][nodeParent].score;
 						operation.nodeParent = nodeParent;
 						operation.nodeChild = nodeChild;
 					}
@@ -638,6 +594,13 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 	}
 	
 	class Operation{
+		
+		public Operation()
+		{
+			nodeParent = -1;
+			nodeChild = -1;	
+			score =  -1E100;
+		}
 		
 		public Operation(String type)
 		{
@@ -679,9 +642,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		}
 		
 		public void run() {
-			parents.clear();
-			
-            //if(!nodeParents.get(nodeEnd).contains(nodeStart))
+		
             if(!nodeParentsMatrix[nodeEnd][nodeStart])
             {
             	if (nodeParents.get(nodeEnd).size() < maxNumParents) 
@@ -690,9 +651,12 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
             		parents.addAll(nodeParents.get(nodeEnd));
             		parents.add(nodeStart);
             		
-            		scoreAdd[nodeStart][nodeEnd] = selectedMetric.getMetric(tableData, tableData, nodeEnd, parents) - baseScore;
-            		synchronized (this){
-            			scorePriorityQueue.add(op);
+            		op.score = selectedMetric.getMetric(tableData, tableData, nodeEnd, parents) - baseScore;
+            		op.nodeChild = nodeEnd;
+            		op.nodeParent = nodeStart;
+            		scoreOperations[nodeStart][nodeEnd] = op;
+            		synchronized (scoreTree){
+            			scoreTree.add(op);
             		}
             	}
             }
@@ -707,12 +671,16 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
             		parents.add(nodeEnd);
             		
             	Operation op = new Operation ("Delete");
-            	scoreDel[nodeStart][nodeEnd] = selectedMetric.getMetric(tableData, tableData, nodeEnd, parents) - baseScore;
-            	synchronized (this){
-            		scorePriorityQueue.add(op);
+            	op.score = selectedMetric.getMetric(tableData, tableData, nodeEnd, parents) - baseScore;
+        		op.nodeChild = nodeEnd;
+        		op.nodeParent = nodeStart;
+        		scoreOperations[nodeStart][nodeEnd] = op;
+            	synchronized (scoreTree){
+            		scoreTree.add(op);
             	}
             		
             }
+            parents.clear();
 
 		}
 		

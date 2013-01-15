@@ -140,7 +140,6 @@ public class EntropyMetric extends AbstractCyniMetric {
 			numTimes = 0;
 			for(j=0;j<numValues;j++)
 			{
-				//result *= doFactorial((double)nCounts[i*numValues+j]);
 				numTimes += nCounts[i*numValues+j];
 			}
 			for(j=0;j<numValues;j++)
@@ -153,7 +152,6 @@ public class EntropyMetric extends AbstractCyniMetric {
 			
 		}
 		
-		//System.out.println("result: " + result);
 		return result;
 	}
 	
