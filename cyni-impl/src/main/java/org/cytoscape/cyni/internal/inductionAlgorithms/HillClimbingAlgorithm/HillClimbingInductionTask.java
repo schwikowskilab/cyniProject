@@ -1,7 +1,7 @@
 /*
   File: HillClimbingInductionTask.java
 
-  Copyright (c) 2006, 2010, The Cytoscape Consortium (www.cytoscape.org)
+  Copyright (c) 2006, 2010-2013, The Cytoscape Consortium (www.cytoscape.org)
 
   This library is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as published
@@ -384,6 +384,10 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 	
 	}
 	
+	/*
+	 * Initialize the list of parents and the parents matrix for each node. The parents matrix is the fast way to know if
+	 * a node is a parent of another node
+	 */
 	private void initParentsMap(CyNetwork network)
 	{
 		for ( CyEdge edge : network.getEdgeList()) {
@@ -392,19 +396,27 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		}
 	}
 	
+	/*
+	 * Update the matrix that allows to know for each node which other nodes are its ascendants
+	 */
 	private void updateAscendantsOfNode(int nodeToUpdate )
 	{
 		ArrayList<Integer> ascendantsList = new ArrayList<Integer>(nodeParents.size());
 		int pos = -1;
+		boolean [] nodeCheckList = new boolean [nodeParents.size()];
 		int nodeToCheck = nodeToUpdate;
 		
+		nodeCheckList[nodeToUpdate] = true;
 		while(pos != ascendantsList.size())
 		{
 			for(int node : nodeParents.get(nodeToCheck))
 			{
 				nodeAscendantsReach[nodeToUpdate][node] = true;
-				if(!ascendantsList.contains(node))
+				if(!nodeCheckList[node])
+				{
 					ascendantsList.add(node);
+					nodeCheckList[node] = true;
+				}
 			
 			}
 			pos++;
@@ -414,6 +426,9 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 	}
 	
+	/*
+	 * Update the ascendants matrix after adding a new edge
+	 */
 	private void updateAscendantsAfterAdd(int parent , int child)
 	{
 		ArrayList<Integer> parentsList = new ArrayList<Integer>();
@@ -437,6 +452,9 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		}
 	}
 	
+	/*
+	 * Update the ascendants matrix after deleting an existing edge
+	 */
 	private void updateAscendantsAfterDelete(int parent , int child)
 	{
 		ArrayList<Integer> childsList = new ArrayList<Integer>();
