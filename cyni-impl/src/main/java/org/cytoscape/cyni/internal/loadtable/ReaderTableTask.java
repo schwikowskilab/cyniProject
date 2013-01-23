@@ -22,9 +22,7 @@ public class ReaderTableTask extends AbstractTask implements TunableValidator {
 
 	
 	public ReaderTableTask(CyTableReader readerTask , CyNetworkManager networkManager,  final CyRootNetworkManager rootNetMgr){
-		System.out.println("ReaderTableTask 1");
 		this.readerTask = readerTask;
-		System.out.println("ReaderTableTask 2");
 	}
 
 	@Override
@@ -45,7 +43,6 @@ public class ReaderTableTask extends AbstractTask implements TunableValidator {
 
 	@Override
 	public void run(TaskMonitor taskMonitor) throws Exception {
-		System.out.println("ReaderTableTask 3");
 
 		readerTask.run(taskMonitor);
 	}

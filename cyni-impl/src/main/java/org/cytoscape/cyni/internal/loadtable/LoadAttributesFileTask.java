@@ -25,7 +25,6 @@ public class LoadAttributesFileTask extends AbstractLoadAttributesTask {
 	 */
 	public void run(final TaskMonitor taskMonitor) throws Exception {
 
-		System.out.println("file task: " + file.getName() + " " + file.toURI());
 		loadTable(file.getName(), file.toURI(), taskMonitor);
 	}
 }

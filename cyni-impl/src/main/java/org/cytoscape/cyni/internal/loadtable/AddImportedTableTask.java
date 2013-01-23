@@ -15,13 +15,11 @@ import org.cytoscape.work.TaskMonitor;
 	AddImportedTableTask(	final CyTableManager tableMgr, final CyTableReader reader){
 		this.tableMgr = tableMgr;
 		this.reader = reader;
-		System.out.println("AddImportedTableTask 1");
 
 	}
 	
 	@Override
 	public void run(TaskMonitor taskMonitor) throws Exception {
-		System.out.println("AddImportedTableTask 2");
 		if( this.reader != null && this.reader.getTables() != null)
 			for (CyTable table : reader.getTables())
 				tableMgr.addTable(table);
