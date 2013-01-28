@@ -373,23 +373,16 @@ public class CyniDialog extends JDialog implements ActionListener {
 			}
 		}
 		
-		if(category == CyniCategory.INDUCTION)
-    	{
-			for ( CyNetwork network : netMgr.getNetworkSet()) 
-			{
-				tableSelector.addItem(network.getDefaultNodeTable());
-				availableTables++;
-			}
-    	}
-		else
+		
+		for ( CyNetwork network : netMgr.getNetworkSet()) 
 		{
-			for ( CyNetwork network : netMgr.getNetworkSet()) 
+			tableSelector.addItem(network.getDefaultNodeTable());
+			availableTables++;
+			if(category != CyniCategory.INDUCTION)
 			{
-				tableSelector.addItem(network.getDefaultNodeTable());
 				tableSelector.addItem(network.getDefaultEdgeTable());
-				tableSelector.addItem(network.getDefaultNetworkTable());
-				availableTables =+ 3;
-			}
+				availableTables++;
+			}	
 		}
 		
 	}
