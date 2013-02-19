@@ -35,14 +35,15 @@ import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableValidator;
 
 public class BPCAImputationContext extends AbstractCyniAlgorithmContext implements TunableValidator {
-	@Tunable(description="Use an interval to define missing value",groups="Missing Value Definition")
-	public boolean interval = false;
-	@Tunable(description="Missing Value",dependsOn="interval=false",groups="Missing Value Definition",params="displayState=hidden")
+	@Tunable(description="How to define a missing value",groups="Missing Value Definition", xorChildren=true)
+	public ListSingleSelection<String> chooser = new ListSingleSelection<String>("By a single value","By an interval");
+	
+	@Tunable(description="Missing Value",groups={"Missing Value Definition","Single Value Selection"},xorKey="By a single value")
 	public double missValue = 999;
 	
-	@Tunable(description="Missing Value Down",dependsOn="interval=true",groups="Missing Value Definition",params="displayState=hidden")
+	@Tunable(description="Missing Value Low Threshold",groups={"Missing Value Definition","Interval Missing Value Selection"},xorKey="By an interval")
 	public double missValueDown = 999;
-	@Tunable(description="Missing Value Up",dependsOn="interval=true",groups="Missing Value Definition",params="displayState=hidden")
+	@Tunable(description="Missing Value High Threshold",groups={"Missing Value Definition","Interval Missing Value Selection"},xorKey="By an interval")
 	public double missValueUp = 999;
 
 
@@ -53,10 +54,10 @@ public class BPCAImputationContext extends AbstractCyniAlgorithmContext implemen
 	
 	@Override
 	public ValidationState getValidationState(final Appendable errMsg) {
-		if(interval && missValueDown > missValueUp)
+		if(chooser.getSelectedValue().matches("By an interval") && missValueDown > missValueUp)
 		{
 			try {
-				errMsg.append("Missing Value Down has to be smaller than Missing Value Up");
+				errMsg.append("Missing Value Low Threshold has to be smaller than Missing Value High Threshold");
 			} catch (IOException e) {
 				e.printStackTrace();
 				return ValidationState.INVALID;
