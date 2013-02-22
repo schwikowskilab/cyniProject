@@ -166,15 +166,15 @@ public class CyniDialog extends JDialog implements ActionListener {
 		availableTables = 0;
 		switch(this.category){
 		case  INDUCTION:
-			executeButtonName = "Execute Induction";
-			selectPanelName = "Induction Algorithm";
+			executeButtonName = "Infer Network";
+			selectPanelName = "Inference Algorithm";
 			break;
 		case IMPUTATION:
-			executeButtonName = "Execute Imputation";
+			executeButtonName = "Impute Missing Data";
 			selectPanelName = "Imputation Algorithm";
 			break;
 		case DISCRETIZATION:
-			executeButtonName = "Execute Discretization";
+			executeButtonName = "Discretize Data";
 			selectPanelName = "Discretization Algorithm";
 			break;
 		default:

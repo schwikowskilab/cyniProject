@@ -55,7 +55,7 @@ public class HillClimbingInductionContext extends AbstractCyniAlgorithmContext i
 	public ListSingleSelection<CyCyniMetric> measures;
 	
 	
-	@Tunable(description="Data Attributes", groups="Sources for Network Induction")
+	@Tunable(description="Data Attributes", groups="Sources for Network Inference")
 	public ListMultipleSelection<String> attributeList;
 	
 	private List<String> attributes;

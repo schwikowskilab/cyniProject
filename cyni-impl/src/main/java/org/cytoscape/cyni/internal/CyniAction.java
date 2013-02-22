@@ -78,17 +78,17 @@ public class CyniAction extends AbstractCyAction {
 		if(category == CyniCategory.INDUCTION)
 		{
 			setMenuGravity(8.0f);
-			PanelName = "Network Induction";
+			PanelName = "Infer Network";
 		}
 		else if (category == CyniCategory.IMPUTATION)
 		{
 			setMenuGravity(9.0f);
-			PanelName = "Data Imputation";
+			PanelName = "Impute Missing Data";
 		}
 		else
 		{
 			setMenuGravity(10.0f);
-			PanelName = "Data Discretization";
+			PanelName = "Discretize Data";
 		}
 		this.appMgr = appMgr;
 		this.cyi = cyi;
