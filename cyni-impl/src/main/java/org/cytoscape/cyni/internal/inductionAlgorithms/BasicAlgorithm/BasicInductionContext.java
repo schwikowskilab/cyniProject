@@ -45,7 +45,7 @@ public class BasicInductionContext extends AbstractCyniAlgorithmContext implemen
 	@Tunable(description="Metric")
 	public ListSingleSelection<CyCyniMetric> measures;
 	
-	@Tunable(description="Data Attributes", groups="Sources for Network Induction")
+	@Tunable(description="Data Attributes", groups="Sources for Network Inference")
 	public ListMultipleSelection<String> attributeList;
 
 	

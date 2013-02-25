@@ -53,6 +53,7 @@ public class BPCAImputationTask extends AbstractCyniTask {
 	private static  double missValueDown;
 	private static  double missValueUp;
 	private final CyTable mytable;
+	private String chooser;
 	private boolean interval;
 	
 	private static ArrayList<ArrayList<Integer>> listPositions; 
@@ -76,7 +77,7 @@ public class BPCAImputationTask extends AbstractCyniTask {
 		missValue = context.missValue;
 		missValueDown = context.missValueDown;
 		missValueUp = context.missValueUp;
-		interval = context.interval;
+		chooser = context.chooser.getSelectedValue();
 		int i = 0;
 		this.mytable = selectedTable;
 		rowIndexToPrimaryKey = new Object[selectedTable.getAllRows().size()]; 
@@ -87,7 +88,10 @@ public class BPCAImputationTask extends AbstractCyniTask {
 			indexToNames[i] = column.getName();
 			i++;
 		}
-		
+		if(chooser.matches("By a single value"))
+			interval = false;
+		else
+			interval = true;
 		String primaryKey = selectedTable.getPrimaryKey().getName();
 		i = 0;
 		for ( CyRow row : selectedTable.getAllRows() ) 

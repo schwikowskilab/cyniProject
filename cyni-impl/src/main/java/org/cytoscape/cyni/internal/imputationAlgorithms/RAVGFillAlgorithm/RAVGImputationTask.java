@@ -70,7 +70,11 @@ public class RAVGImputationTask extends AbstractCyniTask {
 		missValue = context.missValue;
 		missValueDown = context.missValueDown;
 		missValueUp = context.missValueUp;
-		interval = context.interval;
+		
+		if(context.chooser.getSelectedValue().matches("By a single value"))
+			interval = false;
+		else
+			interval = true;
 		
 		this.mytable = selectedTable;
 		

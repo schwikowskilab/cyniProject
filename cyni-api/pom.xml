@@ -9,7 +9,6 @@
 
   <properties>
     <bundle.symbolicName>org.cytoscape.cyni-api</bundle.symbolicName>
-     <cytoscape.api.version>3.0.0-beta4-SNAPSHOT</cytoscape.api.version>
     <bundle.namespace>org.cytoscape.cyni</bundle.namespace>
   </properties>
 
@@ -23,19 +22,6 @@
   <packaging>bundle</packaging>
 
 	<build>
-	<!--	<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-			<resource>
-				<directory>.</directory>
-				<includes>
-					<include>plugin.xml</include>
-					<include>plugin.properties</include>
-					<include>icons/**</include>
-				</includes>
-			</resource>
-		</resources>-->
 		<plugins>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
@@ -55,31 +41,6 @@
 		</plugins>
 	</build>
 
-
-<!--	<repositories>
-		<repository>
-			<id>cytoscape_snapshots</id>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<name>Cytoscape Snapshots</name>
-			<url>http://code.cytoscape.org/nexus/content/repositories/snapshots/</url>
-		</repository>
-		<repository>
-			<id>cytoscape_releases</id>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<name>Cytoscape Releases</name>
-			<url>http://code.cytoscape.org/nexus/content/repositories/releases/</url>
-		</repository>
-	</repositories>-->
 
 	<dependencies>
 		<dependency>

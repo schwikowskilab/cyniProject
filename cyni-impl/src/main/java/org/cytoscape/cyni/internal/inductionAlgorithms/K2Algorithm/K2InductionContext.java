@@ -58,7 +58,7 @@ public class K2InductionContext extends AbstractCyniAlgorithmContext implements 
 	}
 	
 	public ListMultipleSelection<String> attributeList;
-	@Tunable(description="Data Attributes", groups="Sources for Network Induction",listenForChange={"Measures"})
+	@Tunable(description="Data Attributes", groups="Sources for Network Inference",listenForChange={"Measures"})
 	public ListMultipleSelection<String> getA()
 	{
 		List<String>  typeList ;

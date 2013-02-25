@@ -160,17 +160,17 @@ public class CyActivator extends AbstractCyActivator {
 		registerService(bc,aicMetric,CyCyniMetric.class, new Properties());
 		registerService(bc,bdeMetric,CyCyniMetric.class, new Properties());
 		
-		CyniAction inductionAction = new CyniAction("Network Induction...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
+		CyniAction inductionAction = new CyniAction("Infer Network...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
                 cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
                 cyNetworkManagerServiceRef,cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef,panelTaskManagerServiceRef,
                 cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,CyniCategory.INDUCTION);
 		
-		CyniAction imputationAction = new CyniAction("Data Imputation...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
+		CyniAction imputationAction = new CyniAction("Impute Missing Data...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
 				cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
                 cyNetworkManagerServiceRef,cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef,panelTaskManagerServiceRef,
                 cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,CyniCategory.IMPUTATION);
 		
-		CyniAction discretizationAction = new CyniAction("Data Discretization...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
+		CyniAction discretizationAction = new CyniAction("Discretize Data...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
 				cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
                 cyNetworkManagerServiceRef,cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef,panelTaskManagerServiceRef,
                 cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,CyniCategory.DISCRETIZATION);
