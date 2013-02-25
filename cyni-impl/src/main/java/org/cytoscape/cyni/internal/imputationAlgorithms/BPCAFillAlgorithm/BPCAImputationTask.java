@@ -248,7 +248,6 @@ public class BPCAImputationTask extends AbstractCyniTask {
 			 
 		 }
 		 
-		 System.out.println("positions: " + listPositions.size() );
 		 
 		 return dataMatrix;
 		 
@@ -265,10 +264,8 @@ public class BPCAImputationTask extends AbstractCyniTask {
 			 col = list.get(1);
 			 colMatrix = list.get(2);
 			 
-			 System.out.println("positions, row: " + row + " col: " + col + " colMatrix: " + colMatrix );
-			 System.out.println("Column Name: " + indexToNames[col]);
+			
 			 tableRow = table.getRow(rowIndexToPrimaryKey[row]);
-			 System.out.println("row value first : " + tableRow.get(indexToNames[col], Double.class));
 			 if(table.getColumn(indexToNames[col]).getType() == Integer.class)
 			 {
 				 temp = (int) result[row][colMatrix];
@@ -277,9 +274,7 @@ public class BPCAImputationTask extends AbstractCyniTask {
 			 else
 			 {
 				 tableRow.set(indexToNames[col], result[row][colMatrix]);
-				 System.out.println("row value: " + tableRow.get(indexToNames[col], Double.class));
 			 }
-			 System.out.println("value: " + result[row][colMatrix]);
 		 }
 		 
 	 }

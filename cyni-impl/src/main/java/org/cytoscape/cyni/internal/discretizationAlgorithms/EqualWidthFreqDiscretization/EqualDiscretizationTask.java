@@ -119,7 +119,6 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 			
 			column = mytable.getColumn(columnName);
 			values =  column.getValues(column.getType());
-			System.out.println("fetting values: " + values.size());
 			if(mytable.getColumn("nominal."+columnName) != null)
 			{
 				SwingUtilities.invokeLater(new Runnable() {

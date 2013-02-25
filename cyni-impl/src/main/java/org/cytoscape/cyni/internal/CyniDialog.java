@@ -196,8 +196,6 @@ public class CyniDialog extends JDialog implements ActionListener {
 		// Are we the source of the event?
 		String command = e.getActionCommand();
 		
-		System.out.println("induction action performed: " + command);
-
 		if (command.equals("done"))
 			setVisible(false);
 		else if (command.equals("execute")) {
