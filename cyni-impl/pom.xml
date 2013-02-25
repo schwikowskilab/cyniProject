@@ -9,10 +9,8 @@
 
   <properties>
     <bundle.symbolicName>org.cytoscape.cyni-impl</bundle.symbolicName>
-    <cytoscape.api.version>3.0.0-beta4-SNAPSHOT</cytoscape.api.version>
     <cyni.api.version>1.0-beta1</cyni.api.version>
     <bundle.namespace>org.cytoscape.cyni</bundle.namespace>
-    <osgi.api.version>4.2.0</osgi.api.version>
   </properties>
 
   <modelVersion>4.0.0</modelVersion>
@@ -25,31 +23,6 @@
   <packaging>bundle</packaging>
 
 
-<!--	<repositories>
-		<repository>
-			<id>cytoscape_snapshots</id>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<name>Cytoscape Snapshots</name>
-			<url>http://code.cytoscape.org/nexus/content/repositories/snapshots/</url>
-		</repository>
-		<repository>
-			<id>cytoscape_releases</id>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<name>Cytoscape Releases</name>
-			<url>http://code.cytoscape.org/nexus/content/repositories/releases/</url>
-		</repository>
-	</repositories>-->
-
 	<build>
 		<plugins>
 			<plugin>
@@ -61,7 +34,7 @@
 					<instructions>
 						<Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
-                        <Export-Package>!${bundle.namespace}.internal.*,${bundle.namespace}.*;version="${project.version}"</Export-Package>
+                        <Export-Package>!${bundle.namespace}.internal.*,${bundle.namespace}.*;version="${cyni.api.version}"</Export-Package>
                         <Private-Package>${bundle.namespace}.internal.*</Private-Package>
                         <Bundle-Activator>${bundle.namespace}.internal.CyActivator</Bundle-Activator>
                         <Embed-Dependency>cyni-api;inline=true</Embed-Dependency>
