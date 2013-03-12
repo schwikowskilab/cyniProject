@@ -191,7 +191,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		edgeTable = newNetwork.getDefaultEdgeTable();
 		addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
 		
-		edgeTable.createColumn("Probability", Double.class, false);	
+		edgeTable.createColumn("Score", Double.class, false);	
 		
 		i=0;
 		for(String name : data.getAttributeStringValues())
@@ -281,7 +281,7 @@ public class K2InductionTask extends AbstractCyniTask {
 				for(int parent : parents)
 				{
 					edge = newNetwork.addEdge( mapRowNodes.get(data.getRowLabel(parent)),mapRowNodes.get(data.getRowLabel(row)), true);
-					newNetwork.getRow(edge).set("Probability", pNew);
+					newNetwork.getRow(edge).set("Score", pNew);
 					newNetwork.getRow(edge).set("name", newNetwork.getRow( mapRowNodes.get(data.getRowLabel(parent))).get("name", String.class)
 							+ " (k2) " + newNetwork.getRow( mapRowNodes.get(data.getRowLabel(row))).get("name", String.class));
 				}
