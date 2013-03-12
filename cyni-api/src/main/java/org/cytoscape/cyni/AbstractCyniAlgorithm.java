@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import org.cytoscape.work.TunableSetter;
 import org.cytoscape.work.TunableValidator;
@@ -115,8 +117,14 @@ public abstract class AbstractCyniAlgorithm implements CyCyniAlgorithm {
 	public boolean isReady(Object tunableContext) {
 		if (tunableContext instanceof TunableValidator) {
 			StringBuilder errors = new StringBuilder();
-			return ((TunableValidator) tunableContext)
-					.getValidationState(errors) == ValidationState.OK;
+			final ValidationState validationState = ((TunableValidator) tunableContext).getValidationState(errors);
+			if(validationState != ValidationState.OK)
+			{
+				JOptionPane.showMessageDialog(new JFrame(), errors.toString(),
+					      "Input Validation Problem",
+					      JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
 		}
 		return true;
 	}
