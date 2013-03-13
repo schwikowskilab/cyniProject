@@ -181,7 +181,7 @@ public class K2InductionTask extends AbstractCyniTask {
 				data.changeOrderRowsByColumnValuesOrder(table.getColumn(selectedCol).getValues(table.getColumn(selectedCol).getType()));
 		}
 		
-		networkName = "K2 Induction " + newNetwork.getSUID();
+		networkName = "K2 Inference " + newNetwork.getSUID();
 		if (newNetwork != null && networkName != null) {
 			CyRow netRow = newNetwork.getRow(newNetwork);
 			netRow.set(CyNetwork.NAME, networkName);

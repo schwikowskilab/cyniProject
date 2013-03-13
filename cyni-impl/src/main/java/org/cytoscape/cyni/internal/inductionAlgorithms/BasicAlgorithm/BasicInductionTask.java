@@ -133,7 +133,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		threadIndex = new int[nRows];
 		Arrays.fill(threadResults, 0.0);
 		
-		networkName = "Induction " + newNetwork.getSUID();
+		networkName = "Correlation Inference " + newNetwork.getSUID();
 		if (newNetwork != null && networkName != null) {
 			CyRow netRow = newNetwork.getRow(newNetwork);
 			netRow.set(CyNetwork.NAME, networkName);

@@ -145,7 +145,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		taskMonitor.setStatusMessage("Generating Hill Climbing induction...");
 		taskMonitor.setProgress(progress);
 		
-		networkName = "HC Induction " + newNetwork.getSUID();
+		networkName = "HC Inference " + newNetwork.getSUID();
 		if (newNetwork != null && networkName != null) {
 			CyRow netRow = newNetwork.getRow(newNetwork);
 			netRow.set(CyNetwork.NAME, networkName);
