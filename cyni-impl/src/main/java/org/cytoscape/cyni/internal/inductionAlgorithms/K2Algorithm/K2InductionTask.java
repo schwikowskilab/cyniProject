@@ -141,7 +141,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		threadNumber=0;
 		networkSelected = getNetworkAssociatedToTable(table);
 		
-		taskMonitor.setStatusMessage("Generating K2 network bayesian induction...");
+		taskMonitor.setStatusMessage("Generating K2 network bayesian inference...");
 		taskMonitor.setProgress(progress);
 		mapRowNodes = new HashMap<Object,CyNode>();
 		parentsToIndex = new ArrayList<Integer>();

@@ -141,8 +141,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 		networkSelected = getNetworkAssociatedToTable(table);
 		
-		taskMonitor.setTitle("Hill Climbing induction");
-		taskMonitor.setStatusMessage("Generating Hill Climbing induction...");
+		taskMonitor.setTitle("Hill Climbing inference");
+		taskMonitor.setStatusMessage("Generating Hill Climbing inference...");
 		taskMonitor.setProgress(progress);
 		
 		networkName = "HC Inference " + newNetwork.getSUID();
