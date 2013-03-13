@@ -35,9 +35,12 @@ import org.cytoscape.work.TunableValidator;
 public class BasicInductionContext extends AbstractCyniAlgorithmContext implements TunableValidator {
 	@Tunable(description="Threshold to add new edge")
 	public double thresholdAddEdge = 0.5;
+	
+	@Tunable(description="Use only absolut values for correlation")
+	public boolean useAbsolut = true;
 
-	@Tunable(description="Output Only Nodes with Edges")
-	public boolean removeNodes = false;
+	//@Tunable(description="Output Only Nodes with Edges")
+	//public boolean removeNodes = false;
 	
 	@Tunable(description="Use selected nodes only", groups="Parameters if a network associated to table data")
 	public boolean selectedOnly = false;
@@ -74,11 +77,9 @@ public class BasicInductionContext extends AbstractCyniAlgorithmContext implemen
 	
 	@Override
 	public ValidationState getValidationState(final Appendable errMsg) {
-		System.out.println("validation...");
 		setSelectedOnly(selectedOnly);
-		if (thresholdAddEdge > 0.0 && measures.getPossibleValues().size()>0)
-			return ValidationState.OK;
-		else {
+		if (thresholdAddEdge < 0.0 && useAbsolut)
+		{
 			try {
 				errMsg.append("Threshold needs to be greater than 0.0!!!!");
 			} catch (IOException e) {
@@ -87,5 +88,28 @@ public class BasicInductionContext extends AbstractCyniAlgorithmContext implemen
 			}
 			return ValidationState.INVALID;
 		}
+			
+		if(measures.getPossibleValues().size()<=0) {
+			try {
+				errMsg.append("No metrics available to apply the algorithm!!!!");
+			} catch (IOException e) {
+				e.printStackTrace();
+				return ValidationState.INVALID;
+			}
+			return ValidationState.INVALID;
+			
+		}
+		
+		if(attributeList.getSelectedValues().get(0).matches("No sources available") || attributeList.getPossibleValues().size() == 0) {
+			try {
+				errMsg.append("No sources available to apply the algorithm!!!!");
+			} catch (IOException e) {
+				e.printStackTrace();
+				return ValidationState.INVALID;
+			}
+			return ValidationState.INVALID;
+			
+		}
+		return ValidationState.OK;
 	}
 }

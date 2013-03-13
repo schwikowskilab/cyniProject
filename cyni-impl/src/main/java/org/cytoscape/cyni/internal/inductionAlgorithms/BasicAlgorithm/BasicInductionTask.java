@@ -61,7 +61,8 @@ import org.cytoscape.view.model.CyNetworkViewManager;
  */
 public class BasicInductionTask extends AbstractCyniTask {
 	private final double thresholdAddEdge;
-	private boolean removeNodes;
+	private boolean removeNodes = false;
+	private boolean useAbsolut;
 	private final List<String> attributeArray;
 	private final CyTable table;
 	
@@ -82,7 +83,8 @@ public class BasicInductionTask extends AbstractCyniTask {
 		this.thresholdAddEdge = context.thresholdAddEdge;
 		this.layoutManager = layoutManager;
 		this.metricsManager = metricsManager;
-		this.removeNodes = context.removeNodes;
+		//this.removeNodes = context.removeNodes;
+		this.useAbsolut = context.useAbsolut;
 		this.selectedMetric = context.measures.getSelectedValue();
 		this.attributeArray = context.attributeList.getSelectedValues();
 		this.table = selectedTable;
@@ -111,6 +113,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		CyNetwork newNetwork = netFactory.createNetwork();
 		CyNetworkView newNetworkView ;
 		double threadResults[] = new double[nThreads];
+		double result;
 		int threadIndex[] = new int[nThreads];
 		threadNumber=0;
 		Arrays.fill(threadResults, 0.0);
@@ -168,7 +171,10 @@ public class BasicInductionTask extends AbstractCyniTask {
 			
 			for(int pool = 0; pool< threadNumber;pool++)
 			{
-				if(Math.abs(threadResults[pool]) > thresholdAddEdge)
+				result = threadResults[pool];
+				if(useAbsolut)
+					result = Math.abs(threadResults[pool]);
+				if(result > thresholdAddEdge)
 				{
 					if(!mapRowNodes.containsKey(data.getRowLabel(i)))
 					{
