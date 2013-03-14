@@ -73,7 +73,6 @@ public class BayesianMetric extends AbstractCyniMetric {
 			{
 				mapStringValues.put(name, i);
 				i++;
-				System.out.println("attribute: " + name);
 			}
 		}
 		
