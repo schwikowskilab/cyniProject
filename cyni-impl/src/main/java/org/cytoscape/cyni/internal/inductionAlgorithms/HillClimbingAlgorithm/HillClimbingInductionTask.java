@@ -129,6 +129,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		Double progress = 0.0d;
 		Double step = 0.0;
 		int i=0;
+		boolean loopFound = false;
 		int nRows,added,removed,reversed;
 		CyNetwork newNetwork = netFactory.createNetwork();
 		CyNetworkView newNetworkView ;
@@ -138,6 +139,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		Operation operationDelete = new Operation("Delete");
 		Operation operationReverse = new Operation("Reverse");
 		Operation chosenOperation;
+		Operation lastOperation = new Operation("");
 		
 		networkSelected = getNetworkAssociatedToTable(table);
 		
@@ -316,7 +318,13 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 				if(operationReverse.score > chosenOperation.score)
 				{
 					chosenOperation = operationReverse;
+					if(lastOperation.type == "Reverse")
+					{
+						if(lastOperation.nodeChild == chosenOperation.nodeParent &&  lastOperation.nodeParent == chosenOperation.nodeChild)
+							loopFound = true;
+					}
 				}
+				
 			}
 			if(chosenOperation.score > 0.0)
 			{
@@ -357,7 +365,13 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 					updateAscendantsAfterAdd(chosenOperation.nodeChild,chosenOperation.nodeParent);
 					reversed++;
 					newNetwork.getRow(edge).set("Score", chosenOperation.score);
-				}				
+				}			
+				lastOperation.type = chosenOperation.type;
+				lastOperation.nodeParent = chosenOperation.nodeParent;
+				lastOperation.nodeChild = chosenOperation.nodeChild;
+				if(loopFound)
+					okToProceed = false;
+				
 			}
 			else
 				okToProceed = false;

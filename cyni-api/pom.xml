@@ -5,6 +5,7 @@
   <properties>
     <bundle.symbolicName>org.cytoscape.cyni-api</bundle.symbolicName>
     <bundle.namespace>org.cytoscape.cyni</bundle.namespace>
+    <maven-bundle-plugin.version>2.3.4</maven-bundle-plugin.version>
     <cytoscape.api.version>3.0.0</cytoscape.api.version>
   </properties>
 
@@ -22,6 +23,7 @@
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${maven-bundle-plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
