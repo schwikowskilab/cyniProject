@@ -36,7 +36,7 @@ public class BasicInductionContext extends AbstractCyniAlgorithmContext implemen
 	@Tunable(description="Threshold to add new edge")
 	public double thresholdAddEdge = 0.5;
 	
-	@Tunable(description="Use only absolut values for correlation")
+	@Tunable(description="Use only absolute values for correlation")
 	public boolean useAbsolut = true;
 
 	//@Tunable(description="Output Only Nodes with Edges")
