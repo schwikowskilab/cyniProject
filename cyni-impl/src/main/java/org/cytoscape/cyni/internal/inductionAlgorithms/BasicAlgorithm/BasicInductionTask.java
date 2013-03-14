@@ -119,7 +119,8 @@ public class BasicInductionTask extends AbstractCyniTask {
 		Arrays.fill(threadResults, 0.0);
 		networkSelected = getNetworkAssociatedToTable(table);
 		
-		taskMonitor.setStatusMessage("Generating network induction...");
+		taskMonitor.setTitle("Correlation Inference");
+		taskMonitor.setStatusMessage("Generating network inference...");
 		taskMonitor.setProgress(progress);
 		mapRowNodes = new HashMap<Object,CyNode>();
 		index.add(0);

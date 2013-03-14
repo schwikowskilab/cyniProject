@@ -117,6 +117,7 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 		threadNumber=0;
 		networkSelected = getNetworkAssociatedToTable(table);
 		
+		taskMonitor.setTitle("Mutual Information Inference");
 		taskMonitor.setStatusMessage("Generating network inference...");
 		taskMonitor.setProgress(progress);
 		mapRowNodes = new HashMap<Object,CyNode>();
