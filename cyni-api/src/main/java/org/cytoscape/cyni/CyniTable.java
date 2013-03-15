@@ -25,6 +25,7 @@ package org.cytoscape.cyni;
 
 import java.util.*;
 
+import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
@@ -116,7 +117,19 @@ public class CyniTable {
 			}
 			i = 0;
 			String primaryKey = internalTable.getPrimaryKey().getName();
-			for ( CyRow row : internalTable.getAllRows() ) 
+			List<CyRow> rowList = internalTable.getAllRows();
+			if(internalTable.getColumn(CyTable.SUID) != null)
+			{
+				Collections.sort(rowList,new Comparator<CyRow>() {
+					 public int compare(CyRow row1, CyRow row2) {
+						 if(row1.get(CyTable.SUID, Long.class) > row2.get(CyTable.SUID, Long.class))
+							 return 1;
+						 else
+							 return -1;
+					 }
+				});
+			}
+			for ( CyRow row :  rowList) 
 			{
 				if (selectedOnly && row.isSet(CyNetwork.SELECTED))
 				{
