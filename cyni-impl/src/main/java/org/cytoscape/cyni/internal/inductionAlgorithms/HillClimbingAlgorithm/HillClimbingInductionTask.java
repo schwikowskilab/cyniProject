@@ -143,8 +143,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 		networkSelected = getNetworkAssociatedToTable(table);
 		
-		taskMonitor.setTitle("Hill Climbing inference");
-		taskMonitor.setStatusMessage("Generating Hill Climbing inference...");
+		taskMonitor.setTitle("Hill Climbing Inference");
+		taskMonitor.setStatusMessage("Generating Hill Climbing Inference...");
 		taskMonitor.setProgress(progress);
 		
 		networkName = "HC Inference " + newNetwork.getSUID();
@@ -298,6 +298,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 		while(okToProceed)
 		{
+			if (cancelled)
+				break;
 			operationAdd.resetParameters();
 			operationDelete.resetParameters();
 			operationReverse.resetParameters();
@@ -308,9 +310,6 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			
 			if(reversalOption)
 				findBestReverseEdge(data, operationReverse);
-						
-			if (cancelled)
-				break;
 			
 			
 			if(reversalOption)
@@ -522,6 +521,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
             executor = Executors.newFixedThreadPool(nThreads);
             progress = progress + step;
     	    taskMonitor.setProgress(progress);
+    	    if (cancelled)
+    	    	return;
         }
        
 	}
@@ -545,6 +546,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
             	
 				executor.execute(new ThreadedGetMetric(data,nodeStart,nodeEnd,baseScore));
 			}
+            if (cancelled)
+				break;
         }
 		executor.shutdown();
 		// Wait until all threads are finish
