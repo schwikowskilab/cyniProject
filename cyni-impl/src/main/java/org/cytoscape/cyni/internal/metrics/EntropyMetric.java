@@ -70,7 +70,6 @@ public class EntropyMetric extends AbstractCyniMetric {
 			{
 				mapStringValues.put(name, i);
 				i++;
-				System.out.println("attribute: " + name);
 			}
 		}
 		
@@ -127,6 +126,7 @@ public class EntropyMetric extends AbstractCyniMetric {
 		int i,j;
 		int numValues =  mapStringValues.size();
 		int numTimes;
+		double proba;
 		
 		combinations = (int)Math.pow((double)mapStringValues.size(),(double)(nodes.length-1));
 		for(i=0;i<combinations;i++)
@@ -140,13 +140,19 @@ public class EntropyMetric extends AbstractCyniMetric {
 			{
 				if(nCounts[i*numValues+j] > 0)
 				{
-					result += (double)nCounts[i*numValues+j]* Math.log(nCounts[i*numValues+j] / numTimes);
+					proba = (double)nCounts[i*numValues+j]/(double)numTimes;
+					result += proba * log2(proba);
+					
 				}
 			}
-			
 		}
 		
-		return result;
+		return (-1.0*result);
+	}
+	
+	static double log2(double x)
+	{
+	    return (double) (Math.log(x) / Math.log(2.0));
 	}
 	
 

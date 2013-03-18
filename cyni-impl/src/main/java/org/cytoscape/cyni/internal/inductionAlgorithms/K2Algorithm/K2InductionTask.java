@@ -141,7 +141,8 @@ public class K2InductionTask extends AbstractCyniTask {
 		threadNumber=0;
 		networkSelected = getNetworkAssociatedToTable(table);
 		
-		taskMonitor.setStatusMessage("Generating K2 network bayesian induction...");
+		taskMonitor.setTitle("K2 Bayesian Inference");
+		taskMonitor.setStatusMessage("Generating K2 network bayesian inference...");
 		taskMonitor.setProgress(progress);
 		mapRowNodes = new HashMap<Object,CyNode>();
 		parentsToIndex = new ArrayList<Integer>();
@@ -181,7 +182,7 @@ public class K2InductionTask extends AbstractCyniTask {
 				data.changeOrderRowsByColumnValuesOrder(table.getColumn(selectedCol).getValues(table.getColumn(selectedCol).getType()));
 		}
 		
-		networkName = "K2 Induction " + newNetwork.getSUID();
+		networkName = "K2 Inference " + newNetwork.getSUID();
 		if (newNetwork != null && networkName != null) {
 			CyRow netRow = newNetwork.getRow(newNetwork);
 			netRow.set(CyNetwork.NAME, networkName);
@@ -191,7 +192,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		edgeTable = newNetwork.getDefaultEdgeTable();
 		addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
 		
-		edgeTable.createColumn("Probability", Double.class, false);	
+		edgeTable.createColumn("Score", Double.class, false);	
 		
 		i=0;
 		for(String name : data.getAttributeStringValues())
@@ -281,7 +282,7 @@ public class K2InductionTask extends AbstractCyniTask {
 				for(int parent : parents)
 				{
 					edge = newNetwork.addEdge( mapRowNodes.get(data.getRowLabel(parent)),mapRowNodes.get(data.getRowLabel(row)), true);
-					newNetwork.getRow(edge).set("Probability", pNew);
+					newNetwork.getRow(edge).set("Score", pNew);
 					newNetwork.getRow(edge).set("name", newNetwork.getRow( mapRowNodes.get(data.getRowLabel(parent))).get("name", String.class)
 							+ " (k2) " + newNetwork.getRow( mapRowNodes.get(data.getRowLabel(row))).get("name", String.class));
 				}

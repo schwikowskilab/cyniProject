@@ -55,6 +55,7 @@ import org.cytoscape.cyni.internal.imputationAlgorithms.RAVGFillAlgorithm.*;
 import org.cytoscape.cyni.internal.imputationAlgorithms.ZeroFillAlgorithm.*;
 import org.cytoscape.cyni.internal.inductionAlgorithms.K2Algorithm.*;
 import org.cytoscape.cyni.internal.inductionAlgorithms.HillClimbingAlgorithm.*;
+import org.cytoscape.cyni.internal.inductionAlgorithms.MutualInformationAlgorithm.*;
 import org.cytoscape.cyni.internal.discretizationAlgorithms.EqualWidthFreqDiscretization.*;
 import org.cytoscape.cyni.internal.loadtable.*;
 import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
@@ -94,6 +95,7 @@ public class CyActivator extends AbstractCyActivator {
 		BasicInduction basicInduction = new BasicInduction();
 		K2Induction k2Induction = new K2Induction();
 		HillClimbingInduction HCInduction = new HillClimbingInduction();
+		MutualInfoInduction MIInduction = new MutualInfoInduction();
 		
 		BPCAImputation bpca = new BPCAImputation();
 		ZeroImputation zero = new ZeroImputation();
@@ -146,6 +148,7 @@ public class CyActivator extends AbstractCyActivator {
 		registerService(bc,basicInduction,CyCyniAlgorithm.class, new Properties());
 		registerService(bc,k2Induction,CyCyniAlgorithm.class, new Properties());
 		registerService(bc,HCInduction,CyCyniAlgorithm.class, new Properties());
+		registerService(bc,MIInduction,CyCyniAlgorithm.class, new Properties());
 		registerService(bc,zero,CyCyniAlgorithm.class, new Properties());
 		registerService(bc,bpca,CyCyniAlgorithm.class, new Properties());
 		registerService(bc,ravg,CyCyniAlgorithm.class, new Properties());

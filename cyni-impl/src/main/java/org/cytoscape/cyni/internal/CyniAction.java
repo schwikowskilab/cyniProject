@@ -106,13 +106,11 @@ public class CyniAction extends AbstractCyAction {
 		this.rootNetMgr = rootNetMgr;
 		this.vmMgr = vmMgr;
 		
-		System.out.println("induction action");
 		
 		dialog = new CyniDialog(PanelName, category,cyi,netFactory,viewFactory,netMgr,netTableMgr, rootNetMgr,viewMgr,table, desk, appMgr, tm, layoutManager,metricsManager,vmMgr,this.cytoscapePropertiesServiceRef, factoryProvisioner);
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("action performed induction action");
 		dialog.actionPerformed(e);
 	}
 }

@@ -21,7 +21,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package org.cytoscape.cyni.internal.inductionAlgorithms.BasicAlgorithm;
+package org.cytoscape.cyni.internal.inductionAlgorithms.MutualInformationAlgorithm;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,21 +32,15 @@ import org.cytoscape.cyni.*;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableValidator;
 
-public class BasicInductionContext extends AbstractCyniAlgorithmContext implements TunableValidator {
+public class MutualInfoInductionContext extends AbstractCyniAlgorithmContext implements TunableValidator {
 	@Tunable(description="Threshold to add new edge")
-	public double thresholdAddEdge = 0.5;
-	
-	@Tunable(description="Use only absolute values for correlation")
-	public boolean useAbsolut = true;
+	public double thresholdAddEdge = 1.2;
 
-	//@Tunable(description="Output Only Nodes with Edges")
-	//public boolean removeNodes = false;
+	/*@Tunable(description="Output Only Nodes with Edges")
+	public boolean removeNodes = false;*/
 	
 	@Tunable(description="Use selected nodes only", groups="Parameters if a network associated to table data")
 	public boolean selectedOnly = false;
-	
-	@Tunable(description="Metric")
-	public ListSingleSelection<CyCyniMetric> measures;
 	
 	@Tunable(description="Data Attributes", groups="Sources for Network Inference")
 	public ListMultipleSelection<String> attributeList;
@@ -54,9 +48,9 @@ public class BasicInductionContext extends AbstractCyniAlgorithmContext implemen
 	
 	private List<String> attributes;
 	
-	public BasicInductionContext(boolean supportsSelectedOnly, CyTable table,  List<CyCyniMetric> metrics) {
+	public MutualInfoInductionContext(boolean supportsSelectedOnly, CyTable table) {
 		super(supportsSelectedOnly);
-		attributes = getAllAttributesNumbers(table);
+		attributes = getAllAttributesStrings(table);
 		if(attributes.size() > 0)
 		{
 			attributeList = new  ListMultipleSelection<String>(attributes);
@@ -65,51 +59,25 @@ public class BasicInductionContext extends AbstractCyniAlgorithmContext implemen
 		{
 			attributeList = new  ListMultipleSelection<String>("No sources available");
 		}
-		if(metrics.size() > 0)
-		{
-			measures = new  ListSingleSelection<CyCyniMetric>(metrics);
-		}
-		else
-		{
-			measures = new  ListSingleSelection<CyCyniMetric>();//("No metrics available");
-		}
+		
 	}
 	
 	@Override
 	public ValidationState getValidationState(final Appendable errMsg) {
 		setSelectedOnly(selectedOnly);
-		if (thresholdAddEdge < 0.0 && useAbsolut)
-		{
+		if (thresholdAddEdge >= 0.0 && !attributeList.getSelectedValues().get(0).matches("No sources available"))
+			return ValidationState.OK;
+		else {
 			try {
-				errMsg.append("Threshold needs to be greater than 0.0!!!!");
+				if (thresholdAddEdge < 0.0)
+					errMsg.append("Threshold needs to be greater than 0.0!!!!");
+				else
+					errMsg.append("There are no sources available to apply this algorithm.");
 			} catch (IOException e) {
 				e.printStackTrace();
 				return ValidationState.INVALID;
 			}
 			return ValidationState.INVALID;
 		}
-			
-		if(measures.getPossibleValues().size()<=0) {
-			try {
-				errMsg.append("No metrics available to apply the algorithm!!!!");
-			} catch (IOException e) {
-				e.printStackTrace();
-				return ValidationState.INVALID;
-			}
-			return ValidationState.INVALID;
-			
-		}
-		
-		if(attributeList.getSelectedValues().get(0).matches("No sources available") || attributeList.getPossibleValues().size() == 0) {
-			try {
-				errMsg.append("No sources available to apply the algorithm!!!!");
-			} catch (IOException e) {
-				e.printStackTrace();
-				return ValidationState.INVALID;
-			}
-			return ValidationState.INVALID;
-			
-		}
-		return ValidationState.OK;
 	}
 }

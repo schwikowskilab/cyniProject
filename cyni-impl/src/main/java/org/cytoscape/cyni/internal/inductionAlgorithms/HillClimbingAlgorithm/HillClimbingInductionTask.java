@@ -129,6 +129,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		Double progress = 0.0d;
 		Double step = 0.0;
 		int i=0;
+		boolean loopFound = false;
 		int nRows,added,removed,reversed;
 		CyNetwork newNetwork = netFactory.createNetwork();
 		CyNetworkView newNetworkView ;
@@ -138,14 +139,15 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		Operation operationDelete = new Operation("Delete");
 		Operation operationReverse = new Operation("Reverse");
 		Operation chosenOperation;
+		Operation lastOperation = new Operation("");
 		
 		networkSelected = getNetworkAssociatedToTable(table);
 		
-		taskMonitor.setTitle("Hill Climbing induction");
-		taskMonitor.setStatusMessage("Generating Hill Climbing induction...");
+		taskMonitor.setTitle("Hill Climbing Inference");
+		taskMonitor.setStatusMessage("Generating Hill Climbing Inference...");
 		taskMonitor.setProgress(progress);
 		
-		networkName = "HC Induction " + newNetwork.getSUID();
+		networkName = "HC Inference " + newNetwork.getSUID();
 		if (newNetwork != null && networkName != null) {
 			CyRow netRow = newNetwork.getRow(newNetwork);
 			netRow.set(CyNetwork.NAME, networkName);
@@ -288,7 +290,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		taskMonitor.setStatusMessage("Initializing Cache..." );
 		initCache(data, selectedMetric, taskMonitor);
 		taskMonitor.setStatusMessage("Cache Initialized\n Looking for optimal solution..." );
-		edgeTable.createColumn("Probability", Double.class, false);	
+		edgeTable.createColumn("Score", Double.class, false);	
 		progress += 0.5; 
 		added = 0;
 		removed = 0;
@@ -296,6 +298,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 		while(okToProceed)
 		{
+			if (cancelled)
+				break;
 			operationAdd.resetParameters();
 			operationDelete.resetParameters();
 			operationReverse.resetParameters();
@@ -306,9 +310,6 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			
 			if(reversalOption)
 				findBestReverseEdge(data, operationReverse);
-						
-			if (cancelled)
-				break;
 			
 			
 			if(reversalOption)
@@ -316,7 +317,13 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 				if(operationReverse.score > chosenOperation.score)
 				{
 					chosenOperation = operationReverse;
+					if(lastOperation.type == "Reverse")
+					{
+						if(lastOperation.nodeChild == chosenOperation.nodeParent &&  lastOperation.nodeParent == chosenOperation.nodeChild)
+							loopFound = true;
+					}
 				}
+				
 			}
 			if(chosenOperation.score > 0.0)
 			{
@@ -330,6 +337,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 					updateCache(data, selectedMetric,chosenOperation.nodeChild);
 					updateAscendantsAfterAdd(chosenOperation.nodeParent,chosenOperation.nodeChild);
 					added++;
+					newNetwork.getRow(edge).set("Score", chosenOperation.score);
 				}
 				if(chosenOperation.type == "Delete")
 				{
@@ -355,7 +363,14 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 					updateCache(data, selectedMetric,chosenOperation.nodeParent);
 					updateAscendantsAfterAdd(chosenOperation.nodeChild,chosenOperation.nodeParent);
 					reversed++;
-				}
+					newNetwork.getRow(edge).set("Score", chosenOperation.score);
+				}			
+				lastOperation.type = chosenOperation.type;
+				lastOperation.nodeParent = chosenOperation.nodeParent;
+				lastOperation.nodeChild = chosenOperation.nodeChild;
+				if(loopFound)
+					okToProceed = false;
+				
 			}
 			else
 				okToProceed = false;
@@ -506,6 +521,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
             executor = Executors.newFixedThreadPool(nThreads);
             progress = progress + step;
     	    taskMonitor.setProgress(progress);
+    	    if (cancelled)
+    	    	return;
         }
        
 	}
@@ -529,6 +546,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
             	
 				executor.execute(new ThreadedGetMetric(data,nodeStart,nodeEnd,baseScore));
 			}
+            if (cancelled)
+				break;
         }
 		executor.shutdown();
 		// Wait until all threads are finish

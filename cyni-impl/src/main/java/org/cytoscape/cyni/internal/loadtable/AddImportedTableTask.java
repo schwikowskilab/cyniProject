@@ -24,8 +24,10 @@
 package org.cytoscape.cyni.internal.loadtable;
 
 import org.cytoscape.io.read.CyTableReader;
+import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableManager;
+import org.cytoscape.model.SUIDFactory;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
@@ -45,7 +47,17 @@ import org.cytoscape.work.TaskMonitor;
 	public void run(TaskMonitor taskMonitor) throws Exception {
 		if( this.reader != null && this.reader.getTables() != null)
 			for (CyTable table : reader.getTables())
+			{
+				if(table.getColumn(CyTable.SUID) == null)
+				{
+					table.createColumn(CyTable.SUID, Long.class,true);
+					for ( CyRow row :  table.getAllRows()) 
+					{
+						row.set(CyTable.SUID, SUIDFactory.getNextSUID());
+					}
+				}
 				tableMgr.addTable(table);
+			}
 		else{
 			
 		}

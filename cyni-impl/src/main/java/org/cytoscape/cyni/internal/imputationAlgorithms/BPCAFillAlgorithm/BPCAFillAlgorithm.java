@@ -76,7 +76,6 @@ class BPCAFillAlgorithm
             for(int j = numData - 1; j >= 0; j--)
                 if(missingIndex[j][i])
                 {
-                	System.out.println("missing value");
                     yest[j][i] = u.mu[i];
                 }
                 else

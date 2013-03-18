@@ -59,7 +59,10 @@ public class RankCorrelationMetric extends AbstractCyniMetric {
 		
 		rank1 = table1.getRank(indexBase);
 		rank2 = table2.getRank(index2);
-		
+		if(rank1 == null)
+			return 0.0;
+		if(rank2 == null)
+			return 0.0;
 		mean1 = getMean(rank1);
 		mean2 = getMean(rank2);
 		

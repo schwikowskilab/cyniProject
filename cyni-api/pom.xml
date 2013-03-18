@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <parent>
-    <artifactId>cyniApp-parent</artifactId>  
-    <groupId>org.cytoscape</groupId>
-    <version>1.0-beta2</version>
-  </parent>
 
   <properties>
     <bundle.symbolicName>org.cytoscape.cyni-api</bundle.symbolicName>
     <bundle.namespace>org.cytoscape.cyni</bundle.namespace>
+    <maven-bundle-plugin.version>2.3.4</maven-bundle-plugin.version>
+    <cytoscape.api.version>3.0.0</cytoscape.api.version>
   </properties>
 
   <modelVersion>4.0.0</modelVersion>

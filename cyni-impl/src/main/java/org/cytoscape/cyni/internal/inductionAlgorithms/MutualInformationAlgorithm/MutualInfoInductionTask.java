@@ -21,7 +21,7 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package org.cytoscape.cyni.internal.inductionAlgorithms.BasicAlgorithm;
+package org.cytoscape.cyni.internal.inductionAlgorithms.MutualInformationAlgorithm;
 
 
 
@@ -59,10 +59,9 @@ import org.cytoscape.view.model.CyNetworkViewManager;
  * The BasicInduction provides a very simple Induction, suitable as
  * the default Induction for Cytoscape data readers.
  */
-public class BasicInductionTask extends AbstractCyniTask {
+public class MutualInfoInductionTask extends AbstractCyniTask {
 	private final double thresholdAddEdge;
-	private boolean removeNodes = false;
-	private boolean useAbsolut;
+	private boolean removeNodes;
 	private final List<String> attributeArray;
 	private final CyTable table;
 	
@@ -73,7 +72,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 	/**
 	 * Creates a new BasicInduction object.
 	 */
-	public BasicInductionTask(final String name, final BasicInductionContext context, CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
+	public MutualInfoInductionTask(final String name, final MutualInfoInductionContext context, CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
 			CyNetworkManager networkManager,CyNetworkTableManager netTableMgr, CyRootNetworkManager rootNetMgr, VisualMappingManager vmMgr,
 			CyNetworkViewManager networkViewManager,CyLayoutAlgorithmManager layoutManager, 
 			CyCyniMetricsManager metricsManager, CyTable selectedTable)
@@ -84,8 +83,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		this.layoutManager = layoutManager;
 		this.metricsManager = metricsManager;
 		//this.removeNodes = context.removeNodes;
-		this.useAbsolut = context.useAbsolut;
-		this.selectedMetric = context.measures.getSelectedValue();
+		this.selectedMetric = metricsManager.getCyniMetric("Entropy Metric");
 		this.attributeArray = context.attributeList.getSelectedValues();
 		this.table = selectedTable;
 		
@@ -112,29 +110,31 @@ public class BasicInductionTask extends AbstractCyniTask {
 		CyNetwork networkSelected = null;
 		CyNetwork newNetwork = netFactory.createNetwork();
 		CyNetworkView newNetworkView ;
-		double threadResults[] = new double[nThreads];
-		double result;
-		int threadIndex[] = new int[nThreads];
+		double threadResults[] ;
+		double mutualInfoResults[] ;
+		double mi;
+		int threadIndex[] ;
 		threadNumber=0;
-		Arrays.fill(threadResults, 0.0);
 		networkSelected = getNetworkAssociatedToTable(table);
 		
-		taskMonitor.setTitle("Correlation Inference");
+		taskMonitor.setTitle("Mutual Information Inference");
 		taskMonitor.setStatusMessage("Generating network inference...");
 		taskMonitor.setProgress(progress);
 		mapRowNodes = new HashMap<Object,CyNode>();
 		index.add(0);
 		// Create the CyniTable
 		CyniTable data = new CyniTable(table,attributeArray.toArray(new String[0]), false, false, selectedOnly);
+		selectedMetric.resetParameters();
 		
 		nRows = data.nRows();
 		step = 1.0 / nRows;
 		
 		threadResults = new double[nRows];
+		mutualInfoResults = new double[nRows];
 		threadIndex = new int[nRows];
 		Arrays.fill(threadResults, 0.0);
 		
-		networkName = "Correlation Inference " + newNetwork.getSUID();
+		networkName = "Mutual Info Inference " + newNetwork.getSUID();
 		if (newNetwork != null && networkName != null) {
 			CyRow netRow = newNetwork.getRow(newNetwork);
 			netRow.set(CyNetwork.NAME, networkName);
@@ -144,10 +144,23 @@ public class BasicInductionTask extends AbstractCyniTask {
 		edgeTable = newNetwork.getDefaultEdgeTable();
 		addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
 	
-		edgeTable.createColumn("Distance", Double.class, false);	
+		edgeTable.createColumn("Mutual Information", Double.class, false);	
 		
 		// Create the thread pools
 		ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+		
+		for (int i = 0; i < nRows; i++) 
+		{
+			index.set(0, i);
+			executor.execute(new ThreadedGetMutualInfo(data,i,index,i,mutualInfoResults));
+		}
+		executor.shutdown();
+		// Wait until all threads are finish
+		try {
+         	executor.awaitTermination(7, TimeUnit.DAYS);
+        } catch (Exception e) {}
+		
+		executor = Executors.newFixedThreadPool(nThreads);
 
 		for (int i = 0; i < nRows; i++) 
 		{
@@ -160,7 +173,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 					break;
 				
 				index.set(0, j);
-				executor.execute(new ThreadedGetMetric(data,i,index,threadNumber,threadResults));
+				executor.execute(new ThreadedGetMutualInfo(data,i,index,threadNumber,threadResults));
 				threadIndex[threadNumber] = j;
 				threadNumber++;
 			}
@@ -172,10 +185,8 @@ public class BasicInductionTask extends AbstractCyniTask {
 			
 			for(int pool = 0; pool< threadNumber;pool++)
 			{
-				result = threadResults[pool];
-				if(useAbsolut)
-					result = Math.abs(threadResults[pool]);
-				if(result > thresholdAddEdge)
+				mi = (mutualInfoResults[i] + mutualInfoResults[threadIndex[pool]] - threadResults[pool]);
+				if(mi > thresholdAddEdge)
 				{
 					if(!mapRowNodes.containsKey(data.getRowLabel(i)))
 					{
@@ -203,7 +214,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 					if(!newNetwork.containsEdge(mapRowNodes.get(data.getRowLabel(i)), mapRowNodes.get(data.getRowLabel(threadIndex[pool]))))
 					{
 						edge = newNetwork.addEdge(mapRowNodes.get(data.getRowLabel(i)), mapRowNodes.get(data.getRowLabel(threadIndex[pool])), false);
-						newNetwork.getRow(edge).set("Distance", threadResults[pool]);
+						newNetwork.getRow(edge).set("Mutual Information",mi);
 					}
 				}
 			}
@@ -214,10 +225,16 @@ public class BasicInductionTask extends AbstractCyniTask {
 			taskMonitor.setProgress(progress);
 		}
 		
+		if (cancelled)
+		{
+			if(!executor.isShutdown())
+				executor.shutdownNow();
+		}
+		
 		if (!cancelled)
 		{
-			if(removeNodes)
-				removeNodesWithoutEdges(newNetwork);
+			/*if(removeNodes)
+				removeNodesWithoutEdges(newNetwork);*/
 			newNetworkView = displayNewNetwork(newNetwork,networkSelected, false);
 			taskMonitor.setProgress(1.0d);
 			layout = layoutManager.getDefaultLayout();
@@ -227,14 +244,14 @@ public class BasicInductionTask extends AbstractCyniTask {
 	
 	}
 	
-	private class ThreadedGetMetric implements Runnable {
+	private class ThreadedGetMutualInfo implements Runnable {
 		private ArrayList<Integer> index2;
 		private int index1;
 		private CyniTable tableData;
 		private double results[];
 		private int pos;
 		
-		ThreadedGetMetric(CyniTable data,int index1, ArrayList<Integer> parentsToIndex,int pos, double results[])
+		ThreadedGetMutualInfo(CyniTable data,int index1, ArrayList<Integer> parentsToIndex,int pos, double results[])
 		{
 			this.index2 = new ArrayList<Integer>( parentsToIndex);
 			this.index1 = index1;
