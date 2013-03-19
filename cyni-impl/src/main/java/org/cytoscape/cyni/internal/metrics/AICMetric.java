@@ -65,7 +65,7 @@ public class AICMetric extends AbstractCyniMetric {
 		numValues = table1.getAttributeStringValues().size();
 		nCounts  =  (int)Math.pow((double)numValues, (double)indexToCompare.size());
 		
-		result -=  nCounts * (numValues - 1) ;
+		result +=  nCounts * (numValues - 1) ;
 		
 		
 		return  result;

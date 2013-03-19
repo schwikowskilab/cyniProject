@@ -36,6 +36,7 @@ import org.cytoscape.cyni.*;
 public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 	
 	private static Map<String,Integer> mapStringValues;
+	private Map<Double,Double> mapValues;
 	/**
 	 * Creates a new  object.
 	 */
@@ -44,12 +45,14 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 		addType(CyniMetricTypes.INPUT_STRINGS.toString());
 		addType(CyniMetricTypes.LOCAL_METRIC_SCORE.toString());
 		mapStringValues =  new HashMap<String,Integer>();
+		mapValues =  new HashMap<Double,Double>();
 	}
 	
 	public void resetParameters()
 	{
 		if(!mapStringValues.isEmpty())
 			mapStringValues.clear();
+		mapValues.clear();
 	}
 
 	
@@ -149,6 +152,12 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 	
 	private double gammaln(double xx)
 	{
+		Double fact;
+		
+		fact = mapValues.get(xx);
+		if(fact != null)
+			return fact;
+		
 		double x,y,tmp,ser;
 		int j;
 		final double[] cof = {57.1562356658629235,-59.5979603554754912,
@@ -162,7 +171,9 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 		tmp = (x+0.5)*Math.log(tmp)-tmp;
 		ser = 0.999999999999997092;
 		for (j=0;j<14;j++) ser += cof[j]/++y;
-		return tmp+Math.log(2.5066282746310005*ser/x);
+		fact = tmp+Math.log(2.5066282746310005*ser/x);
+		mapValues.put(xx, fact);
+		return fact;
 
 	}
 

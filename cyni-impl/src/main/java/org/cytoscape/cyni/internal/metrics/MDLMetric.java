@@ -63,7 +63,7 @@ public class MDLMetric extends AbstractCyniMetric {
 		numValues = table1.getAttributeStringValues().size();
 		nCounts  =  (int)Math.pow((double)numValues, (double)indexToCompare.size());
 		
-		result -= 0.5 * nCounts * (numValues - 1) * Math.log(table1.nColumns());
+		result += 0.5 * nCounts * (numValues - 1) * Math.log(table1.nColumns());
 		
 		
 		return  result;
