@@ -2,6 +2,6 @@
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0" name="cyniApp-feature">
     <feature description="CyNI App Feature (cyniApp-feature)" version="3.0.0-alpha9-SNAPSHOT" name="cyniApp-feature">
         <bundle>mvn:org.cytoscape/cyni-api/1.0-beta1</bundle>
-        <bundle>mvn:org.cytoscape/cyni-app/1.0-beta2</bundle>
+        <bundle>mvn:org.cytoscape/cyni-app/1.0-beta3</bundle>
     </feature>
 </features>
