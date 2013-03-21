@@ -132,22 +132,22 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 		double temp1,temp2;
 		
 		combinations = (int)Math.pow((double)mapStringValues.size(),(double)(nodes.length-1));
-		temp1 = gammaln((double)1.0/(combinations*numValues));
-		temp2 = gammaln((double)1.0/combinations);
+		temp1 = gammaln((double)1.0/(double)(combinations*numValues));
+		temp2 = gammaln((double)1.0/(double)combinations);
 		for(i=0;i<combinations;i++)
 		{
 			numTimes = 0;
 			for(j=0;j<numValues;j++)
 			{
-				result += gammaln(1.0/(combinations*numValues)+(double)nCounts[i*numValues+j]);
+				result += gammaln(1.0/(double)(combinations*numValues)+(double)nCounts[i*numValues+j]);
 				result -=  temp1;
 				numTimes += nCounts[i*numValues+j];
 			}
 			result += temp2;
-			result -= gammaln(1.0/combinations+(double)numTimes);
+			result -= gammaln(1.0/(double)combinations+(double)numTimes);
 		}
 		
-		return result;// Math.exp(result);
+		return  Math.exp(result);
 	}
 	
 	private double gammaln(double xx)
