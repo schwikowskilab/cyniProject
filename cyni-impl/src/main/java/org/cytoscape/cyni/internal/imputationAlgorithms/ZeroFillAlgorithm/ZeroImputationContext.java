@@ -54,7 +54,6 @@ public class ZeroImputationContext extends AbstractCyniAlgorithmContext implemen
 	
 	@Override
 	public ValidationState getValidationState(final Appendable errMsg) {
-		System.out.println("validation...");
 		if(chooser.getSelectedValue().matches("By an interval") && missValueDown > missValueUp)
 		{
 			try {
@@ -65,16 +64,7 @@ public class ZeroImputationContext extends AbstractCyniAlgorithmContext implemen
 			}
 			return ValidationState.INVALID;
 		}
-		if (!chooser.getSelectedValue().matches("By an interval") && missValue < 0.0 )
-		{
-			try {
-				errMsg.append("Missing value needs to be greater or equal to zero");
-			} catch (IOException e) {
-				e.printStackTrace();
-				return ValidationState.INVALID;
-			}
-			return ValidationState.INVALID;
-		}
+		
 		return ValidationState.OK;
 	}
 }
