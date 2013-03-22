@@ -124,11 +124,18 @@ public class K2InductionContext extends AbstractCyniAlgorithmContext implements 
 	@Override
 	public ValidationState getValidationState(final Appendable errMsg) {
 		setSelectedOnly(selectedOnly);
-		if (maxNumParents > 0 && measures.getPossibleValues().size()>0)
+		if (maxNumParents > 0 && !attributeList.getPossibleValues().get(0).matches("No sources available") && measures.getPossibleValues().size()>0 && attributeList.getSelectedValues().size() >0)
 			return ValidationState.OK;
 		else {
 			try {
-				errMsg.append("Threshold needs to be greater than 0.0!!!!");
+				if (maxNumParents <= 0)
+					errMsg.append("Number of parents needs to be greater than 0!!!!\n");
+				if(measures.getPossibleValues().size()==0)
+					errMsg.append("There are no available metrics for this algorithm!\n");
+				if(attributeList.getSelectedValues().size() == 0)
+					errMsg.append("There are no source attributes selected to apply the Inference Algorithm. Please, select them.\n");
+				else if(attributeList.getSelectedValues().get(0).matches("No sources available"))
+					errMsg.append("There are no source attributes available to apply the Inference Algorithm.\n");
 			} catch (IOException e) {
 				e.printStackTrace();
 				return ValidationState.INVALID;

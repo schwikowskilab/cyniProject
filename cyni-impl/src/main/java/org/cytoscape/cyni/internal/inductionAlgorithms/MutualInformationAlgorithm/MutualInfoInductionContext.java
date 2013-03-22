@@ -65,14 +65,16 @@ public class MutualInfoInductionContext extends AbstractCyniAlgorithmContext imp
 	@Override
 	public ValidationState getValidationState(final Appendable errMsg) {
 		setSelectedOnly(selectedOnly);
-		if (thresholdAddEdge >= 0.0 && !attributeList.getSelectedValues().get(0).matches("No sources available"))
+		if (thresholdAddEdge >= 0.0 && !attributeList.getPossibleValues().get(0).matches("No sources available") && attributeList.getSelectedValues().size() > 0)
 			return ValidationState.OK;
 		else {
 			try {
 				if (thresholdAddEdge < 0.0)
-					errMsg.append("Threshold needs to be greater than 0.0!!!!");
-				else
-					errMsg.append("There are no sources available to apply this algorithm.");
+					errMsg.append("Threshold needs to be greater than 0.0!!!!\n");
+				if( attributeList.getSelectedValues().size() == 0)
+					errMsg.append("There are no source attributes selected to apply the Inference Algorithm. Please, select them.\n");
+				else if(attributeList.getSelectedValues().get(0).matches("No sources available"))
+					errMsg.append("There are no source attributes available to apply the Inference Algorithm.\n");
 			} catch (IOException e) {
 				e.printStackTrace();
 				return ValidationState.INVALID;
