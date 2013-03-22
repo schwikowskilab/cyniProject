@@ -163,7 +163,7 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 					}
 				}
 				
-				label = "(" + String.format("%.5g%n", thresholds.get(pos)) + "," + String.format("%.5g%n",thresholds.get(pos+1)) + ")";
+				label = "(" + String.format("%.5g", thresholds.get(pos)) + "," + String.format("%.5g",thresholds.get(pos+1)) + ")";
 				row.set("nominal."+columnName, label);
 			}
 			 
