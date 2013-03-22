@@ -34,7 +34,7 @@ import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableValidator;
 
 public class EqualDiscretizationContext extends AbstractCyniAlgorithmContext implements TunableValidator {
-	@Tunable(description="Bins")
+	@Tunable(description="Intervals")
 	public int bins = 5;
 	
 	@Tunable(description="Use Equal Frequency")
@@ -68,7 +68,7 @@ public class EqualDiscretizationContext extends AbstractCyniAlgorithmContext imp
 		else {
 			try {
 				if (bins <= 0)
-					errMsg.append("Bins parameter needs to be greater than 0.\n");
+					errMsg.append("Intervals parameter needs to be greater than 0.\n");
 				if(attributeList.getSelectedValues().size() == 0)
 					errMsg.append("There are no numerical attributes selected to apply the Discretization Algorithm. Please, select them.\n");
 				else if(attributeList.getSelectedValues().get(0).matches("No sources available"))

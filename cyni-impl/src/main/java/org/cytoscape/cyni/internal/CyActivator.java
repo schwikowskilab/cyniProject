@@ -57,6 +57,7 @@ import org.cytoscape.cyni.internal.inductionAlgorithms.K2Algorithm.*;
 import org.cytoscape.cyni.internal.inductionAlgorithms.HillClimbingAlgorithm.*;
 import org.cytoscape.cyni.internal.inductionAlgorithms.MutualInformationAlgorithm.*;
 import org.cytoscape.cyni.internal.discretizationAlgorithms.EqualWidthFreqDiscretization.*;
+import org.cytoscape.cyni.internal.discretizationAlgorithms.ManualDiscretization.*;
 import org.cytoscape.cyni.internal.loadtable.*;
 import static org.cytoscape.work.ServiceProperties.PREFERRED_MENU;
 import static org.cytoscape.work.ServiceProperties.MENU_GRAVITY;
@@ -102,6 +103,7 @@ public class CyActivator extends AbstractCyActivator {
 		RAVGImputation ravg = new RAVGImputation();
 		
 		EqualDiscretization equal = new EqualDiscretization();
+		ManualDiscretization manual = new ManualDiscretization();
 		
 		CorrelationMetric  correlationMetric = new CorrelationMetric();
 		RankCorrelationMetric  rankCorrelationMetric = new RankCorrelationMetric();
@@ -153,6 +155,7 @@ public class CyActivator extends AbstractCyActivator {
 		registerService(bc,bpca,CyCyniAlgorithm.class, new Properties());
 		registerService(bc,ravg,CyCyniAlgorithm.class, new Properties());
 		registerService(bc,equal,CyCyniAlgorithm.class, new Properties());
+		registerService(bc,manual,CyCyniAlgorithm.class, new Properties());
 		
 		registerService(bc,correlationMetric,CyCyniMetric.class, new Properties());
 		registerService(bc,rankCorrelationMetric,CyCyniMetric.class, new Properties());
