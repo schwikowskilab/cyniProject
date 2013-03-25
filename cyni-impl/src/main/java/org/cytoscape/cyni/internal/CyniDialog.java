@@ -102,7 +102,6 @@ public class CyniDialog extends JDialog implements ActionListener {
 	private Integer availableAlgorithms;
 	private Integer availableTables;
 	private CyCyniAlgorithm newCyni;
-	private CyTable oldTable;
 	private CyNetworkFactory netFactory;
 	private CyNetworkViewFactory viewFactory;
 	private CyNetworkManager netMgr;
@@ -117,7 +116,7 @@ public class CyniDialog extends JDialog implements ActionListener {
 	/**
 	 *  Store the cyni context.
 	 */
-	private Map<CyCyniAlgorithm, Object> contextMap;
+	private Map<CyCyniAlgorithm, Map<CyTable, Object>> contextMap;
 
 	/**
 	 * Creates a new CyniDialog object.
@@ -159,9 +158,8 @@ public class CyniDialog extends JDialog implements ActionListener {
 		this.metricsManager = metricsManager;
 		this.cytoscapePropertiesServiceRef = cytoscapePropertiesServiceRef;
 		this.factoryProvisioner = factoryProvisioner;
-		this.contextMap = new HashMap<CyCyniAlgorithm, Object>();
+		this.contextMap = new HashMap<CyCyniAlgorithm, Map<CyTable, Object>>();
 		this.category = category;
-		oldTable = null;
 		availableAlgorithms = 0;
 		availableTables = 0;
 		switch(this.category){
@@ -387,28 +385,38 @@ public class CyniDialog extends JDialog implements ActionListener {
 
 	private class AlgorithmActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			boolean firstTime = false;
 			Object o = algorithmSelector.getSelectedItem();
 			
 			Object table = tableSelector.getSelectedItem();
 			// if it's a string, that means it's the instructions
 			if (!(o instanceof String) && !(table instanceof String) && o != null) {
+				Object context = null;
 				newCyni = (CyCyniAlgorithm)o;
 				CyTable newTable = (CyTable) table;
 				
 				//Checking if the context has already been charged, if so there is no need to do it again
-				Object context = contextMap.get(newCyni);
-				executeButton.setEnabled(true);
-				if (context == null || !oldTable.equals(table))
+				if(contextMap.get(newCyni) == null)
 				{
-					if(contextMap.containsKey(newCyni))
-					{
-						contextMap.remove(newCyni);
-					}
-					context =  newCyni.createCyniContext(newTable, metricsManager,null,null);
-					contextMap.put(newCyni, context);
-					oldTable = (CyTable) table;
+					firstTime = true;
 				}
-
+				else
+				{
+					context = contextMap.get(newCyni).get(newTable);
+					if(context ==null)
+						firstTime = true;
+						
+				}
+				
+				if (firstTime)
+				{
+					
+					context =  newCyni.createCyniContext(newTable, metricsManager,null,null);
+					if(contextMap.get(newCyni) == null)
+						contextMap.put(newCyni, new HashMap<CyTable, Object>());
+					contextMap.get(newCyni).put(newTable, context);
+				}
+				executeButton.setEnabled(true);
 				TaskFactory factory = wrapWithContext(newCyni, context);
 
 				JPanel tunablePanel = taskManager.getConfiguration(factory, context);
@@ -425,6 +433,7 @@ public class CyniDialog extends JDialog implements ActionListener {
 				}
 				currentCyni = factory;
 				CyniDialog.this.pack();
+				CyniDialog.this.repaint();
 			}
 		}
 	}

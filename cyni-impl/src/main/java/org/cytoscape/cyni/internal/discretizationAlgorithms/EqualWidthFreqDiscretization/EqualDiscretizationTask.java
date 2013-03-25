@@ -151,7 +151,10 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 				if(value == null)
 					continue;
 				
-				valDouble = ((Double)value).doubleValue();
+				if(column.getType() == Integer.class)
+					valDouble = ((Integer)value).doubleValue();
+				else
+					valDouble = (Double)value;
 					
 				for(int i = 0 ; i< (thresholds.size() -1) ; i++ )
 				{

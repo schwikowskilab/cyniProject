@@ -188,6 +188,7 @@ public class ManualDiscretizationContext extends AbstractCyniAlgorithmContext im
 		super(true);
 		Double value;
 		CyColumn column;
+		boolean isInteger;
 		maxValue = 0.0;
 		minValue = 0.0;
 	    attributes = getAllAttributesNumbers(table);
@@ -195,10 +196,16 @@ public class ManualDiscretizationContext extends AbstractCyniAlgorithmContext im
 	    for(String col : attributes)
     	{
 	    	column = table.getColumn(col);
+	    	if(column.getType() == Integer.class)
+	    		isInteger = true;
+	    	else
+	    		isInteger = false;
 		    for(CyRow row : listRows)
 		    {
-
-		    	value = ((Double)row.get(col, column.getType())).doubleValue();
+		    	if(isInteger)
+		    		value = ((Integer)row.get(col, column.getType())).doubleValue();
+		    	else
+		    		value = (Double)row.get(col, column.getType());
 	    		if(value != null)
 	    		{
 	    			if(value > maxValue)

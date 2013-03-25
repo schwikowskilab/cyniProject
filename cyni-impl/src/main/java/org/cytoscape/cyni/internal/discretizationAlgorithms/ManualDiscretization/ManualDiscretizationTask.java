@@ -120,7 +120,10 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 				if(value == null)
 					continue;
 				
-				valDouble = ((Double)value).doubleValue();
+				if(column.getType() == Integer.class)
+					valDouble = ((Integer)value).doubleValue();
+				else
+					valDouble = (Double)value;
 					
 				pos = thresholds.size();
 				for(int i = 0 ; i< thresholds.size()  ; i++ )
