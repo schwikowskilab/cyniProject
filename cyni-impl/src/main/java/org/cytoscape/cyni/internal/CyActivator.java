@@ -34,6 +34,7 @@ import org.cytoscape.model.CyNetworkTableManager;
 import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 import org.cytoscape.property.CyProperty;
 import org.cytoscape.service.util.AbstractCyActivator;
+import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.task.DynamicTaskFactoryProvisioner;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
@@ -91,6 +92,7 @@ public class CyActivator extends AbstractCyActivator {
 		CyRootNetworkManager rootNetworkManagerServiceRef  = getService(bc, CyRootNetworkManager.class);
 		CyNetworkTableManager cyNetworkTableManagerServiceRef  = getService(bc, CyNetworkTableManager.class);
 		VisualMappingManager visualMappingManagerServiceRef = getService(bc, VisualMappingManager.class);
+		CyServiceRegistrar cyServiceRegistrarServiceRef = getService(bc,CyServiceRegistrar.class);
 
 		
 		BasicInduction basicInduction = new BasicInduction();
@@ -169,17 +171,20 @@ public class CyActivator extends AbstractCyActivator {
 		CyniAction inductionAction = new CyniAction("Infer Network...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
                 cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
                 cyNetworkManagerServiceRef,cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef,panelTaskManagerServiceRef,
-                cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,CyniCategory.INDUCTION);
+                cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,
+                cyServiceRegistrarServiceRef,CyniCategory.INDUCTION);
 		
 		CyniAction imputationAction = new CyniAction("Impute Missing Data...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
 				cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
                 cyNetworkManagerServiceRef,cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef,panelTaskManagerServiceRef,
-                cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,CyniCategory.IMPUTATION);
+                cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,
+                cyServiceRegistrarServiceRef,CyniCategory.IMPUTATION);
 		
 		CyniAction discretizationAction = new CyniAction("Discretize Data...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
 				cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
                 cyNetworkManagerServiceRef,cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef,panelTaskManagerServiceRef,
-                cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,CyniCategory.DISCRETIZATION);
+                cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,
+                cyServiceRegistrarServiceRef,CyniCategory.DISCRETIZATION);
 		
 		registerService(bc, inductionAction, CyAction.class, new Properties());
 		registerService(bc,imputationAction,CyAction.class, new Properties());

@@ -44,6 +44,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -65,6 +66,12 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.model.events.ColumnCreatedEvent;
+import org.cytoscape.model.events.ColumnCreatedListener;
+import org.cytoscape.model.events.ColumnDeletedEvent;
+import org.cytoscape.model.events.ColumnDeletedListener;
+import org.cytoscape.model.events.ColumnNameChangedListener;
+import org.cytoscape.model.events.ColumnNameChangedEvent;
 import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
@@ -78,7 +85,7 @@ import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
  * various settings for Induction algorithms.  Each CyInductionAlgorithm must return a single
  * JPanel that provides all of its settings.
  */
-public class CyniDialog extends JDialog implements ActionListener {
+public class CyniDialog extends JDialog implements ColumnCreatedListener, ColumnDeletedListener,ColumnNameChangedListener, ActionListener {
 	private final static long serialVersionUID = 1202339874277105L;
 	private TaskFactory currentCyni = null;
 
@@ -218,6 +225,42 @@ public class CyniDialog extends JDialog implements ActionListener {
 				
 				setVisible(true);
 				initialized = true;
+			}
+		}
+	}
+	
+	@Override
+	public void handleEvent(final ColumnCreatedEvent e) {
+		for( Map<CyTable, Object> mapTable : contextMap.values())
+		{
+			if(mapTable.containsKey(e.getSource()))
+			{
+				mapTable.remove(e.getSource());
+				initialized = false;
+			}
+		}
+	}
+
+	@Override
+	public void handleEvent(final ColumnDeletedEvent e) {
+		for( Map<CyTable, Object> mapTable : contextMap.values())
+		{
+			if(mapTable.containsKey(e.getSource()))
+			{
+				mapTable.remove(e.getSource());
+				initialized = false;
+			}
+		}
+	}
+	
+	@Override
+	public void handleEvent(final ColumnNameChangedEvent e) {
+		for( Map<CyTable, Object> mapTable : contextMap.values())
+		{
+			if(mapTable.containsKey(e.getSource()))
+			{
+				mapTable.remove(e.getSource());
+				initialized = false;
 			}
 		}
 	}

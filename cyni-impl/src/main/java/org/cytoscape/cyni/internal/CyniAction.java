@@ -25,6 +25,7 @@ package org.cytoscape.cyni.internal;
 
 
 import java.awt.event.ActionEvent;
+import java.util.Properties;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -37,11 +38,15 @@ import org.cytoscape.model.CyNetworkTableManager;
 import org.cytoscape.model.CyTableManager;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.model.events.ColumnCreatedListener;
+import org.cytoscape.model.events.ColumnDeletedListener;
+import org.cytoscape.model.events.ColumnNameChangedListener;
 import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
+import org.cytoscape.service.util.CyServiceRegistrar;
 import org.cytoscape.task.DynamicTaskFactoryProvisioner;
 
 
@@ -71,7 +76,7 @@ public class CyniAction extends AbstractCyAction {
 	public CyniAction(final String MenuName,final CyCyniAlgorithmManager cyi, final CyNetworkFactory networkFactory,final CyNetworkViewFactory networkViewFactory,final CyTableManager table, final CySwingApplication desk, final CyApplicationManager appMgr, final CyNetworkViewManager networkViewManager,
 			final CyNetworkManager networkManager, final CyNetworkTableManager netTableMgr,final CyRootNetworkManager rootNetMgr,
 			PanelTaskManager tm, CyLayoutAlgorithmManager layoutManager,CyCyniMetricsManager metricsManager, final VisualMappingManager vmMgr,
-			CyProperty cytoscapePropertiesServiceRef, DynamicTaskFactoryProvisioner factoryProvisioner, CyniCategory category)
+			CyProperty cytoscapePropertiesServiceRef, DynamicTaskFactoryProvisioner factoryProvisioner,CyServiceRegistrar serviceRegistrar, CyniCategory category)
 	{
 		super(MenuName,appMgr,"", networkViewManager);
 		setPreferredMenu("Tools.Cyni Tools");
@@ -108,6 +113,9 @@ public class CyniAction extends AbstractCyAction {
 		
 		
 		dialog = new CyniDialog(PanelName, category,cyi,netFactory,viewFactory,netMgr,netTableMgr, rootNetMgr,viewMgr,table, desk, appMgr, tm, layoutManager,metricsManager,vmMgr,this.cytoscapePropertiesServiceRef, factoryProvisioner);
+		serviceRegistrar.registerService(dialog, ColumnCreatedListener.class, new Properties());
+		serviceRegistrar.registerService(dialog, ColumnDeletedListener.class, new Properties());
+		serviceRegistrar.registerService(dialog, ColumnNameChangedListener.class, new Properties());
 	}
 
 	public void actionPerformed(ActionEvent e) {
