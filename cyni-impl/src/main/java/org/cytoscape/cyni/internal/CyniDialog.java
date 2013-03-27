@@ -309,7 +309,7 @@ public class CyniDialog extends JDialog implements ColumnCreatedListener, Column
     	}
     	else
     	{
-    		number = number + netMgr.getNetworkSet().size()*3;
+    		number = number + netMgr.getNetworkSet().size()*2;
     	}
 		
 		return number;
