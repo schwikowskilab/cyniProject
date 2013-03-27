@@ -52,6 +52,8 @@ public class BPCAImputationTask extends AbstractCyniTask {
 	private static  double missValue;
 	private static  double missValueDown;
 	private static  double missValueUp;
+	private static  double missValueLarge;
+	private static  double missValueLow;
 	private final CyTable mytable;
 	private String chooser;
 	private boolean interval;
@@ -66,6 +68,7 @@ public class BPCAImputationTask extends AbstractCyniTask {
     private boolean finishFlag;
     private double previousTau;
     private double convergenceThreshold;
+    private MissingValueHandler missing;
 	
 
 	/**
@@ -77,6 +80,8 @@ public class BPCAImputationTask extends AbstractCyniTask {
 		missValue = context.missValue;
 		missValueDown = context.missValueDown;
 		missValueUp = context.missValueUp;
+		missValueLarge = context.missValueLarger;
+		missValueLow = context.missValueLower;
 		chooser = context.chooser.getSelectedValue();
 		int i = 0;
 		this.mytable = selectedTable;
@@ -88,10 +93,7 @@ public class BPCAImputationTask extends AbstractCyniTask {
 			indexToNames[i] = column.getName();
 			i++;
 		}
-		if(chooser.matches("By a single value"))
-			interval = false;
-		else
-			interval = true;
+		
 		String primaryKey = selectedTable.getPrimaryKey().getName();
 		i = 0;
 		for ( CyRow row : selectedTable.getAllRows() ) 
@@ -111,7 +113,7 @@ public class BPCAImputationTask extends AbstractCyniTask {
 		Double progress = 0.0d;
 		double data[][];
 		Double step;
-		MissingValueHandler missing = new MissingValueHandler();
+	    missing = new MissingValueHandler();
 		
         maxEpoch = 200;
         finishFlag = false;
@@ -125,15 +127,33 @@ public class BPCAImputationTask extends AbstractCyniTask {
         taskMonitor.setStatusMessage("Estimating missing data...");
 		taskMonitor.setProgress(progress);
 		
-		if(interval)
+		if(chooser.matches("By a double Threshold"))
 		{
-			missing.setMissingValue(missValueUp, missValueDown, interval);
-			missValue = (missValueUp + missValueDown)/2;
+			missing.setMissingValue(missValueUp, missValueDown, true);
+			if(missValueDown > missValueUp)
+				missValue = (missValueUp + missValueDown)/2;
+			else
+				missValue = missValueUp + 10;
 		}
-		else
-			missing.setMissingValue(missValue, missValue, interval);
+		
+		if(chooser.matches("By a single Maximum Threshold"))
+		{
+			missing.setMissingValueLow(missValueLow);
+			missValue = missValueLow - 10;
+		}
+		
+		if(chooser.matches("By a single Minimum Threshold"))
+		{
+			missing.setMissingValueLarge(missValueLarge);
+			missValue = missValueLarge + 10;
+		}
+		
+		if(chooser.matches("By a single value"))
+			missing.setMissingValue(missValue, missValue, false);
 		
 		data = loadData(mytable);
+		
+		taskMonitor.setStatusMessage("Estimating missing data for " + listPositions.size() + " missing values ...");
 	
 		ExpressionMatrix em = new ExpressionMatrix(data);
 		
@@ -179,7 +199,7 @@ public class BPCAImputationTask extends AbstractCyniTask {
     }
 
 	
-	 public static double[][] loadData( CyTable table)
+	 public  double[][] loadData( CyTable table)
 	 {
 		 double dataMatrix[][];
 		 double valDouble;
@@ -229,14 +249,15 @@ public class BPCAImputationTask extends AbstractCyniTask {
 							 valDouble =  (Double) value;//(Double) values.get(rows);
 						 }
 					 }
-					 if (Math.abs(valDouble - missValue) < 1 || value == null)
+					 if (missing.isMissing(valDouble)  || value == null)
 					 {
 						 colPos = new ArrayList<Integer>();
 						 colPos.add(rows);
 						 colPos.add(cols);
 						 colPos.add(colsMatrix);
 						 listPositions.add(colPos);
-						 valDouble = missValue;
+						 if(value == null)
+							 valDouble = missValue;
 						 //colPos.clear();
 					 }
 					 dataMatrix[rows][colsMatrix] = valDouble;
@@ -247,7 +268,6 @@ public class BPCAImputationTask extends AbstractCyniTask {
 			 cols++;
 			 
 		 }
-		 
 		 
 		 return dataMatrix;
 		 

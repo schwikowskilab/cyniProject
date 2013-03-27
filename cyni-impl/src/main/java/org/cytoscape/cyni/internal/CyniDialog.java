@@ -204,7 +204,7 @@ public class CyniDialog extends JDialog implements ColumnCreatedListener, Column
 		if (command.equals("done"))
 			setVisible(false);
 		else if (command.equals("execute")) {
-			Object context = contextMap.get(newCyni);
+			Object context = contextMap.get(newCyni).get((CyTable)tableSelector.getSelectedItem());
 			if (taskManager.validateAndApplyTunables(context)) {
 					taskManager.execute(currentCyni.createTaskIterator());
 			}

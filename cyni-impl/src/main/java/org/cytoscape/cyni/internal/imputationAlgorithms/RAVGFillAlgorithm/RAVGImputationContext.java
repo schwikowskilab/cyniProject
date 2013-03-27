@@ -33,15 +33,22 @@ import org.cytoscape.work.TunableValidator.ValidationState;
 import org.cytoscape.work.util.ListSingleSelection;
 
 public class RAVGImputationContext extends AbstractCyniAlgorithmContext implements TunableValidator {
-	@Tunable(description="How to define a missing value",groups="Missing Value Definition", xorChildren=true)
-	public ListSingleSelection<String> chooser = new ListSingleSelection<String>("By a single value","By an interval");
+	@Tunable(description="How to define a missing value:",groups="Missing Value Definition", xorChildren=true)
+	public ListSingleSelection<String> chooser = new ListSingleSelection<String>("By a single value","By a single Maximum Threshold",
+			"By a single Minimum Threshold","By a double Threshold");
 	
-	@Tunable(description="Missing Value",groups={"Missing Value Definition","Single Value Selection"},xorKey="By a single value")
+	@Tunable(description="Missing Value:",groups={"Missing Value Definition","Single Value Selection"},xorKey="By a single value")
 	public double missValue = 999;
 	
-	@Tunable(description="Missing Value Low Threshold",groups={"Missing Value Definition","Interval Missing Value Selection"},xorKey="By an interval")
+	@Tunable(description="Missing Value if lower than:",groups={"Missing Value Definition","Single Maximum Threshold Selection"},xorKey="By a single Maximum Threshold")
+	public double missValueLower = 999;
+	
+	@Tunable(description="Missing Value if larger than:",groups={"Missing Value Definition","Single Minimum Threshold Selection"},xorKey="By a single Minimum Threshold")
+	public double missValueLarger = 999;
+	
+	@Tunable(description="Missing Value if lower than:",groups={"Missing Value Definition","Double Threshold Missing Value Selection"},xorKey="By a double Threshold")
 	public double missValueDown = 999;
-	@Tunable(description="Missing Value High Threshold",groups={"Missing Value Definition","Interval Missing Value Selection"},xorKey="By an interval")
+	@Tunable(description="Missing Value if larger than:",groups={"Missing Value Definition","Double Threshold Missing Value Selection"},xorKey="By a double Threshold")
 	public double missValueUp = 999;
 
 
@@ -52,7 +59,7 @@ public class RAVGImputationContext extends AbstractCyniAlgorithmContext implemen
 	
 	@Override
 	public ValidationState getValidationState(final Appendable errMsg) {
-		if(chooser.getSelectedValue().matches("By an interval") && missValueDown > missValueUp)
+		/*if(chooser.getSelectedValue().matches("By an interval") && missValueDown > missValueUp)
 		{
 			try {
 				errMsg.append("Missing Value Low Threshold has to be smaller than Missing Value High Threshold");
@@ -61,7 +68,7 @@ public class RAVGImputationContext extends AbstractCyniAlgorithmContext implemen
 				return ValidationState.INVALID;
 			}
 			return ValidationState.INVALID;
-		}
+		}*/
 		
 		return ValidationState.OK;
 	}
