@@ -56,6 +56,7 @@ public class RAVGImputationTask extends AbstractCyniTask {
 	
 	private final CyTable mytable;
 	private int founds = 0;
+	private int numElements = 0;
 	
 	private Map<Object,Double> rowMeansMap;
 	private MissingValueDefinition missDef;
@@ -111,7 +112,6 @@ public class RAVGImputationTask extends AbstractCyniTask {
 		Object value;
 		String primaryKey = mytable.getPrimaryKey().getName();
 		founds = 0;
-		int numElements = 0;
 		
    
         
