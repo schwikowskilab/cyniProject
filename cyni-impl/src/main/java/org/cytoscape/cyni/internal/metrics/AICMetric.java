@@ -72,5 +72,9 @@ public class AICMetric extends AbstractCyniMetric {
 	}
 	
 	
+	public void setParameters(Map<String,Object> params){
+		
+	}
+	
 	
 }

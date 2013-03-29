@@ -97,4 +97,8 @@ public class KendallTauCorrelationMetric extends AbstractCyniMetric {
 		return  result;
 	}
 	
+	public void setParameters(Map<String,Object> params){
+		
+	}
+	
 }

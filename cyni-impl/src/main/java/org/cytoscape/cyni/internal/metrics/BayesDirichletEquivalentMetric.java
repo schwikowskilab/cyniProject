@@ -199,6 +199,10 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 		return fact;
 
 	}
+	
+	public void setParameters(Map<String,Object> params){
+		
+	}
 
 	
 }

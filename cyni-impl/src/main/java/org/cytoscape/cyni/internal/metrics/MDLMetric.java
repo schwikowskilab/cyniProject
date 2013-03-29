@@ -74,5 +74,8 @@ public class MDLMetric extends AbstractCyniMetric {
 	    return (double) (Math.log(x) / Math.log(2.0));
 	}
 	
+	public void setParameters(Map<String,Object> params){
+		
+	}
 	
 }

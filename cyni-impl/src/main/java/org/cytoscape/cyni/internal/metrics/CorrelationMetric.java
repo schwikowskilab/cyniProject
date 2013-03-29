@@ -94,4 +94,8 @@ public class CorrelationMetric extends AbstractCyniMetric {
 		return  result;
 	}
 	
+	public void setParameters(Map<String,Object> params){
+		
+	}
+	
 }

@@ -41,7 +41,7 @@ public class BayesianMetric extends AbstractCyniMetric {
 	 * Creates a new  object.
 	 */
 	public BayesianMetric() {
-		super("Bayesian.cyni","Bayesian Metric");
+		super("Bayesian.cyni","Bayesian (K2) Metric");
 		addType(CyniMetricTypes.INPUT_STRINGS.toString());
 		addType(CyniMetricTypes.LOCAL_METRIC_SCORE.toString());
 		mapStringValues =  new HashMap<String,Integer>();
@@ -182,6 +182,10 @@ public class BayesianMetric extends AbstractCyniMetric {
 	        return fact;
 		}
 	    
+	}
+	
+	public void setParameters(Map<String,Object> params){
+		
 	}
 	
 }
