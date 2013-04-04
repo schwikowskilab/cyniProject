@@ -63,7 +63,7 @@ public class MDLMetric extends AbstractCyniMetric {
 		numValues = table1.getAttributeStringValues().size();
 		nCounts  =  (int)Math.pow((double)numValues, (double)indexToCompare.size());
 		
-		result += 0.5 * nCounts * (numValues - 1) * log2(table1.nColumns());
+		result += 0.5 * nCounts * (numValues - 1) * log((double)Math.min(table1.nColumns(),table2.nColumns()));
 		
 		
 		return  result;
@@ -72,6 +72,11 @@ public class MDLMetric extends AbstractCyniMetric {
 	static double log2(double x)
 	{
 	    return (double) (Math.log(x) / Math.log(2.0));
+	}
+	
+	static double log(double x)
+	{
+	    return Math.log(x);
 	}
 	
 	public void setParameters(Map<String,Object> params){

@@ -165,7 +165,7 @@ public class EntropyMetric extends AbstractCyniMetric {
 				if(nCounts[i*numValues+j] > 0)
 				{
 					proba = (double)nCounts[i*numValues+j]/(double)numTimes;
-					result += proba * log2(proba);
+					result += proba * log(proba);
 					
 				}
 			}
@@ -177,6 +177,11 @@ public class EntropyMetric extends AbstractCyniMetric {
 	static double log2(double x)
 	{
 	    return (double) (Math.log(x) / Math.log(2.0));
+	}
+	
+	static double log(double x)
+	{
+	    return Math.log(x);
 	}
 	
 	public void setParameters(Map<String,Object> params){
