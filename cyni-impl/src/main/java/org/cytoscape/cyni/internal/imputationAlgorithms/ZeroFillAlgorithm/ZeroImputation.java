@@ -57,10 +57,11 @@ public class ZeroImputation extends AbstractCyniAlgorithm {
 	
 	}
 
-	public TaskIterator createTaskIterator(Object context, CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
+	public TaskIterator createTaskIterator(Object context,CyTable table, CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
 			CyNetworkManager networkManager,CyNetworkTableManager netTableMgr, CyRootNetworkManager rootNetMgr,VisualMappingManager vmMgr,
 			CyNetworkViewManager networkViewManager, CyLayoutAlgorithmManager layoutManager, CyCyniMetricsManager metricsManager){
-			return new TaskIterator(new ZeroImputationTask(getName(),(ZeroImputationContext) context,selectedTable));
+		selectedTable = table;
+		return new TaskIterator(new ZeroImputationTask(getName(),(ZeroImputationContext) context,selectedTable));
 	}
 	
 	public Object createCyniContext(CyTable table, CyCyniMetricsManager metricsManager, TunableSetter tunableSetter,Map<String, Object> mparams) {

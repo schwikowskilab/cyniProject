@@ -460,7 +460,7 @@ public class CyniDialog extends JDialog implements ColumnCreatedListener, Column
 					contextMap.get(newCyni).put(newTable, context);
 				}
 				executeButton.setEnabled(true);
-				TaskFactory factory = wrapWithContext(newCyni, context);
+				TaskFactory factory = wrapWithContext(newCyni, newTable,context);
 
 				JPanel tunablePanel = taskManager.getConfiguration(factory, context);
 
@@ -481,7 +481,7 @@ public class CyniDialog extends JDialog implements ColumnCreatedListener, Column
 		}
 	}
 
-	private  TaskFactory wrapWithContext(final CyCyniAlgorithm cyniAlgorithm, final Object tunableContext) {
+	private  TaskFactory wrapWithContext(final CyCyniAlgorithm cyniAlgorithm,final CyTable table, final Object tunableContext) {
 		return new TaskFactory() {
 			@Override
 			public boolean isReady() {
@@ -490,7 +490,7 @@ public class CyniDialog extends JDialog implements ColumnCreatedListener, Column
 			
 			@Override
 			public TaskIterator createTaskIterator() {
-				return cyniAlgorithm.createTaskIterator(tunableContext, netFactory,viewFactory,netMgr,netTableMgr, rootNetMgr,vmMgr,viewMgr, layoutManager, metricsManager);
+				return cyniAlgorithm.createTaskIterator(tunableContext,table, netFactory,viewFactory,netMgr,netTableMgr, rootNetMgr,vmMgr,viewMgr, layoutManager, metricsManager);
 			}
 		};
 	}

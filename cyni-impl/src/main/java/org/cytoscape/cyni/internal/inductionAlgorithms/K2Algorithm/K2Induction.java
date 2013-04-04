@@ -60,10 +60,11 @@ public class K2Induction extends AbstractCyniAlgorithm {
 	
 	}
 
-	public TaskIterator createTaskIterator(Object context, CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
+	public TaskIterator createTaskIterator(Object context,CyTable table, CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
 			CyNetworkManager networkManager,CyNetworkTableManager netTableMgr, CyRootNetworkManager rootNetMgr,VisualMappingManager vmMgr,
 			CyNetworkViewManager networkViewManager, CyLayoutAlgorithmManager layoutManager, CyCyniMetricsManager metricsManager) {
-			return new TaskIterator(new K2InductionTask(getName(),(K2InductionContext) context, networkFactory,networkViewFactory,
+		selectedTable = table;
+		return new TaskIterator(new K2InductionTask(getName(),(K2InductionContext) context, networkFactory,networkViewFactory,
 					networkManager,netTableMgr,rootNetMgr,vmMgr,networkViewManager,layoutManager,metricsManager, selectedTable));
 	}
 	
