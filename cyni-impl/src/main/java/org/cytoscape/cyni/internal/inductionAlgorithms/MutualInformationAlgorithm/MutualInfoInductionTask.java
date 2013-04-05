@@ -215,6 +215,8 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 					{
 						edge = newNetwork.addEdge(mapRowNodes.get(data.getRowLabel(i)), mapRowNodes.get(data.getRowLabel(threadIndex[pool])), false);
 						newNetwork.getRow(edge).set("Mutual Information",mi);
+						newNetwork.getRow(edge).set("name", newNetwork.getRow(mapRowNodes.get(data.getRowLabel(i))).get("name", String.class)
+								+ " (MI) " + newNetwork.getRow( mapRowNodes.get(data.getRowLabel(threadIndex[pool]))).get("name", String.class));
 					}
 				}
 			}

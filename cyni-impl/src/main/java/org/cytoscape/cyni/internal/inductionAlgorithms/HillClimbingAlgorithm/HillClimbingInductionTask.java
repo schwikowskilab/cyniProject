@@ -290,6 +290,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		taskMonitor.setStatusMessage("Initializing Cache..." );
 		initCache(data, selectedMetric, taskMonitor);
 		taskMonitor.setStatusMessage("Cache Initialized\n Looking for optimal solution..." );
+		edgeTable.createColumn("Metric", String.class, false);	
 		edgeTable.createColumn("Score", Double.class, false);	
 		progress += 0.5; 
 		added = 0;
@@ -338,6 +339,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 					updateAscendantsAfterAdd(chosenOperation.nodeParent,chosenOperation.nodeChild);
 					added++;
 					newNetwork.getRow(edge).set("Score", chosenOperation.score);
+					newNetwork.getRow(edge).set("Metric",selectedMetric.toString());
 				}
 				if(chosenOperation.type == "Delete")
 				{
@@ -364,6 +366,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 					updateAscendantsAfterAdd(chosenOperation.nodeChild,chosenOperation.nodeParent);
 					reversed++;
 					newNetwork.getRow(edge).set("Score", chosenOperation.score);
+					newNetwork.getRow(edge).set("Metric",selectedMetric.toString());
 				}			
 				lastOperation.type = chosenOperation.type;
 				lastOperation.nodeParent = chosenOperation.nodeParent;

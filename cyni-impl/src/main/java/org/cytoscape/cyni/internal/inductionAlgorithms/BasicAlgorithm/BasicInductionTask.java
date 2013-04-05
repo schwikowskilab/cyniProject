@@ -144,6 +144,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		edgeTable = newNetwork.getDefaultEdgeTable();
 		addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
 	
+		edgeTable.createColumn("Metric", String.class, false);
 		edgeTable.createColumn("Distance", Double.class, false);	
 		
 		// Create the thread pools
@@ -204,6 +205,9 @@ public class BasicInductionTask extends AbstractCyniTask {
 					{
 						edge = newNetwork.addEdge(mapRowNodes.get(data.getRowLabel(i)), mapRowNodes.get(data.getRowLabel(threadIndex[pool])), false);
 						newNetwork.getRow(edge).set("Distance", threadResults[pool]);
+						newNetwork.getRow(edge).set("Metric",selectedMetric.toString());
+						newNetwork.getRow(edge).set("name", newNetwork.getRow(mapRowNodes.get(data.getRowLabel(i))).get("name", String.class)
+								+ " (Basic) " + newNetwork.getRow( mapRowNodes.get(data.getRowLabel(threadIndex[pool]))).get("name", String.class));
 					}
 				}
 			}
