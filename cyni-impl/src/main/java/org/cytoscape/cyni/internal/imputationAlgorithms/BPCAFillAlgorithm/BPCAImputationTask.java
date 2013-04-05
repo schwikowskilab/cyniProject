@@ -163,20 +163,25 @@ public class BPCAImputationTask extends AbstractCyniTask {
 		while(finishFlag == false)
 		{
 			doStep();
+			if (cancelled)
+				break;
 			progress = progress + step;
 			taskMonitor.setProgress(progress);
 		}
 		
-		saveData(mytable,getMatrixResult());
-		taskMonitor.setProgress(1.0d);
-		taskMonitor.setProgress(1.0d);
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				JOptionPane.showMessageDialog(null, "Number of missing entries: " + listPositions.size() + 
-						"\nNumber of estimated missing entries: " + listPositions.size(), "Results", JOptionPane.INFORMATION_MESSAGE);
-			}
-		});
+		if (!cancelled)
+		{
+			saveData(mytable,getMatrixResult());
+			taskMonitor.setProgress(1.0d);
+			taskMonitor.setProgress(1.0d);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Number of missing entries: " + listPositions.size() + 
+							"\nNumber of estimated missing entries: " + listPositions.size(), "Results", JOptionPane.INFORMATION_MESSAGE);
+				}
+			});
+		}
 	}
 	
 	public String doStep()
