@@ -21,16 +21,15 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package org.cytoscape.cyni.internal.discretizationAlgorithms.EqualWidthFreqDiscretization;
+package org.cytoscape.cyni.internal.discretizationAlgorithms.ManualDiscretization;
 
 
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.Map;
+
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -48,13 +47,12 @@ import org.cytoscape.model.CyTable;
  * The BasicInduction provides a very simple Induction, suitable as
  * the default Induction for Cytoscape data readers.
  */
-public class EqualDiscretizationTask extends AbstractCyniTask {
+public class ManualDiscretizationTask extends AbstractCyniTask {
 	
 	private  final int bins;
 	private final CyTable mytable;
 	private final List<String> attributeArray;
-	private final Boolean freq;
-	private final Boolean all;
+	private ArrayList<Double> thresholds;
 	
 	
 	
@@ -62,16 +60,18 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 	/**
 	 * Creates a new BasicInduction object.
 	 */
-	public EqualDiscretizationTask(final String name, final EqualDiscretizationContext context, CyTable selectedTable)
+	public ManualDiscretizationTask(final String name, final ManualDiscretizationContext context, CyTable selectedTable)
 	{
 		super(name, context,null,null,null, null,null,null,null);
-		bins = context.bins;
+		bins = Integer.parseInt(context.interval.getSelectedValue());
 		this.attributeArray = context.attributeList.getSelectedValues();
-		
+		thresholds = new ArrayList<Double>();
 		this.mytable = selectedTable;
-		this.freq = context.freq;
-		this.all = context.all;
+		for(int i=1;i<bins;i++)
+			thresholds.add(context.mapTh.get("th"+(bins-1)+""+i).getValue());
 		
+		
+		Collections.sort(thresholds);
 	}
 
 	/**
@@ -84,41 +84,22 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 		Double progress = 0.0d;
 		double  valDouble=0;
 		Double step;
-		String label;
+		String label = "";
 		Object value;
 		int pos = 0;
 		CyColumn column;
-		List<Object> values;
-		List<Double> thresholds = new ArrayList<Double>();
    
         step = 1.0 /  attributeArray.size();
         
         taskMonitor.setStatusMessage("Discretizating data...");
 		taskMonitor.setProgress(progress);
-		if(all)
-		{
-			values = new ArrayList<Object>();
-			for (final String  columnName : attributeArray)
-			{
-				column = mytable.getColumn(columnName);
-				values.addAll(column.getValues(column.getType()));
-			}
-			if(freq)
-			{
-				getThresholdsFromFreq(thresholds, values);
-			}
-			else
-			{
-				getThresholdsFromWidth(thresholds, values);
-			}
-		}
+		
 		
 	
 		for (final String  columnName : attributeArray)
 		 {
 			
 			column = mytable.getColumn(columnName);
-			values =  column.getValues(column.getType());
 			if(mytable.getColumn("nominal."+columnName) != null)
 			{
 				SwingUtilities.invokeLater(new Runnable() {
@@ -131,18 +112,6 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 			}
 			mytable.createColumn("nominal."+columnName, String.class, false);
 			
-			if(!all)
-			{
-				thresholds.clear();
-				if(freq)
-				{
-					getThresholdsFromFreq(thresholds, values);
-				}
-				else
-				{
-					getThresholdsFromWidth(thresholds, values);
-				}
-			}
 			for ( CyRow row : mytable.getAllRows() ) 
 			{
 					 
@@ -156,17 +125,36 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 				else
 					valDouble = (Double)value;
 					
-				for(int i = 0 ; i< (thresholds.size() -1) ; i++ )
+				pos = thresholds.size();
+				for(int i = 0 ; i< thresholds.size()  ; i++ )
 				{
-					//if((valDouble >= (min + width*i)) && (valDouble < (min + width*(i+1))))
-					if((valDouble >= thresholds.get(i)) && (valDouble <= thresholds.get(i+1)))
+					
+					if(i==0)
 					{
-						pos = i;
-						break;
+						if(valDouble <= thresholds.get(i)){
+							pos = i;
+							break;
+						}
+					}
+					else
+					{
+						if((valDouble > thresholds.get(i-1)) && (valDouble <= thresholds.get(i)))
+						{
+							pos = i;
+							break;
+						}
+						
 					}
 				}
-				
-				label = "(" + String.format("%.5g", thresholds.get(pos)) + "," + String.format("%.5g",thresholds.get(pos+1)) + ")";
+				if(pos==0 || pos == thresholds.size())
+				{
+					if(pos==0)
+						label = "(-Infinity," + String.format("%.5g",thresholds.get(pos)) + "]";
+					if(pos==thresholds.size())
+						label = "(" + String.format("%.5g", thresholds.get(pos-1)) + ",+Infinity )";
+				}
+				else
+					label = "(" + String.format("%.5g", thresholds.get(pos-1)) + "," + String.format("%.5g",thresholds.get(pos)) + "]";
 				row.set("nominal."+columnName, label);
 			}
 			 
@@ -176,88 +164,6 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 
 		
 		taskMonitor.setProgress(1.0d);
-		
-	}
-	
-	public void getThresholdsFromWidth(List<Double> thr, List<Object> values)
-	{
-		
-		double  valDouble=0;
-		Double  max,min, width;
-		Boolean first = true;
-		
-		max = 0.0;
-		min = 0.0;
-		
-		for (Object val : values)
-		{
-			if(val == null)
-				continue;
-			valDouble = ((Double)val).doubleValue();
-			
-			if(first)
-			{
-				max = valDouble;
-				min = valDouble;
-				first = false;
-			}
-			if(valDouble > max)
-			{
-				max = valDouble;
-			}
-			if(valDouble < min)
-			{
-				min = valDouble;
-			}
-			
-		}
-		
-		width = (max - min) / (double)bins;
-		thr.add(min);
-		for(int i = 1 ; i< bins ; i++ )
-		{
-			
-			thr.add(min +width*i);
-		}
-		thr.add(max);
-		
-	}
-	
-	public void getThresholdsFromFreq(List<Double> thr, List<Object> values)
-	{
-		int elemPerThr =0;
-		int elemLeft = 0;
-		int i,binElements,limit;
-		double doubleValues[];
-		
-		doubleValues = new double[values.size()];
-		elemPerThr = values.size()/bins;
-		elemLeft = values.size()%bins;
-		
-		for (i= 0; i < values.size(); i++)
-			doubleValues[i]= ((Double)values.get(i)).doubleValue();
-		
-		Arrays.sort(doubleValues);
-		i=0;
-		binElements = 1;
-		thr.add(doubleValues[0]);
-		for (i=0;i<values.size();i++)
-		{
-			if(elemLeft > 0)
-				limit = elemPerThr + 1;
-			else
-				limit = elemPerThr;
-			if(binElements == limit && (i+1) < doubleValues.length)
-			{
-				
-				thr.add((doubleValues[i] + doubleValues[i+1] )/2.0);
-				elemLeft--;
-				binElements = 0;
-			}
-			binElements++;
-			
-		}
-		thr.add(doubleValues[i-1]);
 		
 	}
 	

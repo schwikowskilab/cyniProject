@@ -27,6 +27,8 @@ package org.cytoscape.cyni.internal.imputationAlgorithms.BPCAFillAlgorithm;
 
 public class MissingValueHandler
 {
+	private enum MissingValueDefinition { SINGLE_VALUE, MAX_THRESHOLD, MIN_THRESHOLD, DOUBLE_THRESHOLD};
+	private MissingValueDefinition missDef;
 
     public MissingValueHandler()
     {
@@ -37,7 +39,24 @@ public class MissingValueHandler
         missingValue = up;
         missingValueUp = up;
         missingValueDown = down;
-        this.interval = interval;
+        if(interval)
+        	missDef = MissingValueDefinition.DOUBLE_THRESHOLD;
+        else
+        	missDef = MissingValueDefinition.SINGLE_VALUE;
+    }
+    
+    public void setMissingValueLarge(double up)
+    {
+    	largeOption= true;
+    	missingValueUp = up;
+    	missDef = MissingValueDefinition.MIN_THRESHOLD;
+    }
+    public void setMissingValueLow(double low)
+    {
+    	lowOption = true;
+    	missingValueDown =low;
+    	missDef = MissingValueDefinition.MAX_THRESHOLD;
+    
     }
 
     public static double getMissingValue()
@@ -49,16 +68,34 @@ public class MissingValueHandler
     {
     	boolean result = false;
    
-    	if(interval)
-		{
-			 if ((data >= missingValueDown &&  data <= missingValueUp) )
-				 result = true;
-		}
-    	else
+    	switch(missDef)
     	{
-    		 if(Math.abs(data - missingValue) < threshold)
-    			 result = true;
+    	case DOUBLE_THRESHOLD:
+    		if(missingValueDown > missingValueUp)
+    		{
+	    		if (data < missingValueDown &&  data > missingValueUp) 
+					 result = true;
+    		}
+    		else
+    		{
+    			if (data < missingValueDown ||  data > missingValueUp) 
+					 result = true;
+    		}
+    		 break;
+    	case MAX_THRESHOLD:
+    		if(  data < missingValueDown)
+				 result = true;
+    		 break;
+    	case MIN_THRESHOLD:
+    		if (data > missingValueUp) 
+				 result = true;
+    		break;
+    	case SINGLE_VALUE:
+    		if(Math.abs(data - missingValue) < threshold)
+   			 result = true;
+    		break;
     	}
+    	
         return result;
     }
 
@@ -276,6 +313,8 @@ public class MissingValueHandler
     private static double missingValueUp = 999D;
     private static double missingValueDown = 999D;
     private boolean interval = false;
+    private boolean largeOption = false;
+    private boolean lowOption = false;
     private static double threshold = 1.0D;
 
 }

@@ -21,10 +21,9 @@
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
-package org.cytoscape.cyni.internal.discretizationAlgorithms.EqualWidthFreqDiscretization;
+package org.cytoscape.cyni.internal.discretizationAlgorithms.ManualDiscretization;
 
 
-import java.util.List;
 import java.util.Map;
 
 import org.cytoscape.cyni.*;
@@ -45,15 +44,15 @@ import org.cytoscape.model.subnetwork.CyRootNetworkManager;
  * The BasicInduction provides a very simple Induction, suitable as
  * the default Induction for Cytoscape data readers.
  */
-public class EqualDiscretization extends AbstractCyniAlgorithm {
+public class ManualDiscretization extends AbstractCyniAlgorithm {
 	
 	
 	private CyTable selectedTable;
 	/**
 	 * Creates a new EqualDiscretization object.
 	 */
-	public EqualDiscretization() {
-		super("equal","Equal Width/Frequency Discretization",true,CyniCategory.DISCRETIZATION);
+	public ManualDiscretization() {
+		super("manual","Manual Discretization",true,CyniCategory.DISCRETIZATION);
 	
 	}
 
@@ -61,13 +60,13 @@ public class EqualDiscretization extends AbstractCyniAlgorithm {
 			CyNetworkManager networkManager,CyNetworkTableManager netTableMgr, CyRootNetworkManager rootNetMgr,VisualMappingManager vmMgr,
 			CyNetworkViewManager networkViewManager, CyLayoutAlgorithmManager layoutManager, CyCyniMetricsManager metricsManager) {
 		selectedTable = table;
-		return new TaskIterator(new EqualDiscretizationTask(getName(),(EqualDiscretizationContext) context,selectedTable));
+		return new TaskIterator(new ManualDiscretizationTask(getName(),(ManualDiscretizationContext) context,selectedTable));
 	}
 	
 	public Object createCyniContext(CyTable table, CyCyniMetricsManager metricsManager, TunableSetter tunableSetter,Map<String, Object> mparams) {
 		Object context;
 		selectedTable = table;
-		context = new EqualDiscretizationContext(table);
+		context = new ManualDiscretizationContext(table);
 		if(mparams != null && !mparams.isEmpty())
 			tunableSetter.applyTunables(context, mparams);
 		return context;

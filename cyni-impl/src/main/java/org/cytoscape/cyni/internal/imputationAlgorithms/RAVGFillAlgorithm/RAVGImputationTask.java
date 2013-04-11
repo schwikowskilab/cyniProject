@@ -51,15 +51,18 @@ public class RAVGImputationTask extends AbstractCyniTask {
 	private static  double missValue;
 	private static  double missValueDown;
 	private static  double missValueUp;
+	private static  double missValueLarge;
+	private static  double missValueLow;
 	
 	private final CyTable mytable;
 	private int founds = 0;
-	private boolean interval;
+	private int numElements = 0;
 	
 	private Map<Object,Double> rowMeansMap;
+	private MissingValueDefinition missDef;
 	
  
-	
+	private enum MissingValueDefinition { SINGLE_VALUE, MAX_THRESHOLD, MIN_THRESHOLD, DOUBLE_THRESHOLD};
 
 	/**
 	 * Creates a new BasicInduction object.
@@ -70,11 +73,23 @@ public class RAVGImputationTask extends AbstractCyniTask {
 		missValue = context.missValue;
 		missValueDown = context.missValueDown;
 		missValueUp = context.missValueUp;
+		missValueLarge = context.missValueLarger;
+		missValueLow = context.missValueLower;
+		
+		if(context.chooser.getSelectedValue().matches("By a double Threshold"))
+			missDef = MissingValueDefinition.DOUBLE_THRESHOLD;
+		
+		
+		if(context.chooser.getSelectedValue().matches("By a single Maximum Threshold"))
+			missDef = MissingValueDefinition.MAX_THRESHOLD;
+		
+		
+		if(context.chooser.getSelectedValue().matches("By a single Minimum Threshold"))
+			missDef = MissingValueDefinition.MIN_THRESHOLD;
 		
 		if(context.chooser.getSelectedValue().matches("By a single value"))
-			interval = false;
-		else
-			interval = true;
+			missDef = MissingValueDefinition.SINGLE_VALUE;
+		
 		
 		this.mytable = selectedTable;
 		
@@ -105,9 +120,9 @@ public class RAVGImputationTask extends AbstractCyniTask {
         taskMonitor.setStatusMessage("Estimating missing data...");
 		taskMonitor.setProgress(progress);
 		
-		getRowMeans(mytable);
+		numElements = getRowMeans(mytable);
 		
-	
+		taskMonitor.setStatusMessage("Estimating missing data for " + numElements + " missing values ...");
 		for (final CyColumn column : mytable.getColumns())
 		 {
 			 
@@ -133,36 +148,18 @@ public class RAVGImputationTask extends AbstractCyniTask {
 								 valDouble =  (Double) value;//(Double) values.get(rows);
 							 }
 						 }
-						 if(interval)
+
+					     if (isMissing(valDouble) || value == null)
 						 {
-							 if ((valDouble >= missValueDown &&  valDouble <= missValueUp) || value == null)
+					    	 if (column.getType() == Double.class || column.getType() == Float.class)
 							 {
-								 if (column.getType() == Double.class || column.getType() == Float.class)
-								 {
-									 row.set(column.getName(),rowMeansMap.get(row.getRaw(primaryKey)));
-								 }
-								 else
-								 {
-									 row.set(column.getName(), rowMeansMap.get(row.getRaw(primaryKey)).intValue());
-								 }
-								 founds++;
+								 row.set(column.getName(),rowMeansMap.get(row.getRaw(primaryKey)));
 							 }
-							 
-						 }
-						 else
-						 {
-							 if (Math.abs(valDouble - missValue) < 1 || value == null)
+							 else
 							 {
-								 if (column.getType() == Double.class || column.getType() == Float.class)
-								 {
-									 row.set(column.getName(),rowMeansMap.get(row.getRaw(primaryKey)));
-								 }
-								 else
-								 {
-									 row.set(column.getName(), rowMeansMap.get(row.getRaw(primaryKey)).intValue());
-								 }
-								 founds++;
+								 row.set(column.getName(), rowMeansMap.get(row.getRaw(primaryKey)).intValue());
 							 }
+							 founds++;
 						 }
 					 }
 					 
@@ -179,16 +176,17 @@ public class RAVGImputationTask extends AbstractCyniTask {
 			@Override
 			public void run() {
 				JOptionPane
-				.showMessageDialog(null, "Number of missing entries: " + founds + 
+				.showMessageDialog(null, "Number of missing entries: " + numElements + 
 						"\nNumber of estimated missing entries: " + founds, "Information", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 	}
 	
 	
-	public void getRowMeans(CyTable table)
+	public int getRowMeans(CyTable table)
 	{
 		int elements;
+		int numFound = 0;
 		double mean, valDouble ;
 		 Object value;
 		 boolean found = false;
@@ -219,10 +217,10 @@ public class RAVGImputationTask extends AbstractCyniTask {
 							 valDouble =  (Double) value;//(Double) values.get(rows);
 						 }
 					 }
-					 if (Math.abs(valDouble - missValue) < 1 || value == null)
+					 if (isMissing(valDouble) || value == null)
 					 {
 						 found = true;
-						 
+						 numFound++;
 					 }
 					 else
 					 {
@@ -242,7 +240,45 @@ public class RAVGImputationTask extends AbstractCyniTask {
 			found = false;
 		}
 		
+		return numFound;
+		
 	}
+	
+	  public  boolean isMissing(double data)
+	  {
+	    	boolean result = false;
+	    	
+	    	switch(missDef)
+	    	{
+	    	case DOUBLE_THRESHOLD:
+	    		if(missValueDown > missValueUp )
+	    		{
+		    		 if (data < missValueDown &&  data > missValueUp) 
+						 result = true;
+	    		}
+	    		else
+	    		{
+	    			if (data < missValueDown ||  data > missValueUp) 
+						 result = true;
+	    		}
+	    		 break;
+	    	case MAX_THRESHOLD:
+	    		 if(  data < missValueLow)
+					 result = true;
+	    		 break;
+	    	case MIN_THRESHOLD:
+	    		if (data > missValueLarge) 
+					 result = true;
+	    		break;
+	    	case SINGLE_VALUE:
+	    		if(Math.abs(data - missValue) < 0.01)
+	    			 result = true;
+	    		break;
+	    	}
+	    	
+	    	
+	    	return result;
+	  }
 	
 
 }

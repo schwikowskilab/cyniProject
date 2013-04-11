@@ -97,4 +97,8 @@ public class RankCorrelationMetric extends AbstractCyniMetric {
 		return mean;
 	}
 	
+	public void setParameters(Map<String,Object> params){
+		
+	}
+	
 }

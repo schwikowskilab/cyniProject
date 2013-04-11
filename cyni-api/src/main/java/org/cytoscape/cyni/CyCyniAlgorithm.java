@@ -47,6 +47,7 @@ public interface CyCyniAlgorithm {
 	/**
 	 * Creates a task iterator containing the cyni tasks.
 	 * @param context The cyni context for this cyni algorithm.
+	 * @param table The table with the data to perform the algorithm
 	 * @param networkFactory The network factory to create a new network
 	 * @param networkViewFactory The network view factory to create a new network view
 	 * @param networkManager The network manager
@@ -59,7 +60,7 @@ public interface CyCyniAlgorithm {
 	 * @param mparams The map to the input paramters to be used if cyni is not called through the GUI
 	 * @return taskIterator contains cyni tasks.
 	 */
-	TaskIterator createTaskIterator(Object context,  CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
+	TaskIterator createTaskIterator(Object context, CyTable table, CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
 			CyNetworkManager networkManager, CyNetworkTableManager netTableMgr, CyRootNetworkManager rootNetMgr, VisualMappingManager vmMgr,
 			CyNetworkViewManager networkViewManager, CyLayoutAlgorithmManager layoutManager, CyCyniMetricsManager metricsManager);
 

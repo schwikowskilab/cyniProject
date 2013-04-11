@@ -60,7 +60,9 @@ public class EntropyMetric extends AbstractCyniMetric {
 		int ncols,col;
 		int count = 0;
 		int numValues ;
+		boolean equalTables;
 
+		equalTables = table1.equals(table2);
 		
 		if(mapStringValues.size() != table1.getAttributeStringValues().size())
 		{
@@ -70,6 +72,18 @@ public class EntropyMetric extends AbstractCyniMetric {
 			{
 				mapStringValues.put(name, i);
 				i++;
+			}
+			if(!equalTables)
+			{
+				System.out.println("no equal tables");
+				for(String name : table2.getAttributeStringValues())
+				{
+					if(!mapStringValues.containsKey(name))
+					{
+						mapStringValues.put(name, i);
+						i++;
+					}
+				}
 			}
 		}
 		
@@ -82,11 +96,16 @@ public class EntropyMetric extends AbstractCyniMetric {
 		int[] nodes ;
 			
 		
-		ncols = table1.nColumns();
-		if(indexToCompare.size() == 1)
+		ncols = Math.min(table1.nColumns(),table2.nColumns());
+		if(equalTables)
 		{
-			if(indexToCompare.get(0) == indexBase)
-				nodes = new int[indexToCompare.size()];
+			if(indexToCompare.size() == 1)
+			{
+				if(indexToCompare.get(0) == indexBase)
+					nodes = new int[indexToCompare.size()];
+				else
+					nodes = new int[indexToCompare.size()+1];
+			}
 			else
 				nodes = new int[indexToCompare.size()+1];
 		}
@@ -99,13 +118,18 @@ public class EntropyMetric extends AbstractCyniMetric {
 			nodes[i] = ele;
 			i++;
 		}
-		if(indexToCompare.size() < nodes.length)
+		if(indexToCompare.size() < nodes.length || !equalTables)
 			nodes[i] = indexBase;
 		
 		for(col = 0; col<ncols;col++ )
 		{
 			count = 0;
-			for(i=0;i<nodes.length;i++)
+			for(i=0;i<(nodes.length-1);i++)
+			{
+				if(table2.hasValue(nodes[i], col))
+					count = numValues*count + mapStringValues.get(table2.stringValue(nodes[i], col));
+			}
+			if(i<nodes.length)
 			{
 				if(table1.hasValue(nodes[i], col))
 					count = numValues*count + mapStringValues.get(table1.stringValue(nodes[i], col));
@@ -141,7 +165,7 @@ public class EntropyMetric extends AbstractCyniMetric {
 				if(nCounts[i*numValues+j] > 0)
 				{
 					proba = (double)nCounts[i*numValues+j]/(double)numTimes;
-					result += proba * log2(proba);
+					result += proba * log(proba);
 					
 				}
 			}
@@ -155,6 +179,13 @@ public class EntropyMetric extends AbstractCyniMetric {
 	    return (double) (Math.log(x) / Math.log(2.0));
 	}
 	
-
+	static double log(double x)
+	{
+	    return Math.log(x);
+	}
+	
+	public void setParameters(Map<String,Object> params){
+		
+	}
 	
 }

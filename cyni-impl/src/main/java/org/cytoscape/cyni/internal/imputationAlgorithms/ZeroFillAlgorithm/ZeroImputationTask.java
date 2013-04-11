@@ -47,10 +47,14 @@ public class ZeroImputationTask extends AbstractCyniTask {
 	private static  double missValue;
 	private static  double missValueDown;
 	private static  double missValueUp;
+	private static  double missValueLarge;
+	private static  double missValueLow;
 	private int founds = 0;
 	private final CyTable mytable;
-	private boolean interval;
+	private MissingValueDefinition missDef;
 	
+	 
+	private enum MissingValueDefinition { SINGLE_VALUE, MAX_THRESHOLD, MIN_THRESHOLD, DOUBLE_THRESHOLD};
 	
 	
 
@@ -63,10 +67,22 @@ public class ZeroImputationTask extends AbstractCyniTask {
 		missValue = context.missValue;
 		missValueDown = context.missValueDown;
 		missValueUp = context.missValueUp;
+		missValueLarge = context.missValueLarger;
+		missValueLow = context.missValueLower;
+		
+		if(context.chooser.getSelectedValue().matches("By a double Threshold"))
+			missDef = MissingValueDefinition.DOUBLE_THRESHOLD;
+		
+		
+		if(context.chooser.getSelectedValue().matches("By a single Maximum Threshold"))
+			missDef = MissingValueDefinition.MAX_THRESHOLD;
+		
+		
+		if(context.chooser.getSelectedValue().matches("By a single Minimum Threshold"))
+			missDef = MissingValueDefinition.MIN_THRESHOLD;
+		
 		if(context.chooser.getSelectedValue().matches("By a single value"))
-			interval = false;
-		else
-			interval = true;
+			missDef = MissingValueDefinition.SINGLE_VALUE;
 		
 		this.mytable = selectedTable;
 		
@@ -115,37 +131,21 @@ public class ZeroImputationTask extends AbstractCyniTask {
 							 valDouble =  (Double) value;//(Double) values.get(rows);
 						 }
 					 }
-					 if(interval)
+					 
+					 if (isMissing(valDouble) || value == null)
 					 {
-						 if ((valDouble >= missValueDown &&  valDouble <= missValueUp) || value == null)
+						 if (column.getType() == Double.class || column.getType() == Float.class)
 						 {
-							 if (column.getType() == Double.class || column.getType() == Float.class)
-							 {
 								 row.set(column.getName(), 0.0);
-							 }
-							 else
-							 {
-								 row.set(column.getName(), 0);
-							 }
-							 founds++;
 						 }
+						 else
+						 {
+							 row.set(column.getName(), 0);
+						 }
+						 founds++;
+					 }
 						 
-					 }
-					 else
-					 {
-						 if (Math.abs(valDouble - missValue) < 1 || value == null)
-						 {
-							 if (column.getType() == Double.class || column.getType() == Float.class)
-							 {
-								 row.set(column.getName(), 0.0);
-							 }
-							 else
-							 {
-								 row.set(column.getName(), 0);
-							 }
-							 founds++;
-						 }
-					 }
+					
 					 
 				 }
 				
@@ -166,6 +166,42 @@ public class ZeroImputationTask extends AbstractCyniTask {
 			}
 		});
 	}
+	
+	public  boolean isMissing(double data)
+	  {
+	    	boolean result = false;
+	    	
+	    	switch(missDef)
+	    	{
+	    	case DOUBLE_THRESHOLD:
+	    		if(missValueDown > missValueUp )
+	    		{
+		    		 if (data < missValueDown &&  data > missValueUp) 
+						 result = true;
+	    		}
+	    		else
+	    		{
+	    			if (data < missValueDown ||  data > missValueUp) 
+						 result = true;
+	    		}
+	    		 break;
+	    	case MAX_THRESHOLD:
+	    		 if(  data < missValueLow)
+					 result = true;
+	    		 break;
+	    	case MIN_THRESHOLD:
+	    		if (data > missValueLarge) 
+					 result = true;
+	    		break;
+	    	case SINGLE_VALUE:
+	    		if(Math.abs(data - missValue) < 0.01)
+	    			 result = true;
+	    		break;
+	    	}
+	    	
+	    	
+	    	return result;
+	  }
 	
 	
 }

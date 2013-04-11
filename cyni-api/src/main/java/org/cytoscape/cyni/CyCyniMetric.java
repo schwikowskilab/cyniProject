@@ -24,6 +24,7 @@
 package org.cytoscape.cyni;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -61,4 +62,11 @@ public interface CyCyniMetric {
 	 * 
 	 */
 	public  void resetParameters();
+	
+	/**
+	 * It sets the  metric's parameters
+	 * @param params The map that maps the name of the parameter with the actual variable
+	 * 
+	 */
+	public void setParameters(Map<String,Object> params);
 }

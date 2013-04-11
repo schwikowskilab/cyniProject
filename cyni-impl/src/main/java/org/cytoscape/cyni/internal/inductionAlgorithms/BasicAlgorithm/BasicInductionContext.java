@@ -100,9 +100,9 @@ public class BasicInductionContext extends AbstractCyniAlgorithmContext implemen
 			
 		}
 		
-		if(attributeList.getSelectedValues().get(0).matches("No sources available") || attributeList.getPossibleValues().size() == 0) {
+		if(attributeList.getPossibleValues().get(0).matches("No sources available") || attributeList.getSelectedValues().size() == 0) {
 			try {
-				errMsg.append("No sources available to apply the algorithm!!!!");
+				errMsg.append("No sources selected to apply the algorithm or there are no available. Please, select sources from the list if available.");
 			} catch (IOException e) {
 				e.printStackTrace();
 				return ValidationState.INVALID;
