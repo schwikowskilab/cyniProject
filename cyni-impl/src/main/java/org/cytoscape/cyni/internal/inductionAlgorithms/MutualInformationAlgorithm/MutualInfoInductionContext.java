@@ -34,7 +34,7 @@ import org.cytoscape.work.TunableValidator;
 
 public class MutualInfoInductionContext extends AbstractCyniAlgorithmContext implements TunableValidator {
 	@Tunable(description="Threshold to add new edge")
-	public double thresholdAddEdge = 1.2;
+	public double thresholdAddEdge = 0.6;
 
 	/*@Tunable(description="Output Only Nodes with Edges")
 	public boolean removeNodes = false;*/
