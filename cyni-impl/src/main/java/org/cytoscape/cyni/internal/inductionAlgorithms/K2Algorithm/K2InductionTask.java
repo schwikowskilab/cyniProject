@@ -73,8 +73,7 @@ import org.cytoscape.view.model.CyNetworkViewManager;
 
 
 /**
- * The BasicInduction provides a very simple Induction, suitable as
- * the default Induction for Cytoscape data readers.
+ * The K2InductionTask performs the actual network inference algorithm
  */
 public class K2InductionTask extends AbstractCyniTask {
 	private final int maxNumParents;
@@ -82,14 +81,14 @@ public class K2InductionTask extends AbstractCyniTask {
 	private final CyTable table;
 	private CyLayoutAlgorithmManager layoutManager;
 	private CyCyniMetricsManager metricsManager;
-	private Map<String,Integer> mapStringValues;
 	private CyCyniMetric selectedMetric;
 	private String selectedOrder;
 	private String selectedCol;
 	private boolean removeNodes;
+	private CyniNetworkUtils netUtils;
 
 	/**
-	 * Creates a new BasicInduction object.
+	 * Creates a new K2InductionTask object.
 	 */
 	public K2InductionTask(final String name, final K2InductionContext context, CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
 			CyNetworkManager networkManager,CyNetworkTableManager netTableMgr, CyRootNetworkManager rootNetMgr, VisualMappingManager vmMgr,
@@ -107,7 +106,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		this.table = selectedTable;
 		this.removeNodes = context.removeNodes;
 		this.selectedMetric = context.measures.getSelectedValue();
-		mapStringValues =  new HashMap<String,Integer>();
+		this.netUtils = new CyniNetworkUtils(networkViewFactory,networkManager,networkViewManager,netTableMgr,rootNetMgr,vmMgr);
 		
 	}
 
@@ -139,7 +138,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		double threadResults[] ;
 		int threadIndex[] ;
 		threadNumber=0;
-		networkSelected = getNetworkAssociatedToTable(table);
+		networkSelected = netUtils.getNetworkAssociatedToTable(table);
 		
 		taskMonitor.setTitle("K2 Bayesian Inference");
 		taskMonitor.setStatusMessage("Generating K2 network bayesian inference...");
@@ -190,20 +189,14 @@ public class K2InductionTask extends AbstractCyniTask {
 		
 		nodeTable = newNetwork.getDefaultNodeTable();
 		edgeTable = newNetwork.getDefaultEdgeTable();
-		addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
+		netUtils.addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
 		
 		edgeTable.createColumn("Metric", String.class, false);	
 		edgeTable.createColumn("Score", Double.class, false);   
 		
-		i=0;
-		for(String name : data.getAttributeStringValues())
-		{
-			mapStringValues.put(name, i);
-			i++;
-		}
 		// Create the thread pools
 		ExecutorService executor = Executors.newFixedThreadPool(nThreads);
-		
+
 		for (row = 0; row < nRows; row++) {
 			if (cancelled)
 				break;
@@ -212,14 +205,14 @@ public class K2InductionTask extends AbstractCyniTask {
 			pOld = 0.0;
 			pNew = 0.0;
 			node1 = newNetwork.addNode();
-			cloneRow(newNetwork,CyNode.class,table.getRow(data.getRowLabel(row)), newNetwork.getRow(node1, CyNetwork.LOCAL_ATTRS));
+			netUtils.cloneRow(newNetwork,CyNode.class,table.getRow(data.getRowLabel(row)), newNetwork.getRow(node1, CyNetwork.LOCAL_ATTRS));
 			if(!table.getRow(data.getRowLabel(row)).isSet(CyNetwork.NAME))
 				newNetwork.getRow(node1).set(CyNetwork.NAME, "Node " + numNodes);
 			mapRowNodes.put(data.getRowLabel(row),node1);
 			
 			okToProceed = true;
 			
-			if(data.rowHasMissingValue(i))
+			if(data.rowHasMissingValue(row))
 			{
 				numNodes++;
 				continue;
@@ -299,8 +292,8 @@ public class K2InductionTask extends AbstractCyniTask {
 		if (!cancelled)
 		{
 			if(removeNodes)
-				removeNodesWithoutEdges(newNetwork);
-			newNetworkView = displayNewNetwork(newNetwork, networkSelected,true);
+				netUtils.removeNodesWithoutEdges(newNetwork);
+			newNetworkView = netUtils.displayNewNetwork(newNetwork, networkSelected,true);
 			taskMonitor.setProgress(1.0d);
 			layout = layoutManager.getDefaultLayout();
 			Object context = layout.getDefaultLayoutContext();

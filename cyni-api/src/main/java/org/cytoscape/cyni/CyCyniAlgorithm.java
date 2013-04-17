@@ -53,6 +53,7 @@ public interface CyCyniAlgorithm {
 	 * @param networkManager The network manager
 	 * @param netTableMgr The network table manager
 	 * @param rootNetMgr The root network manager
+	 * @param vmMgr The Visual mapping manager that allows changing the visual style of a network
 	 * @param networkViewManager The network view manager
 	 * @param layoutManager The layout manager to apply a layout if a new network is created
 	 * @param tunableSetter the setter if cyni is not called through the GUI

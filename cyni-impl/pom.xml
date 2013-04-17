@@ -9,7 +9,7 @@
 
   <properties>
     <bundle.symbolicName>org.cytoscape.cyni-impl</bundle.symbolicName>
-    <cyni.api.version>1.0-beta1</cyni.api.version>
+    <cyni.api.version>1.0-beta2</cyni.api.version>
     <bundle.namespace>org.cytoscape.cyni</bundle.namespace>
   </properties>
 
