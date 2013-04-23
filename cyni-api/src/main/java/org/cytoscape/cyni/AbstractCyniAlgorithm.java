@@ -58,7 +58,7 @@ public abstract class AbstractCyniAlgorithm implements CyCyniAlgorithm {
 	 * @param humanName
 	 *            a user visible name of the cyni algorithm.
 	 * @param supportsSelectedOnly
-	 *            indicates whether only selected rows/nodes will be used to apply the algorithm.
+	 *            indicates whether the algorithm can be applied to only selected rows/nodes.
 	 * @param category
 	 *            the category is used to set the type of cyni algorithm
 	 */
@@ -98,7 +98,11 @@ public abstract class AbstractCyniAlgorithm implements CyCyniAlgorithm {
 	}
 	
 	
-	@Override
+	/**
+	 * Returns true if the task factory is ready to produce a task iterator.
+	 * @param Context The input parameters context for this cyni algorithm.
+	 * @return true if the task factory is ready to produce a task iterator.
+	 */
 	public boolean isReady(Object tunableContext) {
 		if (tunableContext instanceof TunableValidator) {
 			StringBuilder errors = new StringBuilder();
@@ -114,6 +118,12 @@ public abstract class AbstractCyniAlgorithm implements CyCyniAlgorithm {
 		return true;
 	}
 	
+	/**
+	 * Tells if this Cyni supports doing a Cyni Algorithm on a subset of
+	 * the nodes.
+	 * 
+	 * @return true if cyni algorithm supports applying only the algorithm on a subset of the nodes
+	 */
 	public boolean supportsSelectedOnly() {
 		return supportsSelectedOnly;
 	}

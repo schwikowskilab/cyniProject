@@ -77,12 +77,5 @@ public class MutualInfoInduction extends AbstractCyniAlgorithm {
 			tunableSetter.applyTunables(context, mparams);
 		return context;
 	}
-	/**
-	 * Returns true if the layout supports only applying the layout to selected nodes.
-	 *
-	 * @return True if the layout supports only applying the layout to selected nodes.
-	 */
-	public boolean supportsSelectedOnly() {
-		return true;
-	}
+	
 }

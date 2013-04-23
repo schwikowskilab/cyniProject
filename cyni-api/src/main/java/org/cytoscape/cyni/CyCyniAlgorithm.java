@@ -67,27 +67,28 @@ public interface CyCyniAlgorithm {
 
 	/**
 	 * Returns true if the task factory is ready to produce a task iterator.
-	 * @param Context The layout context for this cyni algorithm.
+	 * @param Context The input parameters context for this cyni algorithm.
 	 * @return true if the task factory is ready to produce a task iterator.
 	 */
 	boolean isReady(Object Context);
 
 	/**
-	 * Returns a new cyni context object. This method can be used to create
-	 * custom configurations for cyni algorithms.
+	 * Returns a new cyni context object. This method is used to create
+	 * custom configurations for the input parameters selection of the cyni algorithms.
 	 * @param table The table where to get the data.
 	 * @param metricsManager The cyni metrics manager.
 	 * @param tunableSetter The tunable setter to set the parameters if not GUI is used.
 	 * @param mparams The map of each one of the parameters with the value of the parameter.
-	 * @return a new cyni context object.
+	 * @return a new cyni context object, that will be added to a user interface, which will allow
+	 * 			the selection of the algorithm's parameters.
 	 */
 	CyniAlgorithmContext createCyniContext(CyTable table, CyCyniMetricsManager metricsManager, TunableSetter tunableSetter,Map<String, Object> mparams);
 
 	/**
-	 * Tests to see if this Cyni supports doing a Cyni Algorithm on a subset of
+	 * Tells if this Cyni supports doing a Cyni Algorithm on a subset of
 	 * the nodes.
 	 * 
-	 * @return true if cyni algorithm supports only applying the algorithm on a subset of the nodes
+	 * @return true if cyni algorithm supports applying only the algorithm on a subset of the nodes
 	 */
 	public boolean supportsSelectedOnly();
 	
