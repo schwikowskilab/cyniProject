@@ -96,21 +96,6 @@ public abstract class AbstractCyniAlgorithm implements CyCyniAlgorithm {
 	public String toString() {
 		return humanName;
 	}
-
-
-	/**
-	 * Returns a new cyni context object. This method can be used to create
-	 * custom configurations for cyni algorithms.
-	 * @param table The table where to get the data.
-	 * @param metricsManager The cyni metrics manager.
-	 * @param tunableSetter The tunable setter to set the parameters if not GUI is used.
-	 * @param mparams The map of each one of the parameters with the value of the parameter.
-	 * @return a new cyni context object.
-	 */
-	@Override
-	public Object createCyniContext(CyTable table, CyCyniMetricsManager metricsManager, TunableSetter tunableSetter,Map<String, Object> mparams) {
-		return new Object();
-	}
 	
 	
 	@Override

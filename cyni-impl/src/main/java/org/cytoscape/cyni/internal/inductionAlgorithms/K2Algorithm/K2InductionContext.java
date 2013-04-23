@@ -32,7 +32,7 @@ import org.cytoscape.cyni.*;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableValidator;
 
-public class K2InductionContext extends AbstractCyniAlgorithmContext implements TunableValidator {
+public class K2InductionContext extends CyniAlgorithmContext implements TunableValidator {
 	
 	@Tunable(description="Maximmun number of parents")
 	public int maxNumParents = 5;

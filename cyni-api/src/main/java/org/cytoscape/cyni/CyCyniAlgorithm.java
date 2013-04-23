@@ -61,7 +61,7 @@ public interface CyCyniAlgorithm {
 	 * @param mparams The map to the input paramters to be used if cyni is not called through the GUI
 	 * @return taskIterator contains cyni tasks.
 	 */
-	TaskIterator createTaskIterator(Object context, CyTable table, CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
+	TaskIterator createTaskIterator(CyniAlgorithmContext context, CyTable table, CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
 			CyNetworkManager networkManager, CyNetworkTableManager netTableMgr, CyRootNetworkManager rootNetMgr, VisualMappingManager vmMgr,
 			CyNetworkViewManager networkViewManager, CyLayoutAlgorithmManager layoutManager, CyCyniMetricsManager metricsManager);
 
@@ -81,7 +81,7 @@ public interface CyCyniAlgorithm {
 	 * @param mparams The map of each one of the parameters with the value of the parameter.
 	 * @return a new cyni context object.
 	 */
-	Object createCyniContext(CyTable table, CyCyniMetricsManager metricsManager, TunableSetter tunableSetter,Map<String, Object> mparams);
+	CyniAlgorithmContext createCyniContext(CyTable table, CyCyniMetricsManager metricsManager, TunableSetter tunableSetter,Map<String, Object> mparams);
 
 	/**
 	 * Tests to see if this Cyni supports doing a Cyni Algorithm on a subset of

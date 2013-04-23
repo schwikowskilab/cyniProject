@@ -101,7 +101,7 @@ public abstract class AbstractCyniTask extends AbstractTask {
 	 * @param rootNetMgr The root network manager to generate a new root network
 	 * @param vmMgr The Visual mapping manager that allows changing the visual style of a network
 	 */
-	public AbstractCyniTask(String name, final AbstractCyniAlgorithmContext context, CyNetworkFactory networkFactory, 
+	public AbstractCyniTask(String name, final CyniAlgorithmContext context, CyNetworkFactory networkFactory, 
 			CyNetworkViewFactory networkViewFactory,CyNetworkManager networkManager,CyNetworkViewManager networkViewManager,
 			final CyNetworkTableManager netTableMgr,final CyRootNetworkManager rootNetMgr, final VisualMappingManager visualMapperManager) {
 		super();

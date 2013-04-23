@@ -26,7 +26,7 @@ package org.cytoscape.cyni.internal.discretizationAlgorithms.ManualDiscretizatio
 import java.io.IOException;
 import java.util.*;
 
-import org.cytoscape.cyni.AbstractCyniAlgorithmContext;
+import org.cytoscape.cyni.CyniAlgorithmContext;
 import org.cytoscape.cyni.CyCyniMetric;
 import org.cytoscape.work.util.*;
 import org.cytoscape.model.CyTable;
@@ -36,7 +36,7 @@ import org.cytoscape.model.CyColumn;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableValidator;
 
-public class ManualDiscretizationContext extends AbstractCyniAlgorithmContext implements TunableValidator {
+public class ManualDiscretizationContext extends CyniAlgorithmContext implements TunableValidator {
 	@Tunable(description="Number of Intervals", groups={"Interval Definition"}, xorChildren=true)
 	public ListSingleSelection<String> interval = new ListSingleSelection<String>("2","3","4","5","6","7","8","9","10");
 	
