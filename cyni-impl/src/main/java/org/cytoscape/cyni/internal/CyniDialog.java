@@ -205,7 +205,7 @@ public class CyniDialog extends JDialog implements ColumnCreatedListener, Column
 			setVisible(false);
 		else if (command.equals("execute")) {
 			CyniAlgorithmContext context = contextMap.get(newCyni).get((CyTable)tableSelector.getSelectedItem());
-			if(context.contextHasOwnSwingComponent())
+			if(context.contextHasOwnSwingPanel())
 			{
 				if(context.contextContentValid())
 					taskManager.execute(currentCyni.createTaskIterator());
@@ -470,7 +470,7 @@ public class CyniDialog extends JDialog implements ColumnCreatedListener, Column
 				executeButton.setEnabled(true);
 				TaskFactory factory = wrapWithContext(newCyni, newTable,context);
 
-				if(context.contextHasOwnSwingComponent())
+				if(context.contextHasOwnSwingPanel())
 					tunablePanel = context.getContextSwingPanel();
 				else
 					tunablePanel = taskManager.getConfiguration(factory, context);

@@ -57,12 +57,12 @@ public class CyniAlgorithmContext {
 	}
 	
 	/**
-	 * This method tells cytoscape if this algorithm provides its own swing component to display 
+	 * This method tells cytoscape if this algorithm provides its own swing Panel to display 
 	 * the context parameters. So it does not use Cytoscape tunables.
 	 * 
-	 * @return True if the component is provided by the algorithm
+	 * @return True if the panel is provided by the algorithm
 	 */
-	public boolean contextHasOwnSwingComponent()
+	public boolean contextHasOwnSwingPanel()
 	{
 		return false;
 	}
