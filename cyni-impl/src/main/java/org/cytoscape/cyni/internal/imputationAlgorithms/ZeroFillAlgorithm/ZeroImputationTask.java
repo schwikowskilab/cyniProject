@@ -104,6 +104,7 @@ public class ZeroImputationTask extends AbstractCyniTask {
    
         step = 1.0 /  mytable.getColumns().size();
         
+        taskMonitor.setTitle("Zero Impute Data ");
         taskMonitor.setStatusMessage("Estimating missing data...");
 		taskMonitor.setProgress(progress);
 		
