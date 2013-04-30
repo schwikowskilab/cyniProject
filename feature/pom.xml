@@ -4,7 +4,7 @@
     <parent>
 		<artifactId>cyniApp-parent</artifactId>
         <groupId>org.cytoscape</groupId>
-        <version>1.0-beta4</version>
+        <version>1.0-beta5</version>
     </parent>
 
     <properties>
