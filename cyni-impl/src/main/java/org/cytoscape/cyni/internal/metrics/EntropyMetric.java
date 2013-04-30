@@ -36,6 +36,11 @@ import org.cytoscape.cyni.*;
 public class EntropyMetric extends AbstractCyniMetric {
 	
 	private static Map<String,Integer> mapStringValues;
+	private boolean conditional = false;
+	private  GeneralLog log;
+	private  GeneralLog log2;
+	private  GeneralLog log10;
+	private  GeneralLog loge;
 	/**
 	 * Creates a new  object.
 	 */
@@ -44,6 +49,10 @@ public class EntropyMetric extends AbstractCyniMetric {
 		addType(CyniMetricTypes.INPUT_STRINGS.toString());
 		addType(CyniMetricTypes.LOCAL_METRIC_SCORE.toString());
 		mapStringValues =  new HashMap<String,Integer>();
+		log2 = new LogBase2();
+		log10 = new LogBase10();
+		loge = new LogBaseE();
+		log = log2;
 		
 	}
 	
@@ -51,6 +60,8 @@ public class EntropyMetric extends AbstractCyniMetric {
 	{
 		if(!mapStringValues.isEmpty())
 			mapStringValues.clear();
+		conditional = false;
+		log = log2;
 	}
 
 	
@@ -149,37 +160,102 @@ public class EntropyMetric extends AbstractCyniMetric {
 		int combinations;
 		int i,j;
 		int numValues =  mapStringValues.size();
-		int numTimes;
-		double proba;
+		int numTimes = 0;
+		double proba,proba2;
 		
 		combinations = (int)Math.pow((double)mapStringValues.size(),(double)(nodes.length-1));
 		for(i=0;i<combinations;i++)
 		{
+			if(conditional)
+			{
+				numTimes = 0;
+				for(j=0;j<numValues;j++)
+				{
+					numTimes += nCounts[i*numValues+j];
+				}
+			}
 			for(j=0;j<numValues;j++)
 			{
 				if(nCounts[i*numValues+j] > 0)
 				{
 					proba = (double)nCounts[i*numValues+j]/(double)nData;
-					result += (proba * log(proba));
+					if(conditional)
+						proba2 = (double)nCounts[i*numValues+j]/(double)numTimes;
+					else
+						proba2 = proba;
+					result += (proba * log.getLog(proba2));
 				}
 			}
 		}
 		
-		return (-1.0*result);
+		result = -1.0*result;
+		
+		return result;
 	}
 	
-	static double log2(double x)
-	{
-	    return (double) (Math.log(x) / Math.log(2.0));
-	}
-	
-	static double log(double x)
-	{
-	    return Math.log10(x);
-	}
 	
 	public void setParameters(Map<String,Object> params){
+		if(params.containsKey("Conditional"))
+			conditional = (Boolean)params.get("Conditional");
+		
+		if(params.containsKey("LogBase"))
+		{
+			
+			String temp = (String)params.get("LogBase");
+			if(temp.matches("log2"))
+			{
+				log = log2;
+			}
+			if(temp.matches("log10"))
+			{
+				log = log10;
+			}
+			if(temp.matches("loge"))
+			{
+				log = loge;
+			}
+			
+		}
 		
 	}
+	
+	private class GeneralLog {
+		
+		public double getLog(double x)
+		{
+			return 0.0;
+		}
+	}
+	
+	private class LogBaseE extends GeneralLog {
+		
+		@Override
+		public double getLog(double x)
+		{
+			return Math.log(x);
+		}
+		
+	}
+	
+	private class LogBase10 extends GeneralLog {
+		
+		@Override
+		public double getLog(double x)
+		{
+			return Math.log10(x);
+		}
+		
+	}
+
+	private class LogBase2 extends GeneralLog {
+		
+		@Override
+		public double getLog(double x)
+		{
+			return (double) (Math.log(x) / Math.log(2.0));
+		}
+		
+	}
+
 	
 }

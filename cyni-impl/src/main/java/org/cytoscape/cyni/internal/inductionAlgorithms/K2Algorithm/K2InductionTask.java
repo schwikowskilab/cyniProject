@@ -85,6 +85,7 @@ public class K2InductionTask extends AbstractCyniTask {
 	private String selectedOrder;
 	private String selectedCol;
 	private boolean removeNodes;
+	private boolean changeSign;
 	private CyniNetworkUtils netUtils;
 
 	/**
@@ -104,6 +105,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		this.selectedOrder = context.ordering.getSelectedValue();
 		this.selectedCol = context.selectedColumn.getSelectedValue();
 		this.table = selectedTable;
+		this.changeSign = false;
 		this.removeNodes = context.removeNodes;
 		this.selectedMetric = context.measures.getSelectedValue();
 		this.netUtils = new CyniNetworkUtils(networkViewFactory,networkManager,networkViewManager,netTableMgr,rootNetMgr,vmMgr);
@@ -149,6 +151,16 @@ public class K2InductionTask extends AbstractCyniTask {
 		// Create the CyniTable
 		CyniTable data = new CyniTable(table,attributeArray.toArray(new String[0]), false, false, selectedOnly);
 		selectedMetric.resetParameters();
+		
+		if(selectedMetric.getName() == "Entropy.cyni")
+		{
+			Map<String,Object> params = new HashMap<String,Object>();
+			params.put("Conditional", true);
+			params.put("LogBase", "log10");
+			selectedMetric.setParameters(params);
+		}
+		if(selectedMetric.getName() == "Entropy.cyni" || selectedMetric.getName() == "AIC.cyni" || selectedMetric.getName() == "MDL.cyni")
+			changeSign = true;
 		
 		if(data.hasAnyMissingValue())
 		{
@@ -220,6 +232,8 @@ public class K2InductionTask extends AbstractCyniTask {
 			parentsToIndex.clear();
 			parentsToIndex.add(row);
 			pOld = selectedMetric.getMetric(data, data, row, parentsToIndex);
+			if(changeSign)
+				pOld = -1.0*pOld;
 			pNew = pOld;
 			threadNumber = 0;
 						
@@ -273,6 +287,8 @@ public class K2InductionTask extends AbstractCyniTask {
 			
 			if(parents.size() > 0)
 			{
+				if(changeSign && pNew != 0.0)
+					pNew = -1.0*pNew;
 				for(int parent : parents)
 				{
 					edge = newNetwork.addEdge( mapRowNodes.get(data.getRowLabel(parent)),mapRowNodes.get(data.getRowLabel(row)), true);
@@ -320,6 +336,8 @@ public class K2InductionTask extends AbstractCyniTask {
 		
 		public void run() {
 			results[pos] = selectedMetric.getMetric(tableData, tableData, index1, index2);
+			if(changeSign)
+				results[pos] = -1.0*results[pos];
 
 		}
 		

@@ -82,6 +82,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 	private boolean removeNodes;
 	private TreeSet<Operation> scoreTree;
 	private CyniNetworkUtils netUtils;
+	private boolean changeSign;
 	private CyniBayesianUtils bayesUtils;
 	private Map<Integer, ArrayList<Integer>> nodeParents;
 
@@ -106,6 +107,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		this.reversalOption = context.reversalOption;
 		this.removeNodes = context.removeNodes;
 		this.edgesBlocked = context.edgesBlocked;
+		this.changeSign = false;
 		mapNodeIndex =  new HashMap< CyNode, Integer>();
 		mapIndexNode =  new HashMap<Integer, CyNode>();
 		orig2NewNodeMap = new WeakHashMap<CyNode, CyNode>();
@@ -155,6 +157,9 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			CyRow netRow = newNetwork.getRow(newNetwork);
 			netRow.set(CyNetwork.NAME, networkName);
 		}
+		
+		if(selectedMetric.getName() == "Entropy.cyni" || selectedMetric.getName() == "AIC.cyni" || selectedMetric.getName() == "MDL.cyni")
+			changeSign = true;
 		
 		netUtils.addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
 		
@@ -289,6 +294,14 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		scoreOperations = new Operation [nRows][nRows];
 		
 		selectedMetric.resetParameters();
+		
+		if(selectedMetric.getName() == "Entropy.cyni")
+		{
+			Map<String,Object> params = new HashMap<String,Object>();
+			params.put("Conditional", true);
+			params.put("LogBase", "log10");
+			selectedMetric.setParameters(params);
+		}
 		
 		taskMonitor.setStatusMessage("Initializing Cache..." );
 		initCache(data, selectedMetric, taskMonitor);
@@ -689,6 +702,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
             		parents.add(nodeStart);
             		
             		op.score = selectedMetric.getMetric(tableData, tableData, nodeEnd, parents) - baseScore;
+            		if(changeSign)
+            			op.score = -1.0*op.score;
             		op.nodeChild = nodeEnd;
             		op.nodeParent = nodeStart;
             		scoreOperations[nodeStart][nodeEnd] = op;
@@ -709,6 +724,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
             		
             	Operation op = new Operation ("Delete");
             	op.score = selectedMetric.getMetric(tableData, tableData, nodeEnd, parents) - baseScore;
+            	if(changeSign)
+        			op.score = -1.0*op.score;
         		op.nodeChild = nodeEnd;
         		op.nodeParent = nodeStart;
         		scoreOperations[nodeStart][nodeEnd] = op;

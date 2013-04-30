@@ -54,22 +54,6 @@ public class MDLMetric extends AbstractCyniMetric {
 	}
 
 	
-	/*public Double getMetric(CyniTable table1, CyniTable table2, int indexBase, List<Integer> indexToCompare) { 
-		double result = 0.0;
-		int nCounts;
-		int numValues ;
-
-
-		result = entropy.getMetric(table1, table2, indexBase, indexToCompare);
-		numValues = table1.getAttributeStringValues().size();
-		nCounts  =  (int)Math.pow((double)numValues, (double)indexToCompare.size());
-		
-		result += 0.5 * nCounts * (numValues - 1) * log((double)Math.min(table1.nColumns(),table2.nColumns()));
-		
-		
-		return  result;
-	}*/
-	
 	public Double getMetric(CyniTable table1, CyniTable table2, int indexBase,List<Integer> indexToCompare) { 
 		double result = 0.0;
 		int i = 0;

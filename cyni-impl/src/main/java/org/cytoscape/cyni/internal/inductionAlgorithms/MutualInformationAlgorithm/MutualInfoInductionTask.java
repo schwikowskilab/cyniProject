@@ -123,6 +123,14 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 		CyniTable data = new CyniTable(table,attributeArray.toArray(new String[0]), false, false, selectedOnly);
 		selectedMetric.resetParameters();
 		
+		if(selectedMetric.getName() == "Entropy.cyni")
+		{
+			Map<String,Object> params = new HashMap<String,Object>();
+			//params.put("Conditional", true);
+			params.put("LogBase", "log2");
+			selectedMetric.setParameters(params);
+		}
+		
 		nRows = data.nRows();
 		step = 1.0 / nRows;
 		
