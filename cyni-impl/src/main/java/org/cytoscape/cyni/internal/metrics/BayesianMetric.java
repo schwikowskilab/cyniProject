@@ -140,13 +140,13 @@ public class BayesianMetric extends AbstractCyniMetric {
 			nCounts[count]++;
 		}
 		
-		result = getScoreWithCounts(nodes,nCounts );
+		result = getScoreWithCounts(nodes,nCounts , table1.getNumPossibleStrings(indexBase, true));
 		
 		
 		return  result;
 	}
 	
-	private double getScoreWithCounts(int[] nodes,int[] nCounts )
+	private double getScoreWithCounts(int[] nodes,int[] nCounts, int numValuesSon )
 	{
 		double result = 1;
 		int combinations;
@@ -163,7 +163,7 @@ public class BayesianMetric extends AbstractCyniMetric {
 				result *= doFactorial((double)nCounts[i*numValues+j]);
 				numTimes += nCounts[i*numValues+j];
 			}
-			result *= (double)(doFactorial((double)(numValues-1))/doFactorial((double)(numValues+numTimes-1)));
+			result *= (double)(doFactorial((double)(numValuesSon-1))/doFactorial((double)(numValuesSon+numTimes-1)));
 		}
 		
 		return result;

@@ -127,7 +127,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 		String networkName;
 		Integer numNodes = 1;
-		CyTable nodeTable, edgeTable;
+		CyTable nodeTable, edgeTable, netTable;
 		CyEdge edge;
 		CyNode newNode;
 		CyLayoutAlgorithm layout;
@@ -183,6 +183,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 		nodeTable = newNetwork.getDefaultNodeTable();
 		edgeTable = newNetwork.getDefaultEdgeTable();
+		netTable = newNetwork.getDefaultNetworkTable();
 		
 		// Create the CyniTable
 		CyniTable data = new CyniTable(nodeTable,attributeArray.toArray(new String[0]), false, false, selectedOnly);
@@ -308,6 +309,9 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		taskMonitor.setStatusMessage("Cache Initialized\n Looking for optimal solution..." );
 		edgeTable.createColumn("Metric", String.class, false);	
 		edgeTable.createColumn("Score", Double.class, false);	
+		netTable.createColumn("Added Edges", Integer.class, false);
+		netTable.createColumn("Removed Edges", Integer.class, false);
+		netTable.createColumn("Reversed Edges", Integer.class, false);
 		progress += 0.5; 
 		added = 0;
 		removed = 0;
@@ -401,6 +405,9 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 		if (!cancelled)
 		{
+			netTable.getRow(newNetwork.getSUID()).set("Added Edges", added);
+			netTable.getRow(newNetwork.getSUID()).set("Removed Edges", removed);
+			netTable.getRow(newNetwork.getSUID()).set("Reversed Edges", reversed);
 			if(removeNodes)
 				netUtils.removeNodesWithoutEdges(newNetwork);
 			newNetworkView = netUtils.displayNewNetwork(newNetwork,networkSelected, true);

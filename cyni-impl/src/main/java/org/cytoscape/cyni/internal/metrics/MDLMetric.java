@@ -59,7 +59,7 @@ public class MDLMetric extends AbstractCyniMetric {
 		int i = 0;
 		int ncols,col;
 		int count = 0;
-		int numValues ;
+		int numValues, numParents = 1;
 		boolean equalTables;
 
 		equalTables = table1.equals(table2);
@@ -119,7 +119,11 @@ public class MDLMetric extends AbstractCyniMetric {
 			i++;
 		}
 		if(indexToCompare.size() < nodes.length || !equalTables)
+		{
 			nodes[i] = indexBase;
+			for(int t : indexToCompare)
+				numParents *= table2.getNumPossibleStrings(t, true);
+		}
 		
 		for(col = 0; col<ncols;col++ )
 		{
@@ -137,13 +141,12 @@ public class MDLMetric extends AbstractCyniMetric {
 			nCounts[count]++;
 		}
 		
-		result = getScoreWithCounts(nodes,nCounts ,ncols);
-		
+		result = getScoreWithCounts(nodes,nCounts ,ncols, table1.getNumPossibleStrings(indexBase, true),numParents);
 		
 		return  result;
 	}
 	
-	private double getScoreWithCounts(int[] nodes,int[] nCounts , int nData)
+	private double getScoreWithCounts(int[] nodes,int[] nCounts , int nData, int numValuesSon, int numValuesParents)
 	{
 		double result = 0.0;
 		int combinations;
@@ -171,7 +174,7 @@ public class MDLMetric extends AbstractCyniMetric {
 			}
 		}
 		
-		result = (-1.0*result) + (double)(0.5 * combinations * (numValues - 1) * log2((double)nData));
+		result = (-1.0*result) + (double)(0.5 * numValuesParents * (numValuesSon - 1) * log2((double)nData));
 		return result;
 	}
 	
