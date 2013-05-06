@@ -58,7 +58,7 @@ public abstract class AbstractCyniAlgorithm implements CyCyniAlgorithm {
 	 * @param humanName
 	 *            a user visible name of the cyni algorithm.
 	 * @param supportsSelectedOnly
-	 *            indicates whether only selected rows/nodes will be used to apply the algorithm.
+	 *            indicates whether the algorithm can be applied to only selected rows/nodes.
 	 * @param category
 	 *            the category is used to set the type of cyni algorithm
 	 */
@@ -96,24 +96,13 @@ public abstract class AbstractCyniAlgorithm implements CyCyniAlgorithm {
 	public String toString() {
 		return humanName;
 	}
-
-
+	
+	
 	/**
-	 * Returns a new cyni context object. This method can be used to create
-	 * custom configurations for cyni algorithms.
-	 * @param table The table where to get the data.
-	 * @param metricsManager The cyni metrics manager.
-	 * @param tunableSetter The tunable setter to set the parameters if not GUI is used.
-	 * @param mparams The map of each one of the parameters with the value of the parameter.
-	 * @return a new cyni context object.
+	 * Returns true if the task factory is ready to produce a task iterator.
+	 * @param Context The input parameters context for this cyni algorithm.
+	 * @return true if the task factory is ready to produce a task iterator.
 	 */
-	@Override
-	public Object createCyniContext(CyTable table, CyCyniMetricsManager metricsManager, TunableSetter tunableSetter,Map<String, Object> mparams) {
-		return new Object();
-	}
-	
-	
-	@Override
 	public boolean isReady(Object tunableContext) {
 		if (tunableContext instanceof TunableValidator) {
 			StringBuilder errors = new StringBuilder();
@@ -129,6 +118,12 @@ public abstract class AbstractCyniAlgorithm implements CyCyniAlgorithm {
 		return true;
 	}
 	
+	/**
+	 * Tells if this Cyni supports doing a Cyni Algorithm on a subset of
+	 * the nodes.
+	 * 
+	 * @return true if cyni algorithm supports applying only the algorithm on a subset of the nodes
+	 */
 	public boolean supportsSelectedOnly() {
 		return supportsSelectedOnly;
 	}

@@ -25,14 +25,14 @@ package org.cytoscape.cyni.internal.imputationAlgorithms.RAVGFillAlgorithm;
 
 import java.io.IOException;
 
-import org.cytoscape.cyni.AbstractCyniAlgorithmContext;
+import org.cytoscape.cyni.CyniAlgorithmContext;
 
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableValidator;
 import org.cytoscape.work.TunableValidator.ValidationState;
 import org.cytoscape.work.util.ListSingleSelection;
 
-public class RAVGImputationContext extends AbstractCyniAlgorithmContext implements TunableValidator {
+public class RAVGImputationContext extends CyniAlgorithmContext implements TunableValidator {
 	@Tunable(description="How to define a missing value:",groups="Missing Value Definition", xorChildren=true)
 	public ListSingleSelection<String> chooser = new ListSingleSelection<String>("By a single value","By a single Maximum Threshold",
 			"By a single Minimum Threshold","By a double Threshold");

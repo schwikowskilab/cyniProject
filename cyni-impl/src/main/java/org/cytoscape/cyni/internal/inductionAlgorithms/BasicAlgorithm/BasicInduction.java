@@ -60,7 +60,7 @@ public class BasicInduction extends AbstractCyniAlgorithm {
 	
 	}
 
-	public TaskIterator createTaskIterator(Object context,CyTable table, CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
+	public TaskIterator createTaskIterator(CyniAlgorithmContext context,CyTable table, CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
 			CyNetworkManager networkManager,CyNetworkTableManager netTableMgr, CyRootNetworkManager rootNetMgr, VisualMappingManager vmMgr,
 			CyNetworkViewManager networkViewManager, CyLayoutAlgorithmManager layoutManager, CyCyniMetricsManager metricsManager) {
 		selectedTable = table;
@@ -68,8 +68,8 @@ public class BasicInduction extends AbstractCyniAlgorithm {
 					networkManager,netTableMgr,rootNetMgr,vmMgr,networkViewManager,layoutManager,metricsManager, selectedTable));
 	}
 	
-	public Object createCyniContext(CyTable table, CyCyniMetricsManager metricsManager, TunableSetter tunableSetter,Map<String, Object> mparams) {
-		Object context;
+	public CyniAlgorithmContext createCyniContext(CyTable table, CyCyniMetricsManager metricsManager, TunableSetter tunableSetter,Map<String, Object> mparams) {
+		CyniAlgorithmContext context;
 		selectedTable = table;
 		List<String> listTypes = new ArrayList<String>();
 		listTypes.add(CyniMetricTypes.INPUT_NUMBERS.toString());
@@ -79,12 +79,5 @@ public class BasicInduction extends AbstractCyniAlgorithm {
 			tunableSetter.applyTunables(context, mparams);
 		return context;
 	}
-	/**
-	 * Returns true if the layout supports only applying the layout to selected nodes.
-	 *
-	 * @return True if the layout supports only applying the layout to selected nodes.
-	 */
-	public boolean supportsSelectedOnly() {
-		return true;
-	}
+	
 }

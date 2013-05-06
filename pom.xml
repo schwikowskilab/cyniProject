@@ -5,7 +5,7 @@
 
 	<groupId>org.cytoscape</groupId>
 	<artifactId>cyniApp-parent</artifactId>
-	<version>1.0-beta4</version>
+	<version>1.0-beta5</version>
 	<name>Cyni App Parent POM</name>
 	<packaging>pom</packaging>
 

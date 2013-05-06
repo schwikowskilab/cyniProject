@@ -26,14 +26,14 @@ package org.cytoscape.cyni.internal.imputationAlgorithms.ZeroFillAlgorithm;
 import java.io.IOException;
 import java.util.List;
 
-import org.cytoscape.cyni.AbstractCyniAlgorithmContext;
+import org.cytoscape.cyni.CyniAlgorithmContext;
 import org.cytoscape.work.TunableValidator.ValidationState;
 import org.cytoscape.work.util.*;
 
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableValidator;
 
-public class ZeroImputationContext extends AbstractCyniAlgorithmContext implements TunableValidator {
+public class ZeroImputationContext extends CyniAlgorithmContext implements TunableValidator {
 	
 	@Tunable(description="How to define a missing value:",groups="Missing Value Definition", xorChildren=true)
 	public ListSingleSelection<String> chooser = new ListSingleSelection<String>("By a single value","By a single Maximum Threshold",

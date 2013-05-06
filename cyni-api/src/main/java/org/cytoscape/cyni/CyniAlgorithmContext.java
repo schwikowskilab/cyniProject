@@ -24,13 +24,17 @@
 package org.cytoscape.cyni;
 
 import java.util.*;
+import javax.swing.JPanel;
 
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;
 
-
-public class AbstractCyniAlgorithmContext {
+/**
+ * This is a class that contains several methods that are needed to display the context of a Cyni algorithm
+ * 
+ */
+public class CyniAlgorithmContext {
 
 
 	/**
@@ -47,9 +51,42 @@ public class AbstractCyniAlgorithmContext {
 	/**
 	 * The constructor
 	 */
-	public AbstractCyniAlgorithmContext(boolean supportsSelectedOnly) {
+	public CyniAlgorithmContext(boolean supportsSelectedOnly) {
 		this.supportsSelectedOnly = supportsSelectedOnly;
 		
+	}
+	
+	/**
+	 * This method tells cytoscape if this algorithm provides its own swing Panel to display 
+	 * the context parameters. So it does not use Cytoscape tunables.
+	 * 
+	 * @return True if the panel is provided by the algorithm
+	 */
+	public boolean contextHasOwnSwingPanel()
+	{
+		return false;
+	}
+	
+	/**
+	 * Returns the swing Panel that will be used instead of the tunables panel
+	 * 
+	 * @return The swing Panel that will be added to the dialog used to 
+	 * 			select the context parameters 
+	 */
+	public JPanel getContextSwingPanel()
+	{
+		return null;
+	}
+	
+	/**
+	 * This method checks the context values to validate them. It is only used if 
+	 * tunables are not used. Otherwise tunables already has a validation procedure.
+	 * 
+	 * @return True if the context content is correct
+	 */
+	public boolean contextContentValid()
+	{
+		return true;
 	}
 
 	/**

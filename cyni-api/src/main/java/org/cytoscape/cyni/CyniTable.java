@@ -52,6 +52,12 @@ public class CyniTable {
 	private Map<Object,Integer> mapRowLabels;
 	private Map<Object,Integer> mapColLabels;
 	private Map<Integer,Integer> mapRowOrder;
+	private int[] colNumStringsDiff;
+	private int[] rowNumStringsDiff;
+	private int[] colMaxValue;
+	private int[] colMinValue;
+	private int[] rowMaxValue;
+	private int[] rowMinValue;
 
 
 
@@ -68,6 +74,7 @@ public class CyniTable {
 	public CyniTable(  CyTable table, String[] attributes, boolean transpose, boolean ignoreMissing, boolean selectedOnly) {
 		int i,j,index;
 		Set tempSet = new HashSet<String>();
+		ArrayList<String> stringRow = new ArrayList<String>();
 		
 		mapRowLabels =  new HashMap<Object,Integer>();
 		mapColLabels =  new HashMap<Object,Integer>();
@@ -149,18 +156,47 @@ public class CyniTable {
 				}
 			}
 			
+			if (transpose) {
+				colNumStringsDiff = new int[nRows];
+				rowNumStringsDiff = new int[nColumns];
+				colMaxValue = new int[nRows];
+				colMinValue = new int[nRows];
+				rowMaxValue = new int[nColumns];
+				rowMinValue = new int[nColumns];
+			}else
+			{
+				colNumStringsDiff = new int[nColumns];
+				rowNumStringsDiff = new int[nRows];
+				colMaxValue = new int[nColumns];
+				colMinValue = new int[nColumns];
+				rowMaxValue = new int[nRows];
+				rowMinValue = new int[nRows];
+			}
+			Arrays.fill(colNumStringsDiff, 0);
+			Arrays.fill(rowNumStringsDiff, 0);
+			Arrays.fill(colMaxValue, 0);
+			Arrays.fill(colMinValue, 0);
+			Arrays.fill(rowMaxValue, 0);
+			Arrays.fill(rowMinValue, 0);
 			//If columns contain Strings, all possible values found in these columns are store for a future use
 			for ( i = 0; i < attributes.length; i++) 
 			{
 				indexToTypes[i] = internalTable.getColumn(attributes[i]).getType();
 				if(indexToTypes[i] == String.class)
 				{
+					tempSet.clear();
+					tempSet.addAll(internalTable.getColumn(attributes[i]).getValues(String.class));
+					if(transpose)
+						rowNumStringsDiff[i] = tempSet.size();
+					else
+						colNumStringsDiff[i] = tempSet.size();
 					stringValues.addAll(internalTable.getColumn(attributes[i]).getValues(String.class));
 				}
 			}
 			
 			if(stringValues.size()>0)
 			{
+				tempSet.clear();
 				tempSet.addAll(stringValues);
 				stringValues.clear();
 				stringValues.addAll(tempSet);
@@ -180,12 +216,21 @@ public class CyniTable {
 				mapRowOrder.put(i, i);
 				for(j=0;j<nColumns;j++)
 				{
-					if (transpose) {
+					if (transpose) 
+					{
 						data[i][j] = internalTable.getRow(columnLabels[j]).get((String)rowLabels[i], indexToTypes[i]);
+						if(indexToTypes[i] == String.class)
+						{
+							stringRow.add((String) data[i][j]);
+						}
 					}
 					else
 					{
 						data[i][j] = internalTable.getRow(rowLabels[i]).get((String)columnLabels[j], indexToTypes[j]);
+						if(indexToTypes[j] == String.class)
+						{
+							stringRow.add((String) data[i][j]);
+						}
 					}
 					if(data[i][j] == null)
 					{
@@ -193,6 +238,16 @@ public class CyniTable {
 						rowHasMissingValue[i] = true;
 						colHasMissingValue[j] = true;
 					}
+				}
+				if(stringRow.size()>0)
+				{
+					tempSet.clear();
+					tempSet.addAll(stringRow);
+					if(transpose)
+						colNumStringsDiff[i] = tempSet.size();
+					else
+						rowNumStringsDiff[i] = tempSet.size();
+					stringRow.clear();
 				}
 			}
 			//If ignoreMissing is true, rows with missing values will be eliminated but only if table is not transposed
@@ -246,11 +301,33 @@ public class CyniTable {
 		
 		this.transpose = duplicate.transpose;
 		this.anyMissing = duplicate.anyMissing;
+		if (transpose) {
+			this.colNumStringsDiff = new int[nRows];
+			this.rowNumStringsDiff = new int[nColumns];
+			this.colMaxValue = new int[nRows];
+			this.colMinValue = new int[nRows];
+			this.rowMaxValue = new int[nColumns];
+			this.rowMinValue = new int[nColumns];
+		}else
+		{
+			this.colNumStringsDiff = new int[nColumns];
+			this.rowNumStringsDiff = new int[nRows];
+			this.colMaxValue = new int[nColumns];
+			this.colMinValue = new int[nColumns];
+			this.rowMaxValue = new int[nRows];
+			this.rowMinValue = new int[nRows];
+		}
 
 		for (int row = 0; row < nRows; row++) {
 			rowWeights[row] = duplicate.getRowWeight(row);
 			rowLabels[row] = duplicate.getRowLabel(row);
 			rowHasMissingValue[row] = duplicate.rowHasMissingValue(row);
+			if (transpose) {
+				this.colNumStringsDiff[row] = duplicate.colNumStringsDiff[row];
+			}else
+			{
+				this.rowNumStringsDiff[row] = duplicate.rowNumStringsDiff[row];
+			}
 			
 			for (int col = 0; col < nColumns; col++) {
 				if (row == 0) {
@@ -258,6 +335,12 @@ public class CyniTable {
 					columnLabels[col] = duplicate.getColLabel(col);
 					colHasMissingValue[col] = duplicate.columnHasMissingValue(col);
 					
+				}
+				if (transpose) {
+					this.rowNumStringsDiff[col] = duplicate.rowNumStringsDiff[col];
+				}else
+				{
+					this.colNumStringsDiff[col] = duplicate.colNumStringsDiff[col];
 				}
 				if (duplicate.getValue(row, col) != null)
 					this.data[row][col] = duplicate.getValue(row, col);
@@ -301,6 +384,12 @@ public class CyniTable {
 		this.mapRowLabels =  new HashMap<Object,Integer>();
 		this.mapColLabels =  new HashMap<Object,Integer>();
 		this.mapRowOrder =  new HashMap<Integer,Integer>();
+		colNumStringsDiff = new int[nColumns];
+		rowNumStringsDiff = new int[nRows];
+		colMaxValue = new int[nColumns];
+		colMinValue = new int[nColumns];
+		rowMaxValue = new int[nRows];
+		rowMinValue = new int[nRows];
 	}
 
 	/**
@@ -515,6 +604,28 @@ public class CyniTable {
 		}
 		
 		return indexToTypes[typeIndex];
+	}
+	
+	
+	/**
+	 * Returns the number of possible/different strings stored in the defined column or row
+	 * @param index  The index of the row or column.
+	 * @param inRow  True if the index corresponds to a row index, false if it is for a column
+	 * @return The number of different strings stored in the selected row or column or 0 
+	 * 			if the row or column does not contain strings
+	 */
+	public int getNumPossibleStrings(int index, boolean inRow) {
+		int num ;
+		if(inRow)
+		{
+			num = rowNumStringsDiff[mapRowOrder.get(index)];
+		}
+		else
+		{
+			num = colNumStringsDiff[index];
+		}
+				
+		return num;
 	}
 
 	/**

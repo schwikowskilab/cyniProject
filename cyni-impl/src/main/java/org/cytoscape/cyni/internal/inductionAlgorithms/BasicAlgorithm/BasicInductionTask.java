@@ -69,6 +69,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 	private CyLayoutAlgorithmManager layoutManager;
 	private CyCyniMetricsManager metricsManager;
 	private CyCyniMetric selectedMetric;
+	private CyniNetworkUtils netUtils;
 
 	/**
 	 * Creates a new BasicInduction object.
@@ -88,6 +89,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		this.selectedMetric = context.measures.getSelectedValue();
 		this.attributeArray = context.attributeList.getSelectedValues();
 		this.table = selectedTable;
+		this.netUtils = new CyniNetworkUtils(networkViewFactory,networkManager,networkViewManager,netTableMgr,rootNetMgr,vmMgr);
 		
 	}
 
@@ -117,7 +119,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		int threadIndex[] = new int[nThreads];
 		threadNumber=0;
 		Arrays.fill(threadResults, 0.0);
-		networkSelected = getNetworkAssociatedToTable(table);
+		networkSelected = netUtils.getNetworkAssociatedToTable(table);
 		
 		taskMonitor.setTitle("Correlation Inference");
 		taskMonitor.setStatusMessage("Generating network inference...");
@@ -142,7 +144,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		
 		nodeTable = newNetwork.getDefaultNodeTable();
 		edgeTable = newNetwork.getDefaultEdgeTable();
-		addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
+		netUtils.addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
 	
 		edgeTable.createColumn("Metric", String.class, false);
 		edgeTable.createColumn("Distance", Double.class, false);	
@@ -181,7 +183,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 					if(!mapRowNodes.containsKey(data.getRowLabel(i)))
 					{
 						node1 = newNetwork.addNode();
-						cloneRow(newNetwork,CyNode.class,table.getRow(data.getRowLabel(i)), newNetwork.getRow(node1));
+						netUtils.cloneRow(newNetwork,CyNode.class,table.getRow(data.getRowLabel(i)), newNetwork.getRow(node1));
 						if(newNetwork.getRow(node1).get(CyNetwork.NAME,String.class ) == null || newNetwork.getRow(node1).get(CyNetwork.NAME,String.class ).isEmpty() == true)
 							newNetwork.getRow(node1).set(CyNetwork.NAME, "Node " + numNodes);
 						if(newNetwork.getRow(node1).get(CyNetwork.SELECTED,Boolean.class ) == true)
@@ -192,7 +194,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 					if(!mapRowNodes.containsKey(data.getRowLabel(threadIndex[pool])))
 					{
 						node2 = newNetwork.addNode();
-						cloneRow(newNetwork,CyNode.class,table.getRow(data.getRowLabel(threadIndex[pool])), newNetwork.getRow(node2));
+						netUtils.cloneRow(newNetwork,CyNode.class,table.getRow(data.getRowLabel(threadIndex[pool])), newNetwork.getRow(node2));
 						if(newNetwork.getRow(node2).get(CyNetwork.NAME,String.class ) == null || newNetwork.getRow(node2).get(CyNetwork.NAME,String.class ).isEmpty() == true)
 							newNetwork.getRow(node2).set(CyNetwork.NAME, "Node " + numNodes);
 						if(newNetwork.getRow(node2).get(CyNetwork.SELECTED,Boolean.class ) == true)
@@ -221,8 +223,8 @@ public class BasicInductionTask extends AbstractCyniTask {
 		if (!cancelled)
 		{
 			if(removeNodes)
-				removeNodesWithoutEdges(newNetwork);
-			newNetworkView = displayNewNetwork(newNetwork,networkSelected, false);
+				netUtils.removeNodesWithoutEdges(newNetwork);
+			newNetworkView = netUtils.displayNewNetwork(newNetwork,networkSelected, false);
 			taskMonitor.setProgress(1.0d);
 			layout = layoutManager.getDefaultLayout();
 			Object context = layout.getDefaultLayoutContext();

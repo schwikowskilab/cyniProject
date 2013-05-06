@@ -31,12 +31,11 @@ import org.cytoscape.cyni.*;
 
 
 /**
- * The BasicInduction provides a very simple Induction, suitable as
- * the default Induction for Cytoscape data readers.
+ * The AIC Metric
  */
 public class AICMetric extends AbstractCyniMetric {
 	
-	private EntropyMetric entropy;
+	private static Map<String,Integer> mapStringValues;
 	
 	/**
 	 * Creates a new  object.
@@ -45,32 +44,152 @@ public class AICMetric extends AbstractCyniMetric {
 		super("AIC.cyni","AIC Metric");
 		addType(CyniMetricTypes.INPUT_STRINGS.toString());
 		addType(CyniMetricTypes.LOCAL_METRIC_SCORE.toString());
-		entropy = new EntropyMetric();
-		
+		mapStringValues =  new HashMap<String,Integer>();
 	}
 	
 	public void resetParameters()
 	{
-		entropy.resetParameters();
+		if(!mapStringValues.isEmpty())
+			mapStringValues.clear();
 	}
-
 	
 	public Double getMetric(CyniTable table1, CyniTable table2, int indexBase,List<Integer> indexToCompare) { 
 		double result = 0.0;
-		int nCounts;
+		int i = 0;
+		int ncols,col;
+		int count = 0;
 		int numValues ;
+		int numParents = 1;
+		boolean equalTables;
 
-
-		result = entropy.getMetric(table1, table2, indexBase, indexToCompare);
-		numValues = table1.getAttributeStringValues().size();
-		nCounts  =  (int)Math.pow((double)numValues, (double)indexToCompare.size());
+		equalTables = table1.equals(table2);
 		
-		result +=  nCounts * (numValues - 1) ;
+		if(mapStringValues.size() != table1.getAttributeStringValues().size())
+		{
+			i=0;
+			mapStringValues.clear();
+			for(String name : table1.getAttributeStringValues())
+			{
+				mapStringValues.put(name, i);
+				i++;
+			}
+			if(!equalTables)
+			{
+				System.out.println("no equal tables");
+				for(String name : table2.getAttributeStringValues())
+				{
+					if(!mapStringValues.containsKey(name))
+					{
+						mapStringValues.put(name, i);
+						i++;
+					}
+				}
+			}
+		}
+		
+		if(indexToCompare.size() == 0)
+			return result;
+		
+		numValues =  mapStringValues.size();
+		
+		int[] nCounts = new int[ (int)Math.pow((double)numValues, (double)(indexToCompare.size()+1))];
+		int[] nodes ;
+			
+		
+		ncols = Math.min(table1.nColumns(),table2.nColumns());
+		if(equalTables)
+		{
+			if(indexToCompare.size() == 1)
+			{
+				if(indexToCompare.get(0) == indexBase)
+					nodes = new int[indexToCompare.size()];
+				else
+					nodes = new int[indexToCompare.size()+1];
+			}
+			else
+				nodes = new int[indexToCompare.size()+1];
+		}
+		else
+			nodes = new int[indexToCompare.size()+1];
+
+		i=0;
+		for(int ele : indexToCompare)
+		{
+			nodes[i] = ele;
+			i++;
+		}
+		if(indexToCompare.size() < nodes.length || !equalTables)
+		{
+			nodes[i] = indexBase;
+			for(int t : indexToCompare)
+				numParents *= table2.getNumPossibleStrings(t, true);
+		}
+		
+		for(col = 0; col<ncols;col++ )
+		{
+			count = 0;
+			for(i=0;i<(nodes.length-1);i++)
+			{
+				if(table2.hasValue(nodes[i], col))
+					count = numValues*count + mapStringValues.get(table2.stringValue(nodes[i], col));
+			}
+			if(i<nodes.length)
+			{
+				if(table1.hasValue(nodes[i], col))
+					count = numValues*count + mapStringValues.get(table1.stringValue(nodes[i], col));
+			}
+			nCounts[count]++;
+		}
+		
+		
+		
+		result = getScoreWithCounts(nodes,nCounts ,ncols, table1.getNumPossibleStrings(indexBase, true),numParents);
 		
 		
 		return  result;
 	}
 	
+	private double getScoreWithCounts(int[] nodes,int[] nCounts , int nData, int numValuesSon, int numValuesParents)
+	{
+		double result = 0.0;
+		int combinations;
+		int i,j;
+		int numValues =  mapStringValues.size();
+		int numTimes;
+		double proba;
+		
+		combinations = (int)Math.pow((double)mapStringValues.size(),(double)(nodes.length-1));
+		for(i=0;i<combinations;i++)
+		{
+			numTimes = 0;
+			for(j=0;j<numValues;j++)
+			{
+				numTimes += nCounts[i*numValues+j];
+			}
+			for(j=0;j<numValues;j++)
+			{
+				if(nCounts[i*numValues+j] > 0)
+				{
+					proba = (double)nCounts[i*numValues+j]/(double)numTimes;
+					result += (double)nCounts[i*numValues+j] * log2(proba);
+					
+				}
+			}
+		}
+		
+		result = (-1.0*result) + (double)(numValuesParents * (numValuesSon - 1));
+		return result;
+	}
+	
+	static double log2(double x)
+	{
+	    return (double) (Math.log(x) / Math.log(2.0));
+	}
+	
+	static double log(double x)
+	{
+	    return Math.log(x);
+	}
 	
 	public void setParameters(Map<String,Object> params){
 		

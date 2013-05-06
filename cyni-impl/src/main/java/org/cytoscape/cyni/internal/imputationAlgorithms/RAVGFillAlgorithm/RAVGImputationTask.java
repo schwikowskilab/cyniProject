@@ -117,6 +117,7 @@ public class RAVGImputationTask extends AbstractCyniTask {
         
 		step = 1.0 /  mytable.getColumns().size();
         
+		taskMonitor.setTitle("Row Average Impute Data");
         taskMonitor.setStatusMessage("Estimating missing data...");
 		taskMonitor.setProgress(progress);
 		

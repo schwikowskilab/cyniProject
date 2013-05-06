@@ -26,14 +26,14 @@ package org.cytoscape.cyni.internal.discretizationAlgorithms.EqualWidthFreqDiscr
 import java.io.IOException;
 import java.util.List;
 
-import org.cytoscape.cyni.AbstractCyniAlgorithmContext;
+import org.cytoscape.cyni.CyniAlgorithmContext;
 import org.cytoscape.work.util.*;
 import org.cytoscape.model.CyTable;
 
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableValidator;
 
-public class EqualDiscretizationContext extends AbstractCyniAlgorithmContext implements TunableValidator {
+public class EqualDiscretizationContext extends CyniAlgorithmContext implements TunableValidator {
 	@Tunable(description="Intervals")
 	public int bins = 5;
 	
