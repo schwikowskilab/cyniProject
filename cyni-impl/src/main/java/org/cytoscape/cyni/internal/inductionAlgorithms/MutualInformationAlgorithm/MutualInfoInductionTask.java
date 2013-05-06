@@ -126,7 +126,7 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 		if(selectedMetric.getName() == "Entropy.cyni")
 		{
 			Map<String,Object> params = new HashMap<String,Object>();
-			//params.put("Conditional", true);
+			params.put("Conditional", false);
 			params.put("LogBase", "log2");
 			selectedMetric.setParameters(params);
 		}

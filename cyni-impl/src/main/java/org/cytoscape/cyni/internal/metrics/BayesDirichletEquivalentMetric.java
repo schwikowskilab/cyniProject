@@ -63,6 +63,7 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 		int count = 0;
 		int numValues ;
 		boolean equalTables;
+		int numParents = 1;
 
 		equalTables = table1.equals(table2);
 		
@@ -121,7 +122,11 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 			i++;
 		}
 		if(indexToCompare.size() < nodes.length || !equalTables)
+		{
 			nodes[i] = indexBase;
+			for(int t : indexToCompare)
+				numParents *= table2.getNumPossibleStrings(t, true);
+		}
 		
 		for(col = 0; col<ncols;col++ )
 		{
@@ -139,13 +144,13 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 			nCounts[count]++;
 		}
 		
-		result = getScoreWithCounts(nodes,nCounts );
+		result = getScoreWithCounts(nodes,nCounts, table1.getNumPossibleStrings(indexBase, true),numParents );
 		
 		
 		return  result;
 	}
 	
-	private double getScoreWithCounts(int[] nodes,int[] nCounts )
+	private double getScoreWithCounts(int[] nodes,int[] nCounts , int numValuesSon, int numValuesParents)
 	{
 		double result = 1;
 		int combinations;
@@ -154,20 +159,22 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 		int numTimes;
 		double temp1,temp2;
 		
+		if(numValuesSon == 0 || numValuesParents == 0)
+			return 0.0;
 		combinations = (int)Math.pow((double)mapStringValues.size(),(double)(nodes.length-1));
-		temp1 = gammaln((double)1.0/(double)(combinations*numValues));
-		temp2 = gammaln((double)1.0/(double)combinations);
+		temp1 = gammaln((double)1.0/(double)(numValuesParents*numValuesSon));
+		temp2 = gammaln((double)1.0/(double)numValuesParents);
 		for(i=0;i<combinations;i++)
 		{
 			numTimes = 0;
 			for(j=0;j<numValues;j++)
 			{
-				result += gammaln(1.0/(double)(combinations*numValues)+(double)nCounts[i*numValues+j]);
+				result += gammaln(1.0/(double)(numValuesParents*numValuesSon)+(double)nCounts[i*numValues+j]);
 				result -=  temp1;
 				numTimes += nCounts[i*numValues+j];
 			}
 			result += temp2;
-			result -= gammaln(1.0/(double)combinations+(double)numTimes);
+			result -= gammaln(1.0/(double)numValuesParents+(double)numTimes);
 		}
 		
 		return  Math.exp(result);
@@ -176,10 +183,11 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 	private double gammaln(double xx)
 	{
 		Double fact;
-		
-		fact = mapValues.get(xx);
+		/*synchronized(mapValues){
+			fact = mapValues.get(xx);
+		}
 		if(fact != null)
-			return fact;
+			return fact;*/
 		
 		double x,y,tmp,ser;
 		int j;
@@ -195,7 +203,9 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 		ser = 0.999999999999997092;
 		for (j=0;j<14;j++) ser += cof[j]/++y;
 		fact = tmp+Math.log(2.5066282746310005*ser/x);
-		mapValues.put(xx, fact);
+		/*synchronized(mapValues){
+			mapValues.put(xx, fact);
+		}*/
 		return fact;
 
 	}
