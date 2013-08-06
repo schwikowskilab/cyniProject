@@ -149,7 +149,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		parentsToIndex = new ArrayList<Integer>();
 
 		// Create the CyniTable
-		CyniTable data = new CyniTable(table,attributeArray.toArray(new String[0]), false, false, selectedOnly);
+		CyniTable data = selectedMetric.getCyniTable(table,attributeArray.toArray(new String[0]), false, false, selectedOnly);
 		selectedMetric.resetParameters();
 		
 		if(selectedMetric.getName() == "Entropy.cyni")
@@ -190,21 +190,24 @@ public class K2InductionTask extends AbstractCyniTask {
 		else if(selectedOrder.equals("Use Column"))
 		{
 			if(selectedCol != null)
-				data.changeOrderRowsByColumnValuesOrder(table.getColumn(selectedCol).getValues(table.getColumn(selectedCol).getType()));
+			{
+				ArrayList<Object>  tempList = new ArrayList<Object>(nRows);
+				for(CyRow tempRow : table.getAllRows())
+				{
+					tempList.add(tempRow.get(selectedCol, table.getColumn(selectedCol).getType()));
+				}
+				data.changeOrderRowsByColumnValuesOrder(tempList);
+			}
 		}
 		
-		networkName = "K2 Inference " + newNetwork.getSUID();
-		if (newNetwork != null && networkName != null) {
-			CyRow netRow = newNetwork.getRow(newNetwork);
-			netRow.set(CyNetwork.NAME, networkName);
-		}
+		netUtils.setNetworkName(newNetwork, "K2 Inference " + newNetwork.getSUID());
 		
-		nodeTable = newNetwork.getDefaultNodeTable();
-		edgeTable = newNetwork.getDefaultEdgeTable();
-		netUtils.addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
 		
-		edgeTable.createColumn("Metric", String.class, false);	
-		edgeTable.createColumn("Score", Double.class, false);   
+		//netUtils.addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
+		netUtils.copyNodeColumns(newNetwork, table);
+				
+		netUtils.createEdgeColumn(newNetwork,"Metric", String.class, false);	
+		netUtils.createEdgeColumn(newNetwork,"Score", Double.class, false);	
 		
 		// Create the thread pools
 		ExecutorService executor = Executors.newFixedThreadPool(nThreads);
@@ -217,7 +220,7 @@ public class K2InductionTask extends AbstractCyniTask {
 			pOld = 0.0;
 			pNew = 0.0;
 			node1 = newNetwork.addNode();
-			netUtils.cloneRow(newNetwork,CyNode.class,table.getRow(data.getRowLabel(row)), newNetwork.getRow(node1, CyNetwork.LOCAL_ATTRS));
+			netUtils.cloneNodeRow(newNetwork,table.getRow(data.getRowLabel(row)), node1);
 			if(!table.getRow(data.getRowLabel(row)).isSet(CyNetwork.NAME))
 				newNetwork.getRow(node1).set(CyNetwork.NAME, "Node " + numNodes);
 			mapRowNodes.put(data.getRowLabel(row),node1);

@@ -27,37 +27,48 @@ package org.cytoscape.cyni;
  * An enum that captures the types of the default Cyni Metrics available
  * @CyAPI.Enum.Class
  */
-public enum CyniMetricTypes {
+public enum CyniMetricTags {
 	/** 
 	* Cyni Metric accepts numbers as input
 	*/ 
-	INPUT_NUMBERS( 0x01), 
+	INPUT_NUMBERS, 
 	
 	/** 
 	* Cyni Metric accepts strings as input
 	*/ 
-	INPUT_STRINGS (0x02), 
+	INPUT_STRINGS , 
 	
 	/** 
 	* Cyni Metric decomposed as the sum or product of the score of each individual node
 	*/ 
-	LOCAL_METRIC_SCORE (0x04),
+	LOCAL_METRIC_SCORE ,
+	
+	/** 
+	* Cyni Metric implements a information theory related metric
+	*/ 
+	INFORMATION_THEORY ,
+	
+	/** 
+	* Cyni Metric works with continuous values
+	*/ 
+	CONTINUOUS_VALUES ,
+	
+	/** 
+	* Cyni Metric works with discrete values
+	*/ 
+	DISCRETE_VALUES ,
+	
+	/** 
+	* Cyni Metric to  be used on bayesian methods
+	*/ 
+	BAYESIAN_METRIC ,
 	
 	/** 
 	* Cyni Metric based on searching for any statistical relationship between two sets of data
 	*/ 
-	CORRELATION_METRIC (0x08);
+	CORRELATION_METRIC ;
 	
 	
-	private int type;
 	
-	CyniMetricTypes(int type)
-	{
-		this.type = type;
-	}
-	public int getType()
-	{
-		return this.type;
-	}
 	
 }

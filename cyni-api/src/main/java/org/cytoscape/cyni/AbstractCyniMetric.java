@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.cytoscape.model.CyTable;
+
 
 
 /**
@@ -39,7 +41,7 @@ public abstract class AbstractCyniMetric implements CyCyniMetric {
 
 	private final String humanName;
 	private final String computerName;
-	private final ArrayList<String> types;
+	private final ArrayList<String> tags;
 	
 
 	/**
@@ -49,13 +51,12 @@ public abstract class AbstractCyniMetric implements CyCyniMetric {
 	 *            a computer readable name used to differentiate the metrics.
 	 * @param humanName
 	 *            a user visible name of the metric.
-	 * @param types
-	 *            list of types that this metric supports.
+	 *
 	 */
 	public AbstractCyniMetric(final String computerName,final String humanName) {
 		this.humanName = humanName;
 		this.computerName = computerName;
-		types = new ArrayList<String>();
+		tags = new ArrayList<String>();
 
 	}
 	
@@ -78,19 +79,30 @@ public abstract class AbstractCyniMetric implements CyCyniMetric {
 	}
 	
 	/**
-	 * It adds a type to the list of supported types for that metric
+	 * It adds a tags to the list of tags that define that metric
 	 * 
 	 */
-	protected void addType(String type){
-		types.add(type);
+	protected void addTag(String tag){
+		tags.add(tag);
 	}
+	
+	/**
+	 * It produces a CyniTable with methods specific for this metric
+	 * 
+	 * @return the new extended CyniTable
+	 */
+	public  CyniTable getCyniTable( CyTable table, String[] attributes, boolean transpose, boolean ignoreMissing, boolean selectedOnly)
+	{
+		return new CyniTable(table, attributes, transpose,ignoreMissing,selectedOnly);
+	}
+	
 	/**
 	 * The list of types of this metric
 	 * 
 	 * @return the list of types
 	 */
-	public List<String>  getTypesList() {
-		return types;
+	public List<String>  getTagsList() {
+		return tags;
 	}
 
 	/**

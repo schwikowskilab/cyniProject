@@ -39,8 +39,8 @@ public class CorrelationMetric extends AbstractCyniMetric {
 	 */
 	public CorrelationMetric() {
 		super("Correlation.cyni","Pearson's Correlation");
-		addType(CyniMetricTypes.INPUT_NUMBERS.toString());
-		addType(CyniMetricTypes.CORRELATION_METRIC.toString());
+		addTag(CyniMetricTags.INPUT_NUMBERS.toString());
+		addTag(CyniMetricTags.CORRELATION_METRIC.toString());
 		
 	}
 

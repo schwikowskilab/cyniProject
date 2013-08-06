@@ -111,17 +111,17 @@ public class CyCyniMetricsImpl implements CyCyniMetricsManager {
 	
 	
 	/**
-	 * Returns the list of names of metrics.
+	 * Returns the list of names of metrics that support all tags requested.
 	 * 
-	 * @param type
+	 * @param tags
 	 * @return the list of names of metrics.
 	 */
 	@Override
-	public ArrayList<CyCyniMetric> getAllCyniMetricsWithType(List<String> types){
+	public ArrayList<CyCyniMetric> getAllCyniMetricsWithTags(List<String> tags){
 		ArrayList<CyCyniMetric> list = new ArrayList<CyCyniMetric>();
 		
 		for(Map.Entry<String, CyCyniMetric> metric : CyniMetricsMap.entrySet()){
-			if(metric.getValue().getTypesList().containsAll(types))
+			if(metric.getValue().getTagsList().containsAll(tags))
 				list.add(metric.getValue());
 		}
 		

@@ -68,8 +68,8 @@ public abstract class AbstractCyniTask extends AbstractTask {
 
 
 	private final String name;
-	private final CyNetworkTableManager netTableMgr;
-	private final CyRootNetworkManager rootNetMgr;
+	protected final CyNetworkTableManager netTableMgr;
+	protected final CyRootNetworkManager rootNetMgr;
 	protected CyNetworkFactory netFactory;
 	protected CyNetworkViewFactory viewFactory;
 	protected CyNetworkManager netMgr;

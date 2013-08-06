@@ -42,8 +42,9 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 	 */
 	public BayesDirichletEquivalentMetric() {
 		super("BDE.cyni","Bayesian Dirichlet Equivalent(BDe) Metric");
-		addType(CyniMetricTypes.INPUT_STRINGS.toString());
-		addType(CyniMetricTypes.LOCAL_METRIC_SCORE.toString());
+		addTag(CyniMetricTags.INPUT_STRINGS.toString());
+		addTag(CyniMetricTags.LOCAL_METRIC_SCORE.toString());
+		addTag(CyniMetricTags.DISCRETE_VALUES.toString());
 		mapStringValues =  new HashMap<String,Integer>();
 		mapValues =  new HashMap<Double,Double>();
 	}

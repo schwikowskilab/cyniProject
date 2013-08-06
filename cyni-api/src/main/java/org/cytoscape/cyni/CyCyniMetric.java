@@ -26,6 +26,8 @@ package org.cytoscape.cyni;
 import java.util.List;
 import java.util.Map;
 
+import org.cytoscape.model.CyTable;
+
 
 /**
  * An interface specific to Cyni metrics.
@@ -51,11 +53,18 @@ public interface CyCyniMetric {
 	public String getName();
 	
 	/**
-	 * The list of types of this metric
+	 * The list of tags  that define this metric
 	 * 
-	 * @return the list of types
+	 * @return the list of tags
 	 */
-	public List<String>  getTypesList();
+	public List<String>  getTagsList();
+	
+	/**
+	 * It produces a CyniTable with methods specific for this metric
+	 * 
+	 * @return the new extended CyniTable
+	 */
+	public  CyniTable getCyniTable( CyTable table, String[] attributes, boolean transpose, boolean ignoreMissing, boolean selectedOnly);
 	
 	/**
 	 * It resets the metric and leaves the default metric's parameters

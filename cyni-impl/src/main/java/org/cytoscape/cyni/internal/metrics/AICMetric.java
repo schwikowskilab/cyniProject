@@ -42,8 +42,9 @@ public class AICMetric extends AbstractCyniMetric {
 	 */
 	public AICMetric() {
 		super("AIC.cyni","AIC Metric");
-		addType(CyniMetricTypes.INPUT_STRINGS.toString());
-		addType(CyniMetricTypes.LOCAL_METRIC_SCORE.toString());
+		addTag(CyniMetricTags.INPUT_STRINGS.toString());
+		addTag(CyniMetricTags.LOCAL_METRIC_SCORE.toString());
+		addTag(CyniMetricTags.DISCRETE_VALUES.toString());
 		mapStringValues =  new HashMap<String,Integer>();
 	}
 	

@@ -46,8 +46,10 @@ public class EntropyMetric extends AbstractCyniMetric {
 	 */
 	public EntropyMetric() {
 		super("Entropy.cyni","Entropy Metric");
-		addType(CyniMetricTypes.INPUT_STRINGS.toString());
-		addType(CyniMetricTypes.LOCAL_METRIC_SCORE.toString());
+		addTag(CyniMetricTags.INPUT_STRINGS.toString());
+		addTag(CyniMetricTags.LOCAL_METRIC_SCORE.toString());
+		addTag(CyniMetricTags.DISCRETE_VALUES.toString());
+		addTag(CyniMetricTags.INFORMATION_THEORY.toString());
 		mapStringValues =  new HashMap<String,Integer>();
 		log2 = new LogBase2();
 		log10 = new LogBase10();

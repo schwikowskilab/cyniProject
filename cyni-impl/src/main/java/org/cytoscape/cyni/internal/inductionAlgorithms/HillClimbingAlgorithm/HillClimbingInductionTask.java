@@ -125,9 +125,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 	@Override
 	final protected void doCyniTask(final TaskMonitor taskMonitor) {
 		
-		String networkName;
 		Integer numNodes = 1;
-		CyTable nodeTable, edgeTable, netTable;
+		CyTable nodeTable, netTable;
 		CyEdge edge;
 		CyNode newNode;
 		CyLayoutAlgorithm layout;
@@ -152,16 +151,14 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		taskMonitor.setStatusMessage("Generating Hill Climbing Inference...");
 		taskMonitor.setProgress(progress);
 		
-		networkName = "HC Inference " + newNetwork.getSUID();
-		if (newNetwork != null && networkName != null) {
-			CyRow netRow = newNetwork.getRow(newNetwork);
-			netRow.set(CyNetwork.NAME, networkName);
-		}
+		netUtils.setNetworkName(newNetwork, "HC Inference " + newNetwork.getSUID());
 		
 		if(selectedMetric.getName() == "Entropy.cyni" || selectedMetric.getName() == "AIC.cyni" || selectedMetric.getName() == "MDL.cyni")
 			changeSign = true;
 		
-		netUtils.addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
+		//netUtils.addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
+		
+		netUtils.copyNodeColumns(newNetwork, table);
 		
 		for (CyRow origRow : table.getAllRows()) {
 			if(selectedOnly)
@@ -175,18 +172,17 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 				orig2NewNodeMap.put(networkSelected.getNode(origRow.get(CyNetwork.SUID,Long.class)), newNode);
 				new2OrigNodeMap.put(newNode, networkSelected.getNode(origRow.get(CyNetwork.SUID,Long.class)));
 			}
-			netUtils.cloneRow(newNetwork, CyNode.class,origRow, newNetwork.getRow(newNode, CyNetwork.LOCAL_ATTRS));
+			netUtils.cloneNodeRow(newNetwork, origRow, newNode);
 			if(!origRow.isSet(CyNetwork.NAME))
 				newNetwork.getRow(newNode).set(CyNetwork.NAME, "Node " + numNodes);
 			numNodes++;
 		}
 		
 		nodeTable = newNetwork.getDefaultNodeTable();
-		edgeTable = newNetwork.getDefaultEdgeTable();
 		netTable = newNetwork.getDefaultNetworkTable();
 		
 		// Create the CyniTable
-		CyniTable data = new CyniTable(nodeTable,attributeArray.toArray(new String[0]), false, false, selectedOnly);
+		CyniTable data = selectedMetric.getCyniTable(nodeTable,attributeArray.toArray(new String[0]), false, false, selectedOnly);
 		
 		if(data.hasAnyMissingValue())
 		{
@@ -249,7 +245,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 				{
 					final boolean newDirected = origEdge.isDirected();
 					final CyEdge newEdge = newNetwork.addEdge(newSource, newTarget, newDirected);
-					netUtils.cloneRow(newNetwork, CyEdge.class, networkSelected.getRow(origEdge, CyNetwork.LOCAL_ATTRS), newNetwork.getRow(newEdge, CyNetwork.LOCAL_ATTRS));
+					netUtils.cloneEdgeRow(newNetwork, networkSelected.getRow(origEdge, CyNetwork.LOCAL_ATTRS), newEdge);
 					if(edgesBlocked)
 					{
 						if(networkSelected.getRow(origEdge, CyNetwork.LOCAL_ATTRS).get(CyNetwork.SELECTED, Boolean.class))
@@ -307,11 +303,12 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		taskMonitor.setStatusMessage("Initializing Cache..." );
 		initCache(data, selectedMetric, taskMonitor);
 		taskMonitor.setStatusMessage("Cache Initialized\n Looking for optimal solution..." );
-		edgeTable.createColumn("Metric", String.class, false);	
-		edgeTable.createColumn("Score", Double.class, false);	
-		netTable.createColumn("Added Edges", Integer.class, false);
-		netTable.createColumn("Removed Edges", Integer.class, false);
-		netTable.createColumn("Reversed Edges", Integer.class, false);
+		netUtils.createEdgeColumn(newNetwork,"Metric", String.class, false);	
+		netUtils.createEdgeColumn(newNetwork,"Score", Double.class, false);	
+		netUtils.createNetworkColumn(newNetwork,"Added Edges", Integer.class, false);	
+		netUtils.createNetworkColumn(newNetwork,"Removed Edges", Integer.class, false);	
+		netUtils.createNetworkColumn(newNetwork,"Reversed Edges", Integer.class, false);	
+		
 		progress += 0.5; 
 		added = 0;
 		removed = 0;

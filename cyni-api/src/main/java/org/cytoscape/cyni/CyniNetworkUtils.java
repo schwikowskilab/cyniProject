@@ -87,6 +87,128 @@ public class CyniNetworkUtils  {
 		
 	}
 	
+	
+	/**
+	 * Copy the columns from a table to the node table of a network.
+	 * Basically, allows copying all columns from one table to another one.
+	 * 
+	 * @param newNet The new network
+	 * @param origTable The original table
+	 */
+	public void copyNodeColumns(final CyNetwork newNetwork, final CyTable origTable) {
+		CyTable from = origTable; 
+		CyTable to = newNetwork.getDefaultNodeTable();
+		
+			
+		for (final CyColumn col : from.getColumns())
+		{
+			final String name = col.getName();
+			
+			if (to.getColumn(name) == null){
+			
+					copyColumn(col, to);
+			}
+		}
+	}
+	
+	/**
+	 * Copy the columns from a table to the edge table of a network.
+	 * Basically, allows copying all columns from one table to another one.
+	 * 
+	 * @param newNet The new network
+	 * @param origTable The original table
+	 */
+	public void copyEdgeColumns(final CyNetwork newNetwork, final CyTable origTable) {
+		CyTable from = origTable; 
+		CyTable to = newNetwork.getDefaultEdgeTable();
+		
+			
+		for (final CyColumn col : from.getColumns())
+		{
+			final String name = col.getName();
+			
+			if (to.getColumn(name) == null){
+			
+					copyColumn(col, to);
+			}
+		}
+	}
+	
+	/**
+	 * Copy the columns from a table to the edge table of a network.
+	 * Basically, allows copying all columns from one table to another one.
+	 * 
+	 * @param newNet The network
+	 * @param name The name of the network
+	 */
+	public void setNetworkName(final CyNetwork newNetwork,String name)
+	{
+		if (newNetwork != null && name != null) {
+			CyRow netRow = newNetwork.getRow(newNetwork);
+			netRow.set(CyNetwork.NAME, name);
+		}
+	}
+	
+	/**
+	 * Create a column of the specified name and the specified type in the node table of 
+	 * the specified network. The column type is limited
+	 * to Integer, Long, Double, String, and Boolean. The
+	 * default value for the column will be null.
+	 * If the column already exists, the column will not be created.
+	 * @param newNetwork The network where the new column will be created
+	 * @param <T> The generic type of the column.
+	 * @param columnName The name identifying the attribute.
+	 * @param type The type of the column.
+	 * @param isImmutable  if true, this column can never be deleted
+	 */
+	public <T> void createNodeColumn(final CyNetwork newNetwork,String columnName, Class<?extends T> type, boolean isImmutable)
+	{
+		CyTable temp = newNetwork.getDefaultNodeTable();
+		
+		if(temp.getColumn(columnName) == null)
+			temp.createColumn(columnName, type, isImmutable);
+	}
+	
+	/**
+	 * Create a column of the specified name and the specified type in the edge table of 
+	 * the specified network. The column type is limited
+	 * to Integer, Long, Double, String, and Boolean. The
+	 * default value for the column will be null.
+	 * If the column already exists, the column will not be created.
+	 * @param newNetwork The network where the new column will be created
+	 * @param <T> The generic type of the column.
+	 * @param columnName The name identifying the attribute.
+	 * @param type The type of the column.
+	 * @param isImmutable  if true, this column can never be deleted
+	 */
+	public <T> void createEdgeColumn(final CyNetwork newNetwork,String columnName, Class<?extends T> type, boolean isImmutable)
+	{
+		CyTable temp = newNetwork.getDefaultEdgeTable();
+		
+		if(temp.getColumn(columnName) == null)
+			temp.createColumn(columnName, type, isImmutable);
+	}
+	
+	/**
+	 * Create a column of the specified name and the specified type in the network table of 
+	 * the specified network. The column type is limited
+	 * to Integer, Long, Double, String, and Boolean. The
+	 * default value for the column will be null.
+	 * If the column already exists, the column will not be created.
+	 * @param newNetwork The network where the new column will be created
+	 * @param <T> The generic type of the column.
+	 * @param columnName The name identifying the attribute.
+	 * @param type The type of the column.
+	 * @param isImmutable  if true, this column can never be deleted
+	 */
+	public <T> void createNetworkColumn(final CyNetwork newNetwork,String columnName, Class<?extends T> type, boolean isImmutable)
+	{
+		CyTable temp = newNetwork.getDefaultNetworkTable();
+		
+		if(temp.getColumn(columnName) == null)
+			temp.createColumn(columnName, type, isImmutable);
+	}
+	
 	/**
 	 * Add columns that belong to a table associated to a network to a new table associated to a new network.
 	 * Basically, allows copying all columns from one table to another one
@@ -169,6 +291,60 @@ public class CyniNetworkUtils  {
 			subTable.createListColumn(col.getName(), col.getListElementType(), false);
 		else
 			subTable.createColumn(col.getName(), col.getType(), false);	
+	}
+	
+	/**
+	 * Clone the row data to the row corresponding to a node
+	 * 
+	 * @param newNet The network where the node belongs
+	 * @param sourceRow The source row
+	 * @param targetNode The target node where the data will be cloned
+	 */
+	public void cloneNodeRow(final CyNetwork newNet,  final CyRow sourceRow,final CyNode targetNode) {
+		final CyRootNetwork newRoot = rootNetMgr.getRootNetwork(newNet);
+		Map<String, CyTable> rootTables = netTableMgr.getTables(newRoot, CyNode.class);
+		CyRow to = newNet.getRow(targetNode);
+		
+		for (final CyColumn col : to.getTable().getColumns()){
+			final String name = col.getName();
+			
+			if (name.equals(CyIdentifiable.SUID))
+				continue;
+			
+			final VirtualColumnInfo info = col.getVirtualColumnInfo();
+			
+			// If it's a virtual column whose source table is assigned to the new root-network,
+			// then we have to set the value, because the rows of the new root table may not have been copied yet
+			if (!info.isVirtual() || rootTables.containsValue(info.getSourceTable()))
+				to.set(name, sourceRow.getRaw(name));
+		}
+	}
+	
+	/**
+	 * Clone the row data to the row corresponding to an edge
+	 * 
+	 * @param newNet The network where the node belongs
+	 * @param sourceRow The source row
+	 * @param targetEdge The target edge where the data will be cloned
+	 */
+	public void cloneEdgeRow(final CyNetwork newNet,  final CyRow sourceRow,final CyEdge targetEdge) {
+		final CyRootNetwork newRoot = rootNetMgr.getRootNetwork(newNet);
+		Map<String, CyTable> rootTables = netTableMgr.getTables(newRoot, CyEdge.class);
+		CyRow to = newNet.getRow(targetEdge);
+		
+		for (final CyColumn col : to.getTable().getColumns()){
+			final String name = col.getName();
+			
+			if (name.equals(CyIdentifiable.SUID))
+				continue;
+			
+			final VirtualColumnInfo info = col.getVirtualColumnInfo();
+			
+			// If it's a virtual column whose source table is assigned to the new root-network,
+			// then we have to set the value, because the rows of the new root table may not have been copied yet
+			if (!info.isVirtual() || rootTables.containsValue(info.getSourceTable()))
+				to.set(name, sourceRow.getRaw(name));
+		}
 	}
 	
 	/**

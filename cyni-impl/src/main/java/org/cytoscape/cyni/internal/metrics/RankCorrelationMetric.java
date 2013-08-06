@@ -40,8 +40,8 @@ public class RankCorrelationMetric extends AbstractCyniMetric {
 	 */
 	public RankCorrelationMetric() {
 		super("RankCorrelation.cyni","Spearman Rank Correlation");
-		addType(CyniMetricTypes.INPUT_NUMBERS.toString());
-		addType(CyniMetricTypes.CORRELATION_METRIC.toString());
+		addTag(CyniMetricTags.INPUT_NUMBERS.toString());
+		addTag(CyniMetricTags.CORRELATION_METRIC.toString());
 	}
 
 	

@@ -42,8 +42,9 @@ public class BayesianMetric extends AbstractCyniMetric {
 	 */
 	public BayesianMetric() {
 		super("Bayesian.cyni","Bayesian (K2) Metric");
-		addType(CyniMetricTypes.INPUT_STRINGS.toString());
-		addType(CyniMetricTypes.LOCAL_METRIC_SCORE.toString());
+		addTag(CyniMetricTags.INPUT_STRINGS.toString());
+		addTag(CyniMetricTags.LOCAL_METRIC_SCORE.toString());
+		addTag(CyniMetricTags.DISCRETE_VALUES.toString());
 		mapStringValues =  new HashMap<String,Integer>();
 		mapFactorial =  new HashMap<Double,Double>();
 		mapFactorial.put(0.0,1.0);

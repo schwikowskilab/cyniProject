@@ -72,9 +72,9 @@ public class K2Induction extends AbstractCyniAlgorithm {
 		CyniAlgorithmContext context;
 		selectedTable = table;
 		List<String> listTypes = new ArrayList<String>();
-		listTypes.add(CyniMetricTypes.LOCAL_METRIC_SCORE.toString());
+		listTypes.add(CyniMetricTags.LOCAL_METRIC_SCORE.toString());
 		metricsManager.setDefaultCyniMetric("Bayesian.cyni");
-		context = new K2InductionContext(supportsSelectedOnly(), selectedTable, metricsManager.getAllCyniMetricsWithType(listTypes),metricsManager);
+		context = new K2InductionContext(supportsSelectedOnly(), selectedTable, metricsManager.getAllCyniMetricsWithTags(listTypes),metricsManager);
 		if(mparams != null && !mparams.isEmpty())
 			tunableSetter.applyTunables(context, mparams);
 		return context;

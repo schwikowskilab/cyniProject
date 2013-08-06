@@ -25,22 +25,23 @@ package org.cytoscape.cyni;
 
 import java.util.*;
 
-import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
+import cern.colt.matrix.tobject.impl.*;
+import cern.colt.matrix.tdouble.impl.*;
 
 
 
 public class CyniTable {
 	private int nRows;
 	private int nColumns;
-	private Object data[][];
+	private DenseObjectMatrix2D data;
 	private CyTable internalTable;
-	private double colWeights[];
-	private double rowWeights[];
-	private Object rowLabels[];
-	private Object columnLabels[];
+	private DenseDoubleMatrix1D colWeights;
+	private DenseDoubleMatrix1D rowWeights;
+	private DenseObjectMatrix1D rowLabels;
+	private DenseObjectMatrix1D columnLabels;
 	protected boolean transpose;
 	protected boolean anyMissing;
 	protected boolean ignoreMissing;
@@ -96,13 +97,13 @@ public class CyniTable {
 		
 		if (transpose) 
 		{
-			rowLabels = new Object[attributes.length];
-			columnLabels = new Object[internalTable.getAllRows().size()];
+			rowLabels = new DenseObjectMatrix1D(attributes.length);
+			columnLabels = new DenseObjectMatrix1D(internalTable.getAllRows().size());
 		}
 		else
 		{
-			columnLabels = new Object[attributes.length];
-			rowLabels = new Object[internalTable.getAllRows().size()];
+			columnLabels = new DenseObjectMatrix1D(attributes.length);
+			rowLabels = new DenseObjectMatrix1D(internalTable.getAllRows().size());
 		}
 
 		if (attributes.length >= 1 ) 
@@ -111,13 +112,13 @@ public class CyniTable {
 			for ( i = 0; i < attributes.length; i++) 
 			{
 				if (transpose) {
-					rowLabels[i] = attributes[i];
+					rowLabels.setQuick(i,  attributes[i]);
 					mapRowLabels.put(attributes[i], i);
 					nRows++;
 				}
 				else
 				{
-					columnLabels[i] = attributes[i];
+					columnLabels.setQuick(i, attributes[i]);
 					mapColLabels.put(attributes[i], i);
 					nColumns++;
 				}
@@ -144,13 +145,13 @@ public class CyniTable {
 					continue;
 				}
 				if (transpose) {
-					columnLabels[i++] = row.getRaw(primaryKey);
+					columnLabels.setQuick(i++, row.getRaw(primaryKey));
 					mapColLabels.put(row.getRaw(primaryKey), i-1);
 					nColumns++;
 				}
 				else
 				{
-					rowLabels[i++] = row.getRaw(primaryKey);
+					rowLabels.setQuick(i++, row.getRaw(primaryKey));
 					mapRowLabels.put(row.getRaw(primaryKey), i-1);
 					nRows++;
 				}
@@ -210,7 +211,7 @@ public class CyniTable {
 			setUniformWeights();
 			
 			//Fill in the internal table
-			this.data = new Object[nRows][nColumns];
+			this.data = new DenseObjectMatrix2D(nRows,nColumns);//Object[nRows][nColumns];
 			for(i=0;i<nRows;i++)
 			{
 				mapRowOrder.put(i, i);
@@ -218,21 +219,21 @@ public class CyniTable {
 				{
 					if (transpose) 
 					{
-						data[i][j] = internalTable.getRow(columnLabels[j]).get((String)rowLabels[i], indexToTypes[i]);
+						data.setQuick(i, j, internalTable.getRow(columnLabels.get(j)).get((String)rowLabels.get(i), indexToTypes[i]));
 						if(indexToTypes[i] == String.class)
 						{
-							stringRow.add((String) data[i][j]);
+							stringRow.add((String) data.getQuick(i, j));
 						}
 					}
 					else
 					{
-						data[i][j] = internalTable.getRow(rowLabels[i]).get((String)columnLabels[j], indexToTypes[j]);
+						data.setQuick(i, j, internalTable.getRow(rowLabels.getQuick(i)).get((String)columnLabels.getQuick(j), indexToTypes[j]));
 						if(indexToTypes[j] == String.class)
 						{
-							stringRow.add((String) data[i][j]);
+							stringRow.add((String) data.getQuick(i, j));
 						}
 					}
-					if(data[i][j] == null)
+					if(data.getQuick(i, j) == null)
 					{
 						anyMissing = true;
 						rowHasMissingValue[i] = true;
@@ -255,12 +256,13 @@ public class CyniTable {
 			{
 				anyMissing = false;
 				index = 0;
+				Object values[][] = data.toArray();
 				for(i=0;i<nRows;i++)
 				{
 					if(!rowHasMissingValue[i])
 					{
-						 System.arraycopy(data[i], 0, data[index], 0,nColumns);
-						 rowLabels[index] = rowLabels[i];
+						 System.arraycopy(values[i], 0, values[index], 0,nColumns);
+						 rowLabels.setQuick(index, rowLabels.getQuick(i));
 						 index++;
 					}
 				}
@@ -269,6 +271,7 @@ public class CyniTable {
 					Arrays.fill(colHasMissingValue, false);
 					Arrays.fill(rowHasMissingValue, false);
 					nRows = index;
+					data.assign(values);
 				}
 			}
 		} else {
@@ -285,11 +288,11 @@ public class CyniTable {
 	public CyniTable(CyniTable duplicate) {
 		this.nRows = duplicate.nRows();
 		this.nColumns = duplicate.nColumns();
-		this.data = new Object[nRows][nColumns];
-		this.colWeights = new double[nColumns];
-		this.rowWeights = new double[nRows];
-		this.columnLabels = new Object[nColumns];
-		this.rowLabels = new Object[nRows];
+		this.data =  new DenseObjectMatrix2D(nRows,nColumns);
+		this.colWeights = new DenseDoubleMatrix1D(nColumns);
+		this.rowWeights = new DenseDoubleMatrix1D(nRows);
+		this.columnLabels = new DenseObjectMatrix1D(nColumns);
+		this.rowLabels = new DenseObjectMatrix1D(nRows);
 		this.ignoreMissing = duplicate.ignoreMissing;
 		this.selectedOnly = duplicate.selectedOnly;
 		this.internalTable = duplicate.internalTable;
@@ -319,8 +322,8 @@ public class CyniTable {
 		}
 
 		for (int row = 0; row < nRows; row++) {
-			rowWeights[row] = duplicate.getRowWeight(row);
-			rowLabels[row] = duplicate.getRowLabel(row);
+			rowWeights.setQuick(row,  duplicate.getRowWeight(row));
+			rowLabels.setQuick(row , duplicate.getRowLabel(row));
 			rowHasMissingValue[row] = duplicate.rowHasMissingValue(row);
 			if (transpose) {
 				this.colNumStringsDiff[row] = duplicate.colNumStringsDiff[row];
@@ -331,8 +334,8 @@ public class CyniTable {
 			
 			for (int col = 0; col < nColumns; col++) {
 				if (row == 0) {
-					colWeights[col] = duplicate.getColWeight(col);
-					columnLabels[col] = duplicate.getColLabel(col);
+					colWeights.setQuick(col,  duplicate.getColWeight(col));
+					columnLabels.setQuick(col, duplicate.getColLabel(col));
 					colHasMissingValue[col] = duplicate.columnHasMissingValue(col);
 					
 				}
@@ -343,7 +346,7 @@ public class CyniTable {
 					this.colNumStringsDiff[col] = duplicate.colNumStringsDiff[col];
 				}
 				if (duplicate.getValue(row, col) != null)
-					this.data[row][col] = duplicate.getValue(row, col);
+					this.data.setQuick(row, col,  duplicate.getValue(row, col));
 			}
 			mapRowOrder.put(row, duplicate.mapRowOrder.get(row));
 		}
@@ -369,11 +372,11 @@ public class CyniTable {
 	public CyniTable(int rows, int cols) {
 		this.nRows = rows;
 		this.nColumns = cols;
-		this.data = new Double[rows][cols];
-		this.colWeights = new double[cols];
-		this.rowWeights = new double[rows];
-		this.columnLabels = new Object[cols];
-		this.rowLabels = new Object[rows];
+		this.data =  new DenseObjectMatrix2D(nRows,nColumns);
+		this.colWeights = new DenseDoubleMatrix1D(cols);
+		this.rowWeights = new DenseDoubleMatrix1D(rows);
+		this.columnLabels = new DenseObjectMatrix1D(cols);
+		this.rowLabels = new DenseObjectMatrix1D(rows);
 		this.transpose = false;
 		this.ignoreMissing = false;
 		this.anyMissing = false;
@@ -425,7 +428,7 @@ public class CyniTable {
 	public Object getValue(int row, int column) {
 		if(row >= nRows || column >= nColumns)
 			return null;
-		return data[mapRowOrder.get(row)][column];
+		return data.getQuick(mapRowOrder.get(row),column);
 	}
 	
 	/**
@@ -460,13 +463,13 @@ public class CyniTable {
 		
 		if(indexToTypes[typeIndex] == Double.class || indexToTypes[typeIndex] == Float.class)
 		{
-			result = (Double) data[mapRowOrder.get(row)][column];
+			result = (Double) data.getQuick(mapRowOrder.get(row),column);
 		}
 		else
 		{
 			if(indexToTypes[typeIndex] == Integer.class)
 			{
-				Integer intVal = (Integer) data[mapRowOrder.get(row)][column];
+				Integer intVal = (Integer) data.getQuick(mapRowOrder.get(row),column);
 				result = Double.valueOf(intVal.doubleValue());
 			}
 				
@@ -499,14 +502,14 @@ public class CyniTable {
 		
 		if(indexToTypes[typeIndex] == Double.class || indexToTypes[typeIndex] == Float.class)
 		{
-			Double val = (Double) data[mapRowOrder.get(row)][column];
+			Double val = (Double) data.getQuick(mapRowOrder.get(row),column);
 			result = val.intValue();
 		}
 		else
 		{
 			if(indexToTypes[typeIndex] == Integer.class)
 			{
-				result = (Integer) data[mapRowOrder.get(row)][column];
+				result = (Integer) data.getQuick(mapRowOrder.get(row),column);
 			}
 				
 		}
@@ -538,7 +541,7 @@ public class CyniTable {
 		
 		if(indexToTypes[typeIndex] == String.class )
 		{
-			result = (String) data[mapRowOrder.get(row)][column];
+			result = (String) data.getQuick(mapRowOrder.get(row),column);
 		}
 			
 		return result;
@@ -554,7 +557,7 @@ public class CyniTable {
 	public boolean hasValue(int row, int column) {
 		boolean result;
 		result = true;
-		if(row >= nRows || column >= nColumns || data[mapRowOrder.get(row)][column]==null)
+		if(row >= nRows || column >= nColumns || data.getQuick(mapRowOrder.get(row),column)==null)
 			result = false;
 		
 		return result;
@@ -633,11 +636,13 @@ public class CyniTable {
 	 */
 	public void setUniformWeights() {
 		if (colWeights == null || rowWeights == null) {
-			colWeights = new double[nColumns];
-			rowWeights = new double[nRows];
+			colWeights = new DenseDoubleMatrix1D(nColumns);
+			rowWeights = new DenseDoubleMatrix1D(nRows);
 		}
-		Arrays.fill(this.colWeights,1.0);
-		Arrays.fill(this.rowWeights,1.0);
+		colWeights.assign(1.0);
+		rowWeights.assign(1.0);
+		//Arrays.fill(this.colWeights,1.0);
+		//Arrays.fill(this.rowWeights,1.0);
 	}
 
 	/**
@@ -645,7 +650,7 @@ public class CyniTable {
 	 * @return The array of weights for the rows.
 	 */
 	public double[] getRowWeights() {
-		return this.rowWeights;
+		return this.rowWeights.toArray();
 	}
 
 	/**
@@ -654,7 +659,7 @@ public class CyniTable {
 	 * @return The weight for the specified row.
 	 */
 	public double getRowWeight(int row) {
-		return this.rowWeights[mapRowOrder.get(row)];
+		return this.rowWeights.getQuick(mapRowOrder.get(row));
 	}
 
 	/**
@@ -662,7 +667,7 @@ public class CyniTable {
 	 * @return The array of weights for the columns.
 	 */
 	public double[] getColWeights() {
-		return this.colWeights;
+		return this.colWeights.toArray();
 	}
 
 	/**
@@ -671,7 +676,7 @@ public class CyniTable {
 	 * @return The weight for the specified column.
 	 */
 	public double getColWeight(int col) {
-		return this.colWeights[col];
+		return this.colWeights.getQuick(col);
 	}
 
 	/**
@@ -681,9 +686,9 @@ public class CyniTable {
 	 */
 	public void setRowWeight(int row, double value) {
 		if (rowWeights == null) {
-			rowWeights = new double[nRows];
+			rowWeights = new DenseDoubleMatrix1D(nRows);
 		}
-		rowWeights[mapRowOrder.get(row)] = value;
+		rowWeights.setQuick(mapRowOrder.get(row), value);
 	}
 
 	/**
@@ -693,9 +698,9 @@ public class CyniTable {
 	 */
 	public void setColWeight(int col, double value) {
 		if (colWeights == null) {
-			colWeights = new double[nColumns];
+			colWeights = new DenseDoubleMatrix1D(nColumns);
 		}
-		colWeights[col] = value;
+		colWeights.setQuick(col,  value);
 	}
 
 	/**
@@ -703,7 +708,7 @@ public class CyniTable {
 	 * @return The array with all column labels.
 	 */
 	public Object[] getColLabels() {
-		return this.columnLabels;
+		return this.columnLabels.toArray();
 	}
 
 	/**
@@ -712,7 +717,7 @@ public class CyniTable {
 	 * @return The label for the specified column.
 	 */
 	public Object getColLabel(int col) {
-		return this.columnLabels[col];
+		return this.columnLabels.getQuick(col);
 	}
 
 	/**
@@ -723,7 +728,7 @@ public class CyniTable {
 	public void setColLabel(int col, Object label) {
 		if(col<nColumns)
 		{
-			this.columnLabels[col] = label;
+			this.columnLabels.setQuick(col, label);
 			mapColLabels.put(label, col);
 		}
 	}
@@ -745,7 +750,7 @@ public class CyniTable {
 	 * @return The array with all row labels.
 	 */
 	public Object[] getRowLabels() {
-		return this.rowLabels;
+		return this.rowLabels.toArray();
 	}
 
 	/**
@@ -754,7 +759,7 @@ public class CyniTable {
 	 * @return The label for the specified row.
 	 */
 	public Object getRowLabel(int row) {
-		return this.rowLabels[mapRowOrder.get(row)];
+		return this.rowLabels.getQuick(mapRowOrder.get(row));
 	}
 	
 	/**
@@ -777,7 +782,7 @@ public class CyniTable {
 	public void setRowLabel(int row, Object label) {
 		if(row<nRows)
 		{
-			this.rowLabels[mapRowOrder.get(row)] = label;
+			this.rowLabels.setQuick(mapRowOrder.get(row), label);
 			mapRowLabels.put(label, row);
 		}
 	}
@@ -850,11 +855,11 @@ public class CyniTable {
 			{
 				if(getType(row,column) == Integer.class)
 				{
-					tData[nVals++] = ((Integer) data[mapRowOrder.get(row)][column]).doubleValue();
+					tData[nVals++] = ((Integer) data.getQuick(mapRowOrder.get(row),column)).doubleValue();
 				}
 				else
 				{
-					tData[nVals++] = (Double) data[mapRowOrder.get(row)][column];
+					tData[nVals++] = (Double) data.getQuick(mapRowOrder.get(row),column);
 				}
 			}
 		}

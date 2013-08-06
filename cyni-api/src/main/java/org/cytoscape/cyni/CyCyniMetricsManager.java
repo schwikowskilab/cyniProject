@@ -56,10 +56,10 @@ public interface CyCyniMetricsManager {
 	/**
 	 * Returns the list of metrics that contains at least the same types that are passed as input parameter.
 	 * 
-	 * @param types The list of types that the metrics need to support
+	 * @param tags The list of tags that the metrics need to support
 	 * @return the list of metrics.
 	 */
-	ArrayList<CyCyniMetric> getAllCyniMetricsWithType(List<String> types);
+	ArrayList<CyCyniMetric> getAllCyniMetricsWithTags(List<String> tags);
 
 	/**
 	 * Returns the default Cyni Metric. The default metric name can be

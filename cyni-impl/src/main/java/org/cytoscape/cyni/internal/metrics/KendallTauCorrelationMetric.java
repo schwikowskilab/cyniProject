@@ -40,8 +40,8 @@ public class KendallTauCorrelationMetric extends AbstractCyniMetric {
 	 */
 	public KendallTauCorrelationMetric() {
 		super("Kendall.cyni","Kendall Tau Correlation");
-		addType(CyniMetricTypes.INPUT_NUMBERS.toString());
-		addType(CyniMetricTypes.CORRELATION_METRIC.toString());
+		addTag(CyniMetricTags.INPUT_NUMBERS.toString());
+		addTag(CyniMetricTags.CORRELATION_METRIC.toString());
 	}
 
 	

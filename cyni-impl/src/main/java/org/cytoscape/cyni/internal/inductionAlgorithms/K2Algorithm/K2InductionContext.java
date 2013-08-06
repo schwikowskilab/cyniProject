@@ -61,27 +61,27 @@ public class K2InductionContext extends CyniAlgorithmContext implements TunableV
 	@Tunable(description="Data Attributes", groups="Sources for Network Inference",listenForChange={"Measures"})
 	public ListMultipleSelection<String> getA()
 	{
-		List<String>  typeList ;
+		List<String>  tagList ;
 		if(measures.getPossibleValues().size()==0)
 		{
 			attributeList = new  ListMultipleSelection<String>("No sources available");
 		}
 		else
 		{
-			typeList = measures.getSelectedValue().getTypesList();
-			if(typeList.contains(CyniMetricTypes.INPUT_NUMBERS.toString())  &&  !currentType.matches(CyniMetricTypes.INPUT_NUMBERS.toString()))
+			tagList = measures.getSelectedValue().getTagsList();
+			if(tagList.contains(CyniMetricTags.INPUT_NUMBERS.toString())  &&  !currentType.matches(CyniMetricTags.INPUT_NUMBERS.toString()))
 			{
 				attributes = getAllAttributesNumbers(selectedTable);
 				attributeList = new  ListMultipleSelection<String>(attributes);
-				currentType = CyniMetricTypes.INPUT_NUMBERS.toString();
+				currentType = CyniMetricTags.INPUT_NUMBERS.toString();
 			}
 			else
 			{
-				if(typeList.contains(CyniMetricTypes.INPUT_STRINGS.toString())  &&  !currentType.matches(CyniMetricTypes.INPUT_STRINGS.toString()))
+				if(tagList.contains(CyniMetricTags.INPUT_STRINGS.toString())  &&  !currentType.matches(CyniMetricTags.INPUT_STRINGS.toString()))
 				{
 					attributes = getAllAttributesStrings(selectedTable);
 					attributeList = new  ListMultipleSelection<String>(attributes);
-					currentType =  CyniMetricTypes.INPUT_STRINGS.toString();
+					currentType =  CyniMetricTags.INPUT_STRINGS.toString();
 				}
 				else
 				{

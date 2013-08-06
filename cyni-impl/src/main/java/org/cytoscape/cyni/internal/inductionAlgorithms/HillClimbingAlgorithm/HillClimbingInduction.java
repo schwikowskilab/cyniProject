@@ -73,8 +73,8 @@ public class HillClimbingInduction extends AbstractCyniAlgorithm {
 		CyniAlgorithmContext context;
 		selectedTable = table;
 		List<String> listTypes = new ArrayList<String>();
-		listTypes.add(CyniMetricTypes.LOCAL_METRIC_SCORE.toString());
-		context = new HillClimbingInductionContext(supportsSelectedOnly(), selectedTable, metricsManager.getAllCyniMetricsWithType(listTypes));
+		listTypes.add(CyniMetricTags.LOCAL_METRIC_SCORE.toString());
+		context = new HillClimbingInductionContext(supportsSelectedOnly(), selectedTable, metricsManager.getAllCyniMetricsWithTags(listTypes));
 		if(mparams != null && !mparams.isEmpty())
 			tunableSetter.applyTunables(context, mparams);
 		return context;

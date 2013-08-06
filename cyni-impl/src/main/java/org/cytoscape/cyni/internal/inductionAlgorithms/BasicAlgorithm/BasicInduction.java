@@ -71,10 +71,10 @@ public class BasicInduction extends AbstractCyniAlgorithm {
 	public CyniAlgorithmContext createCyniContext(CyTable table, CyCyniMetricsManager metricsManager, TunableSetter tunableSetter,Map<String, Object> mparams) {
 		CyniAlgorithmContext context;
 		selectedTable = table;
-		List<String> listTypes = new ArrayList<String>();
-		listTypes.add(CyniMetricTypes.INPUT_NUMBERS.toString());
-		listTypes.add(CyniMetricTypes.CORRELATION_METRIC.toString());
-		context = new BasicInductionContext(supportsSelectedOnly(), selectedTable, metricsManager.getAllCyniMetricsWithType(listTypes));
+		List<String> listTags = new ArrayList<String>();
+		listTags.add(CyniMetricTags.INPUT_NUMBERS.toString());
+		listTags.add(CyniMetricTags.CORRELATION_METRIC.toString());
+		context = new BasicInductionContext(supportsSelectedOnly(), selectedTable, metricsManager.getAllCyniMetricsWithTags(listTags));
 		if(mparams != null && !mparams.isEmpty())
 			tunableSetter.applyTunables(context, mparams);
 		return context;
