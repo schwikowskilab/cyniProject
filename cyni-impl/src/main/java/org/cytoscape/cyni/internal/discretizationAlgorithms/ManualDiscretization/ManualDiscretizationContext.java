@@ -192,28 +192,31 @@ public class ManualDiscretizationContext extends CyniAlgorithmContext implements
 		maxValue = 0.0;
 		minValue = 0.0;
 	    attributes = getAllAttributesNumbers(table);
-	    List<CyRow> listRows= table.getAllRows();
-	    for(String col : attributes)
-    	{
-	    	column = table.getColumn(col);
-	    	if(column.getType() == Integer.class)
-	    		isInteger = true;
-	    	else
-	    		isInteger = false;
-		    for(CyRow row : listRows)
-		    {
-		    	if(isInteger)
-		    		value = ((Integer)row.get(col, column.getType())).doubleValue();
+	    if(table != null)
+	    {
+		    List<CyRow> listRows= table.getAllRows();
+		    for(String col : attributes)
+	    	{
+		    	column = table.getColumn(col);
+		    	if(column.getType() == Integer.class)
+		    		isInteger = true;
 		    	else
-		    		value = (Double)row.get(col, column.getType());
-	    		if(value != null)
-	    		{
-	    			if(value > maxValue)
-	    				maxValue = value;
-	    			if(value < minValue)
-	    				minValue = value;
-	    		}
-	    	}
+		    		isInteger = false;
+			    for(CyRow row : listRows)
+			    {
+			    	if(isInteger)
+			    		value = ((Integer)row.get(col, column.getType())).doubleValue();
+			    	else
+			    		value = (Double)row.get(col, column.getType());
+		    		if(value != null)
+		    		{
+		    			if(value > maxValue)
+		    				maxValue = value;
+		    			if(value < minValue)
+		    				minValue = value;
+		    		}
+		    	}
+		    }
 	    }
 	    mean = (maxValue - minValue)/2.0;
 	    

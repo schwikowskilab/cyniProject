@@ -34,31 +34,31 @@ import cern.colt.matrix.tdouble.impl.*;
 
 
 public class CyniTable {
-	private int nRows;
-	private int nColumns;
-	private DenseObjectMatrix2D data;
-	private CyTable internalTable;
-	private DenseDoubleMatrix1D colWeights;
-	private DenseDoubleMatrix1D rowWeights;
-	private DenseObjectMatrix1D rowLabels;
-	private DenseObjectMatrix1D columnLabels;
+	protected int nRows;
+	protected int nColumns;
+	protected DenseObjectMatrix2D data;
+	protected CyTable internalTable;
+	protected DenseDoubleMatrix1D colWeights;
+	protected DenseDoubleMatrix1D rowWeights;
+	protected DenseObjectMatrix1D rowLabels;
+	protected DenseObjectMatrix1D columnLabels;
 	protected boolean transpose;
 	protected boolean anyMissing;
 	protected boolean ignoreMissing;
 	protected boolean selectedOnly;
-	private Class<?>[] indexToTypes;
-	private ArrayList<String> stringValues;
-	private Boolean colHasMissingValue[];
-	private Boolean rowHasMissingValue[];
-	private Map<Object,Integer> mapRowLabels;
-	private Map<Object,Integer> mapColLabels;
-	private Map<Integer,Integer> mapRowOrder;
-	private int[] colNumStringsDiff;
-	private int[] rowNumStringsDiff;
-	private int[] colMaxValue;
-	private int[] colMinValue;
-	private int[] rowMaxValue;
-	private int[] rowMinValue;
+	protected Class<?>[] indexToTypes;
+	protected ArrayList<String> stringValues;
+	protected Boolean colHasMissingValue[];
+	protected Boolean rowHasMissingValue[];
+	protected Map<Object,Integer> mapRowLabels;
+	protected Map<Object,Integer> mapColLabels;
+	protected Map<Integer,Integer> mapRowOrder;
+	protected int[] colNumStringsDiff;
+	protected int[] rowNumStringsDiff;
+	protected int[] colMaxValue;
+	protected int[] colMinValue;
+	protected int[] rowMaxValue;
+	protected int[] rowMinValue;
 
 
 
@@ -382,7 +382,7 @@ public class CyniTable {
 		this.anyMissing = false;
 		this.selectedOnly = false;
 		this.internalTable = null;
-		this.indexToTypes = null;
+		this.indexToTypes = new Class[nColumns];
 		this.stringValues = new ArrayList<String>();
 		this.mapRowLabels =  new HashMap<Object,Integer>();
 		this.mapColLabels =  new HashMap<Object,Integer>();
@@ -393,6 +393,11 @@ public class CyniTable {
 		colMinValue = new int[nColumns];
 		rowMaxValue = new int[nRows];
 		rowMinValue = new int[nRows];
+		for(int i=0;i<nRows;i++)
+		{
+			mapRowOrder.put(i, i);
+		}
+
 	}
 
 	/**
@@ -429,6 +434,18 @@ public class CyniTable {
 		if(row >= nRows || column >= nColumns)
 			return null;
 		return data.getQuick(mapRowOrder.get(row),column);
+	}
+	
+	/**
+	 * Set the value for the specified row and column 
+	 * @param row  The number of the row.
+	 * @param column  The number of the column.
+	 * @param value The value for the column and row
+	 */
+	public void setValue(int row, int column, Object value) {
+		if(row >= nRows || column >= nColumns)
+			return ;
+		data.setQuick(mapRowOrder.get(row),column,value);
 	}
 	
 	/**
@@ -607,6 +624,30 @@ public class CyniTable {
 		}
 		
 		return indexToTypes[typeIndex];
+	}
+	
+	/**
+	 * Allows setting the type of for the specified row and column combination.
+	 * @param row  The number of the row.
+	 * @param column  The number of the column.
+	 * @param type The type of that table content
+	 */
+	public void setType(int row, int column, Class type) {
+		int typeIndex;
+		
+		if (transpose) {
+			if(row > nRows)
+				return;
+			typeIndex = mapRowOrder.get(row);
+		}
+		else
+		{
+			if(column > nColumns)
+				return;
+			typeIndex = column;
+		}
+		
+	    indexToTypes[typeIndex] = type;
 	}
 	
 	
@@ -899,15 +940,15 @@ public class CyniTable {
 	}
 	
 	private class IndexComparator implements Comparator<Integer> {
-		double[] data = null;
+		double[] dataComparator = null;
 
 
-		public IndexComparator(double[] data) { this.data = data; }
+		public IndexComparator(double[] data) { this.dataComparator = data; }
 
 		public int compare(Integer o1, Integer o2) {
-			if (data != null) {
-				if (data[o1.intValue()] < data[o2.intValue()]) return -1;
-				if (data[o1.intValue()] > data[o2.intValue()]) return 1;
+			if (dataComparator != null) {
+				if (dataComparator[o1.intValue()] < dataComparator[o2.intValue()]) return -1;
+				if (dataComparator[o1.intValue()] > dataComparator[o2.intValue()]) return 1;
 				return 0;
 			} 
 			return 0;

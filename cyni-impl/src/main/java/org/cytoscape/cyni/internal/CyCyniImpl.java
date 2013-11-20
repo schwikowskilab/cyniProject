@@ -24,90 +24,143 @@
 package org.cytoscape.cyni.internal;
 
 
+import static org.cytoscape.work.ServiceProperties.COMMAND;
+import static org.cytoscape.work.ServiceProperties.COMMAND_NAMESPACE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.cytoscape.model.CyNetworkFactory;
+import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.model.CyNetworkTableManager;
+import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 import org.cytoscape.property.CyProperty;
+import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
+import org.cytoscape.view.model.CyNetworkViewFactory;
+import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.view.vizmap.VisualMappingManager;
+import org.cytoscape.work.TaskFactory;
 import org.cytoscape.cyni.*;
+import org.cytoscape.cyni.internal.task.CyniTaskFactoryWrapper;
 
 
 /**
- * CyInductionsImpl is a singleton class that is used to register all available
- * Induction algorithms.  
+ * CycynisImpl is a singleton class that is used to register all available
+ * cyni algorithms.  
  */
 public class CyCyniImpl implements CyCyniAlgorithmManager {
 
-	private final Map<String, CyCyniAlgorithm> InductionMap;
+	private final Map<String, CyCyniAlgorithm> cyniMap;
 	private final Map<String, CyCyniAlgorithm> ImputationMap;
 	private final Map<String, CyCyniAlgorithm> DiscretizationMap;
+	private final Map<String, TaskFactory> serviceMap;
 	private final CyProperty<Properties> cyProps;
+	private final CyServiceRegistrar serviceRegistrar;
+	private final CyNetworkFactory netFactory;
+	private final CyNetworkViewFactory viewFactory;
+	private final CyNetworkManager netMgr;
+	private final CyNetworkViewManager viewMgr;
+	private final VisualMappingManager vmMgr;
+	private final CyCyniMetricsManager metricsManager;
+	private final CyNetworkTableManager netTableMgr;
+	private final CyRootNetworkManager rootNetMgr;
+	private final CyLayoutAlgorithmManager layoutManager;
 
-	public CyCyniImpl(final CyProperty<Properties> p) {
+	public CyCyniImpl(CyServiceRegistrar serviceRegistrar,CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
+			CyNetworkManager networkManager, CyNetworkTableManager netTableMgr, CyRootNetworkManager rootNetMgr, VisualMappingManager vmMgr,
+			CyNetworkViewManager networkViewManager, CyLayoutAlgorithmManager layoutManager, CyCyniMetricsManager metricsManager,final CyProperty<Properties> p) {
 		this.cyProps = p;
-		InductionMap = new HashMap<String,CyCyniAlgorithm>();
+		cyniMap = new HashMap<String,CyCyniAlgorithm>();
 		ImputationMap = new HashMap<String,CyCyniAlgorithm>();
 		DiscretizationMap = new HashMap<String,CyCyniAlgorithm>();
+		serviceMap = new ConcurrentHashMap<String,TaskFactory>();
+		this.serviceRegistrar = serviceRegistrar;
+		this.layoutManager = layoutManager;
+		this.netFactory = networkFactory;
+		this.netMgr = networkManager;
+		this.viewFactory = networkViewFactory;
+		this.viewMgr = networkViewManager;
+		this.netTableMgr = netTableMgr;
+		this.rootNetMgr = rootNetMgr;
+		this.vmMgr = vmMgr;
+		this.metricsManager = metricsManager;
 	}
 
 	/**
-	 * Add a Induction to the Induction manager's list.  If menu is "null"
+	 * Add a cyni to the cyni manager's list.  If menu is "null"
 	 * it will be assigned to the "none" menu, which is not displayed.
-	 * This can be used to register Inductions that are to be used for
+	 * This can be used to register cynis that are to be used for
 	 * specific algorithmic purposes, but not, in general, supposed
 	 * to be for direct user use.
 	 *
-	 * @param Induction The Induction to be added
+	 * @param cyni The cyni to be added
 	 * @param menu The menu that this should appear under
 	 */
-	public void addCyniAlgorithm(CyCyniAlgorithm Induction, Map props) {
-		if ( Induction != null )
+	public void addCyniAlgorithm(CyCyniAlgorithm cyni, Map props) {
+		if ( cyni != null )
 		{
-			if(Induction.getCategory() == CyniCategory.INDUCTION)
+			if(cyni.getCategory() == CyniCategory.INDUCTION)
 			{
-				InductionMap.put(Induction.getName(),Induction);
+				cyniMap.put(cyni.getName(),cyni);
 			}
-			else if (Induction.getCategory() == CyniCategory.IMPUTATION)
+			else if (cyni.getCategory() == CyniCategory.IMPUTATION)
 			{
-				ImputationMap.put(Induction.getName(),Induction);
-			}else if (Induction.getCategory() == CyniCategory.DISCRETIZATION)
+				ImputationMap.put(cyni.getName(),cyni);
+			}else if (cyni.getCategory() == CyniCategory.DISCRETIZATION)
 			{
-				DiscretizationMap.put(Induction.getName(),Induction);
+				DiscretizationMap.put(cyni.getName(),cyni);
+			}
+			if (serviceRegistrar != null) {
+				Properties cyniProps = new Properties();
+				cyniProps.setProperty(COMMAND, cyni.getName());
+				cyniProps.setProperty(COMMAND_NAMESPACE, "cyni");
+				TaskFactory service = new CyniTaskFactoryWrapper(netFactory, viewFactory,netMgr,netTableMgr,rootNetMgr,vmMgr, viewMgr,layoutManager,metricsManager, cyni);
+				// Register the service as a TaskFactory for commands
+				serviceRegistrar.registerService(service, TaskFactory.class, cyniProps);
+				serviceMap.put(cyni.getName(), service);
 			}
 		}
 	}
 
 	/**
-	 * Remove a Induction from the Induction maanger's list.
+	 * Remove a cyni from the cyni maanger's list.
 	 *
-	 * @param Induction The Induction to remove
+	 * @param cyni The cyni to remove
 	 */
-	public void removeCyniAlgorithm(CyCyniAlgorithm Induction, Map props) {
-		if ( Induction != null )
+	public void removeCyniAlgorithm(CyCyniAlgorithm cyni, Map props) {
+		if ( cyni != null )
 		{
-			if(Induction.getCategory() == CyniCategory.INDUCTION)
+			if(cyni.getCategory() == CyniCategory.INDUCTION)
 			{
-				InductionMap.remove(Induction.getName());
+				cyniMap.remove(cyni.getName());
 			}
-			else if (Induction.getCategory() == CyniCategory.IMPUTATION)
+			else if (cyni.getCategory() == CyniCategory.IMPUTATION)
 			{
-				ImputationMap.remove(Induction.getName());
-			}else if (Induction.getCategory() == CyniCategory.DISCRETIZATION)
+				ImputationMap.remove(cyni.getName());
+			}else if (cyni.getCategory() == CyniCategory.DISCRETIZATION)
 			{
-				DiscretizationMap.remove(Induction.getName());
+				DiscretizationMap.remove(cyni.getName());
+			}
+			if (serviceRegistrar != null && serviceMap.containsKey(cyni.getName())) {
+				TaskFactory service = serviceMap.get(cyni.getName());
+				serviceRegistrar.unregisterService(service,TaskFactory.class);
+				serviceMap.remove(cyni.getName());
 			}
 		}
 	}
 
 	/**
-	 * Get the Induction named "name".  If "name" does
+	 * Get the cyni named "name".  If "name" does
 	 * not exist, this will return null
 	 *
-	 * @param name String representing the name of the Induction
-	 * @return the Induction of that name or null if it is not reigstered
+	 * @param name String representing the name of the cyni
+	 * @return the cyni of that name or null if it is not reigstered
 	 */
 	@Override
 	public CyCyniAlgorithm getCyniAlgorithm(String name, CyniCategory category) {
@@ -115,7 +168,7 @@ public class CyCyniImpl implements CyCyniAlgorithmManager {
 		{
 			if(category == CyniCategory.INDUCTION)
 			{
-				return InductionMap.get(name);
+				return cyniMap.get(name);
 			}
 			else if (category == CyniCategory.IMPUTATION)
 			{
@@ -130,15 +183,15 @@ public class CyCyniImpl implements CyCyniAlgorithmManager {
 	}
 
 	/**
-	 * Get all of the available Inductions.
+	 * Get all of the available cynis.
 	 *
-	 * @return a Collection of all the available Inductions
+	 * @return a Collection of all the available cynis
 	 */
 	@Override
 	public Collection<CyCyniAlgorithm> getAllCyniAlgorithms(CyniCategory category) {
 		if(category == CyniCategory.INDUCTION)
 		{
-			return InductionMap.values();
+			return cyniMap.values();
 		}
 		else if (category == CyniCategory.IMPUTATION)
 		{
@@ -151,16 +204,16 @@ public class CyCyniImpl implements CyCyniAlgorithmManager {
 	}
 	
 	/**
-	 * Get the name all available Inductions Metrics.
+	 * Get the name all available cynis Metrics.
 	 *
-	 * @return a list all the available Inductions Metrics
+	 * @return a list all the available cynis Metrics
 	 */
 	@Override
 	public List<String> getAllCyniAlgorithmNames(CyniCategory category) {
 		List<String> list;
 		if(category == CyniCategory.INDUCTION)
 		{
-			list = new ArrayList<String>( InductionMap.keySet());
+			list = new ArrayList<String>( cyniMap.keySet());
 			return list;
 		}
 		else if (category == CyniCategory.IMPUTATION)

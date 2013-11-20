@@ -118,6 +118,8 @@ public class CyniAlgorithmContext {
 	 * @param type The type of the columns
 	 */
 	public void getAttributesList(List<String> attributeList, CyTable table, String prefix, Object type) {
+		if(table == null)
+			return;
 		String[] names = new String[table.getColumns().size()];
 		int i = 0;
 		for (final CyColumn column : table.getColumns())
@@ -151,8 +153,11 @@ public class CyniAlgorithmContext {
 	 */
 	public List<String> getAllAttributesStrings(CyTable table) {
 		List<String> attributeList = new ArrayList<String>();
-		getAttributesList(attributeList, table,"", String.class);
-		Collections.sort(attributeList);
+		if(table != null)
+		{
+			getAttributesList(attributeList, table,"", String.class);
+			Collections.sort(attributeList);
+		}
 		return attributeList;
 	}
 	
@@ -164,8 +169,11 @@ public class CyniAlgorithmContext {
 	 */
 	public List<String> getAllAttributesNumbers(CyTable table) {
 		List<String> attributeList = new ArrayList<String>();
-		getAttributesList(attributeList, table,"", null);
-		Collections.sort(attributeList);
+		if(table != null)
+		{
+			getAttributesList(attributeList, table,"", null);
+			Collections.sort(attributeList);
+		}
 		return attributeList;
 	}
 

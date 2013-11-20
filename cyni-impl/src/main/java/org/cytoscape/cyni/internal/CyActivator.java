@@ -116,9 +116,11 @@ public class CyActivator extends AbstractCyActivator {
 		AICMetric  aicMetric = new AICMetric();
 		BayesDirichletEquivalentMetric  bdeMetric = new BayesDirichletEquivalentMetric();
 		
-		CyCyniImpl cyInduction = new CyCyniImpl(cyPropertyServiceRef);
-		
 		CyCyniMetricsImpl cyCyniMetrics = new CyCyniMetricsImpl(cyPropertyServiceRef);
+		
+		CyCyniImpl cyInduction = new CyCyniImpl(cyServiceRegistrarServiceRef,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyNetworkManagerServiceRef, 
+				cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef, visualMappingManagerServiceRef,
+				cyNetworkViewManagerServiceRef,cyLayoutsServiceRef,cyCyniMetrics,cyPropertyServiceRef);
 		
 		/******************************************************************************************************************************************/
 		/**This code is temporal and it will be removed when cy3 allows loading tables without mapping them to other elements as nodes or networks*/
