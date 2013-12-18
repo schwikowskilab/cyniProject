@@ -300,6 +300,9 @@ public class CyniTable {
 		this.stringValues = new ArrayList<String>();
 		this.rowHasMissingValue = new Boolean[nRows];
 		this.colHasMissingValue = new Boolean[nColumns];
+		this.mapRowLabels =  new HashMap<Object,Integer>();
+		this.mapColLabels =  new HashMap<Object,Integer>();
+		this.mapRowOrder =  new HashMap<Integer,Integer>();
 
 		
 		this.transpose = duplicate.transpose;
@@ -777,13 +780,13 @@ public class CyniTable {
 	/**
 	 * Returns the index column for the specified label.
 	 * @param label  The label object.
-	 * @return The index column for the specified label or 0 if the label does not exist.
+	 * @return The index column for the specified label or -1 if the label does not exist.
 	 */
 	public Integer getColIndex(Object label) {
 		if(mapColLabels.containsKey(label))
 			return this.mapColLabels.get(label);
 		else
-			return 0;
+			return -1;
 	}
 
 	/**
@@ -806,13 +809,13 @@ public class CyniTable {
 	/**
 	 * Returns the index row for the specified label.
 	 * @param label  The label object.
-	 * @return The index row for the specified label or 0 if the label does not exist.
+	 * @return The index row for the specified label or -1 if the label does not exist.
 	 */
 	public Integer getRowIndex(Object label) {
 		if(mapRowLabels.containsKey(label))
 			return this.mapRowLabels.get(label);
 		else
-			return 0;
+			return -1;
 	}
 
 	/**
