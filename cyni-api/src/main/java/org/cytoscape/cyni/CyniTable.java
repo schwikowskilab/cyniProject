@@ -615,7 +615,7 @@ public class CyniTable {
 	 * @param column  The number of the column.
 	 * @return The type of that table content
 	 */
-	public Class getType(int row, int column) {
+	public Class<?> getType(int row, int column) {
 		int typeIndex;
 		
 		if (transpose) {
@@ -635,7 +635,7 @@ public class CyniTable {
 	 * @param column  The number of the column.
 	 * @param type The type of that table content
 	 */
-	public void setType(int row, int column, Class type) {
+	public void setType(int row, int column, Class<?> type) {
 		int typeIndex;
 		
 		if (transpose) {
@@ -829,6 +829,34 @@ public class CyniTable {
 			this.rowLabels.setQuick(mapRowOrder.get(row), label);
 			mapRowLabels.put(label, row);
 		}
+	}
+	
+	/**
+	 * Checks whether the element in position defined by row and col parameters matches the given value.
+	 * @param row  The row index.
+	 * @param col  The col index.
+	 * @param value  The object value to check.
+	 * @return True if the value matches the element in position(row,col) or false otherwise.
+	 */
+	public boolean isMatching(int row,int col, Object value) {
+		boolean result = false;
+		
+		if(getType(row,col) == String.class && value.getClass() == String.class)
+		{
+			if(stringValue(row,col).matches((String) value))
+				result = true;
+		}
+		else
+		{
+			if(value instanceof Number)
+			{
+				Double temp = new Double(((Number)value).doubleValue());
+				if(temp == doubleValue(row,col))
+					result = true;
+			}
+		}
+		
+		return result;
 	}
 	
 	/**
