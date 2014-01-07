@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyNetworkTableManager;
@@ -71,10 +72,12 @@ public class CyCyniImpl implements CyCyniAlgorithmManager {
 	private final CyNetworkTableManager netTableMgr;
 	private final CyRootNetworkManager rootNetMgr;
 	private final CyLayoutAlgorithmManager layoutManager;
+	private final CyEventHelper eventHelper;
 
 	public CyCyniImpl(CyServiceRegistrar serviceRegistrar,CyNetworkFactory networkFactory, CyNetworkViewFactory networkViewFactory,
 			CyNetworkManager networkManager, CyNetworkTableManager netTableMgr, CyRootNetworkManager rootNetMgr, VisualMappingManager vmMgr,
-			CyNetworkViewManager networkViewManager, CyLayoutAlgorithmManager layoutManager, CyCyniMetricsManager metricsManager,final CyProperty<Properties> p) {
+			CyNetworkViewManager networkViewManager, CyLayoutAlgorithmManager layoutManager, CyCyniMetricsManager metricsManager,
+			final CyProperty<Properties> p,CyEventHelper eventHelper) {
 		this.cyProps = p;
 		cyniMap = new HashMap<String,CyCyniAlgorithm>();
 		ImputationMap = new HashMap<String,CyCyniAlgorithm>();
@@ -90,6 +93,7 @@ public class CyCyniImpl implements CyCyniAlgorithmManager {
 		this.rootNetMgr = rootNetMgr;
 		this.vmMgr = vmMgr;
 		this.metricsManager = metricsManager;
+		this.eventHelper = eventHelper;
 	}
 
 	/**
@@ -125,6 +129,7 @@ public class CyCyniImpl implements CyCyniAlgorithmManager {
 				serviceRegistrar.registerService(service, TaskFactory.class, cyniProps);
 				serviceMap.put(cyni.getName(), service);
 			}
+			eventHelper.fireEvent(new CyniAlgorithmAddedEvent(this,cyni));
 		}
 	}
 
@@ -152,6 +157,7 @@ public class CyCyniImpl implements CyCyniAlgorithmManager {
 				serviceRegistrar.unregisterService(service,TaskFactory.class);
 				serviceMap.remove(cyni.getName());
 			}
+			eventHelper.fireEvent(new CyniAlgorithmDeletedEvent(this,cyni));
 		}
 	}
 

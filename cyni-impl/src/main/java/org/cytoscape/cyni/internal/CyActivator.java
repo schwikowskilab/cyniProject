@@ -27,6 +27,7 @@ package org.cytoscape.cyni.internal;
 import java.util.HashMap;
 import java.util.Properties;
 
+import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyTableManager;
@@ -48,6 +49,7 @@ import org.cytoscape.task.read.LoadTableURLTaskFactory;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.cyni.*;
 import org.cytoscape.cyni.internal.metrics.*;
 import org.cytoscape.cyni.internal.inductionAlgorithms.BasicAlgorithm.*;
@@ -93,6 +95,8 @@ public class CyActivator extends AbstractCyActivator {
 		CyNetworkTableManager cyNetworkTableManagerServiceRef  = getService(bc, CyNetworkTableManager.class);
 		VisualMappingManager visualMappingManagerServiceRef = getService(bc, VisualMappingManager.class);
 		CyServiceRegistrar cyServiceRegistrarServiceRef = getService(bc,CyServiceRegistrar.class);
+		CyEventHelper cyEventHelperServiceRef = getService(bc,CyEventHelper.class);
+
 
 		
 		BasicInduction basicInduction = new BasicInduction();
@@ -120,7 +124,7 @@ public class CyActivator extends AbstractCyActivator {
 		
 		CyCyniImpl cyInduction = new CyCyniImpl(cyServiceRegistrarServiceRef,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyNetworkManagerServiceRef, 
 				cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef, visualMappingManagerServiceRef,
-				cyNetworkViewManagerServiceRef,cyLayoutsServiceRef,cyCyniMetrics,cyPropertyServiceRef);
+				cyNetworkViewManagerServiceRef,cyLayoutsServiceRef,cyCyniMetrics,cyPropertyServiceRef,cyEventHelperServiceRef);
 		
 		/******************************************************************************************************************************************/
 		/**This code is temporal and it will be removed when cy3 allows loading tables without mapping them to other elements as nodes or networks*/
@@ -169,6 +173,16 @@ public class CyActivator extends AbstractCyActivator {
 		registerService(bc,mdlMetric,CyCyniMetric.class, new Properties());
 		registerService(bc,aicMetric,CyCyniMetric.class, new Properties());
 		registerService(bc,bdeMetric,CyCyniMetric.class, new Properties());
+		
+		
+		CyniControlPanel cyniControlPanel = new CyniControlPanel("Cyni Toolbox",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef, 
+				cyNetworkManagerServiceRef,cyNetworkTableManagerServiceRef, rootNetworkManagerServiceRef,cyNetworkViewManagerServiceRef,
+               cyTableServiceRef,cySwingApplicationServiceRef,cyApplicationManagerServiceRef,panelTaskManagerServiceRef,cyLayoutsServiceRef,
+               cyCyniMetrics,visualMappingManagerServiceRef,cyServiceRegistrarServiceRef);
+		CyniControlPanelAction controlPanelAction = new CyniControlPanelAction(cySwingApplicationServiceRef,cyniControlPanel);
+		
+		registerService(bc,cyniControlPanel,CytoPanelComponent.class, new Properties());
+		registerService(bc,controlPanelAction,CyAction.class, new Properties());
 		
 		CyniAction inductionAction = new CyniAction("Infer Network...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
                 cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
