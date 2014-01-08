@@ -193,7 +193,12 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 						node1 = newNetwork.addNode();
 						netUtils.cloneNodeRow(newNetwork,table.getRow(data.getRowLabel(i)), node1);
 						if(newNetwork.getRow(node1).get(CyNetwork.NAME,String.class ) == null || newNetwork.getRow(node1).get(CyNetwork.NAME,String.class ).isEmpty() == true)
-							newNetwork.getRow(node1).set(CyNetwork.NAME, "Node " + numNodes);
+						{
+							if(table.getPrimaryKey().getType().equals(String.class) && networkSelected == null)
+								newNetwork.getRow(node1).set(CyNetwork.NAME,table.getRow(data.getRowLabel(i)).get(table.getPrimaryKey().getName(),String.class));
+							else
+								newNetwork.getRow(node1).set(CyNetwork.NAME, "Node " + numNodes);
+						}
 						if(newNetwork.getRow(node1).get(CyNetwork.SELECTED,Boolean.class ) == true)
 							newNetwork.getRow(node1).set(CyNetwork.SELECTED, false);
 						mapRowNodes.put(data.getRowLabel(i),node1);
@@ -204,7 +209,12 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 						node2 = newNetwork.addNode();
 						netUtils.cloneNodeRow(newNetwork,table.getRow(data.getRowLabel(threadIndex[pool])), node2);
 						if(newNetwork.getRow(node2).get(CyNetwork.NAME,String.class ) == null || newNetwork.getRow(node2).get(CyNetwork.NAME,String.class ).isEmpty() == true)
-							newNetwork.getRow(node2).set(CyNetwork.NAME, "Node " + numNodes);
+						{
+							if(table.getPrimaryKey().getType().equals(String.class) && networkSelected == null)
+								newNetwork.getRow(node2).set(CyNetwork.NAME,table.getRow(data.getRowLabel(threadIndex[pool])).get(table.getPrimaryKey().getName(),String.class));
+							else
+								newNetwork.getRow(node2).set(CyNetwork.NAME, "Node " + numNodes);
+						}
 						if(newNetwork.getRow(node2).get(CyNetwork.SELECTED,Boolean.class ) == true)
 							newNetwork.getRow(node2).set(CyNetwork.SELECTED, false);
 						mapRowNodes.put(data.getRowLabel(threadIndex[pool]),node2);

@@ -175,7 +175,12 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			}
 			netUtils.cloneNodeRow(newNetwork, origRow, newNode);
 			if(!origRow.isSet(CyNetwork.NAME))
-				newNetwork.getRow(newNode).set(CyNetwork.NAME, "Node " + numNodes);
+			{
+				if(table.getPrimaryKey().getType().equals(String.class) && networkSelected == null)
+					newNetwork.getRow(newNode).set(CyNetwork.NAME,origRow.get(table.getPrimaryKey().getName(),String.class));
+				else
+					newNetwork.getRow(newNode).set(CyNetwork.NAME, "Node " + numNodes);
+			}
 			numNodes++;
 		}
 		

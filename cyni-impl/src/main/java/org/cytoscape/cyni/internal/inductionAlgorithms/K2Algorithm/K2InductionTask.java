@@ -222,7 +222,12 @@ public class K2InductionTask extends AbstractCyniTask {
 			node1 = newNetwork.addNode();
 			netUtils.cloneNodeRow(newNetwork,table.getRow(data.getRowLabel(row)), node1);
 			if(!table.getRow(data.getRowLabel(row)).isSet(CyNetwork.NAME))
-				newNetwork.getRow(node1).set(CyNetwork.NAME, "Node " + numNodes);
+			{
+				if(table.getPrimaryKey().getType().equals(String.class) && networkSelected == null)
+					newNetwork.getRow(node1).set(CyNetwork.NAME,table.getRow(data.getRowLabel(row)).get(table.getPrimaryKey().getName(),String.class));
+				else
+					newNetwork.getRow(node1).set(CyNetwork.NAME, "Node " + numNodes);
+			}
 			mapRowNodes.put(data.getRowLabel(row),node1);
 			
 			okToProceed = true;
