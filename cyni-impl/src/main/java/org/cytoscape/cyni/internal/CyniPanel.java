@@ -190,7 +190,7 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 		case IMPUTATION:
 			executeButtonName = "Impute Missing Data";
 			selectPanelName = "Imputation Algorithm";
-			setName("Impute Missing Data");
+			setName("Impute Data");
 			break;
 		case DISCRETIZATION:
 			executeButtonName = "Discretize Data";
@@ -463,7 +463,7 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 	private void initializeOnce() {
 		
 
-		
+		setPreferredSize(new Dimension(420, getMinimumSize().height));
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
 		// Create a panel for the list of algorithms
