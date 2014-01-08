@@ -109,13 +109,13 @@ public class BasicInductionTask extends AbstractCyniTask {
 		ArrayList<Integer> index = new ArrayList<Integer>();
 		Map<Object,CyNode> mapRowNodes;
 		CyNetwork networkSelected = null;
-		CyNetwork newNetwork = netFactory.createNetwork();
 		CyNetworkView newNetworkView ;
 		double threadResults[] = new double[nThreads];
 		double result;
 		int threadIndex[] = new int[nThreads];
 		threadNumber=0;
 		Arrays.fill(threadResults, 0.0);
+		newNetwork = netFactory.createNetwork();
 		networkSelected = netUtils.getNetworkAssociatedToTable(table);
 		
 		taskMonitor.setTitle("Correlation Inference");

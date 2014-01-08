@@ -104,13 +104,14 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 		ArrayList<Integer> index = new ArrayList<Integer>();
 		Map<Object,CyNode> mapRowNodes;
 		CyNetwork networkSelected = null;
-		CyNetwork newNetwork = netFactory.createNetwork();
 		CyNetworkView newNetworkView ;
 		double threadResults[] ;
 		double mutualInfoResults[] ;
 		double mi;
 		int threadIndex[] ;
 		threadNumber=0;
+		
+		newNetwork = netFactory.createNetwork();
 		networkSelected = netUtils.getNetworkAssociatedToTable(table);
 		
 		taskMonitor.setTitle("Mutual Information Inference");

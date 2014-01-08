@@ -23,39 +23,21 @@
  */
 package org.cytoscape.cyni;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 
-import org.cytoscape.model.CyColumn;
-import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyIdentifiable;
+
+
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
-import org.cytoscape.view.layout.CyLayoutAlgorithm;
-import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
-import org.cytoscape.view.model.View;
 import org.cytoscape.view.vizmap.VisualMappingManager;
-import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.model.CyNetworkTableManager;
-import org.cytoscape.model.CyRow;
-import org.cytoscape.model.CyTable;
-import org.cytoscape.model.VirtualColumnInfo;
-import org.cytoscape.model.subnetwork.CyRootNetwork;
 import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 
-
-import org.cytoscape.view.model.CyNetworkViewFactory;
-import org.cytoscape.view.model.CyNetworkViewManager;
-import org.cytoscape.view.presentation.property.ArrowShapeVisualProperty;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.ObservableTask;
 
 
 /**
@@ -64,7 +46,7 @@ import org.cytoscape.work.TaskMonitor;
  * 
  * @CyAPI.Abstract.Class
  */
-public abstract class AbstractCyniTask extends AbstractTask {
+public abstract class AbstractCyniTask extends AbstractTask implements ObservableTask{
 
 
 	private final String name;
@@ -87,6 +69,11 @@ public abstract class AbstractCyniTask extends AbstractTask {
 	 * Indicates the maximum number of threads that this task can use
 	 */
 	protected int nThreads;
+	
+	/**
+	 * This variable holds the new network that will be created if an infer algorithm is executed.
+	 */
+	protected CyNetwork newNetwork = null;
 
 	/**
 	 * Constructor.
@@ -127,6 +114,17 @@ public abstract class AbstractCyniTask extends AbstractTask {
 
 	}
 	
+	public Object getResults(Class requestedType) {
+		if(newNetwork == null)
+			return "Ok";
+	
+		if(requestedType.equals(String.class))
+			return newNetwork.NAME;
+		if(requestedType.equals(CyNetwork.class))
+			return newNetwork;
+		
+		return "Ok";
+	}
 	
 	/**
 	 * This method is designed to actually encapsulate the cyni algorithm. It

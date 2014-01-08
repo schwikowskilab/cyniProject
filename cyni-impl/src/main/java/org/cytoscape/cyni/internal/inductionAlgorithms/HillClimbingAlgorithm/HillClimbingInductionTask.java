@@ -135,7 +135,6 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		int i=0;
 		boolean loopFound = false;
 		int nRows,added,removed,reversed;
-		CyNetwork newNetwork = netFactory.createNetwork();
 		CyNetworkView newNetworkView ;
 		CyNetwork networkSelected = null;
 		boolean okToProceed = true;
@@ -144,6 +143,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		Operation operationReverse = new Operation("Reverse");
 		Operation chosenOperation;
 		Operation lastOperation = new Operation("");
+		
+		newNetwork = netFactory.createNetwork();
 		
 		networkSelected = netUtils.getNetworkAssociatedToTable(table);
 		

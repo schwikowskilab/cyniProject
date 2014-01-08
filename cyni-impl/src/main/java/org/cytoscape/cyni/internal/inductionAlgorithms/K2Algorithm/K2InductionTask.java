@@ -130,7 +130,6 @@ public class K2InductionTask extends AbstractCyniTask {
 		int bestAttribute,row,i,threadNumber;
 		int nRows;
 		Map<Object,CyNode> mapRowNodes;
-		CyNetwork newNetwork = netFactory.createNetwork();
 		CyNetworkView newNetworkView = null ;
 		CyNetwork networkSelected = null;
 		boolean okToProceed = false;
@@ -140,6 +139,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		double threadResults[] ;
 		int threadIndex[] ;
 		threadNumber=0;
+		newNetwork = netFactory.createNetwork();
 		networkSelected = netUtils.getNetworkAssociatedToTable(table);
 		
 		taskMonitor.setTitle("K2 Bayesian Inference");
