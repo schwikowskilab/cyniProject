@@ -88,6 +88,7 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 		Object value;
 		int pos = 0;
 		CyColumn column;
+		String newColName;
    
         step = 1.0 /  attributeArray.size();
         
@@ -98,19 +99,11 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 	
 		for (final String  columnName : attributeArray)
 		 {
-			
+			newColName = "nominal."+columnName;
+			newColName = getUniqueColumnName(mytable,newColName);
 			column = mytable.getColumn(columnName);
-			if(mytable.getColumn("nominal."+columnName) != null)
-			{
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						JOptionPane.showMessageDialog(null, "Attribute " + columnName + " has already been discretizated",  "Warning",JOptionPane.WARNING_MESSAGE);
-					}
-				});
-				continue;
-			}
-			mytable.createColumn("nominal."+columnName, String.class, false);
+			
+			mytable.createColumn(newColName, String.class, false);
 			
 			for ( CyRow row : mytable.getAllRows() ) 
 			{
@@ -155,7 +148,7 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 				}
 				else
 					label = "(" + String.format("%.5g", thresholds.get(pos-1)) + "," + String.format("%.5g",thresholds.get(pos)) + "]";
-				row.set("nominal."+columnName, label);
+				row.set(newColName, label);
 			}
 			 
 			 progress = progress + step;
@@ -167,5 +160,19 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 		
 	}
 	
+	
+	private String getUniqueColumnName(CyTable table, final String preferredName) {
+		if (table.getColumn(preferredName) == null)
+			return preferredName;
+
+		String newUniqueName;
+		int i = 0;
+		do {
+			++i;
+			newUniqueName = preferredName + "-" + i;
+		} while (table.getColumn(newUniqueName) != null);
+
+		return newUniqueName;
+	}
 	
 }

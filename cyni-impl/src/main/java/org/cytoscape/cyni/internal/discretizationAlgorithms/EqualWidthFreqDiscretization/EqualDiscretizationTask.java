@@ -88,6 +88,7 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 		Object value;
 		int pos = 0;
 		CyColumn column;
+		String newColName;
 		List<Object> values;
 		List<Double> thresholds = new ArrayList<Double>();
    
@@ -119,17 +120,10 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 			
 			column = mytable.getColumn(columnName);
 			values =  column.getValues(column.getType());
-			if(mytable.getColumn("nominal."+columnName) != null)
-			{
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						JOptionPane.showMessageDialog(null, "Attribute " + columnName + " has already been discretizated",  "Warning",JOptionPane.WARNING_MESSAGE);
-					}
-				});
-				continue;
-			}
-			mytable.createColumn("nominal."+columnName, String.class, false);
+			newColName = "nominal."+columnName;
+			newColName = getUniqueColumnName(mytable,newColName);
+			
+			mytable.createColumn(newColName, String.class, false);
 			
 			if(!all)
 			{
@@ -167,7 +161,7 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 				}
 				
 				label = "(" + String.format("%.5g", thresholds.get(pos)) + "," + String.format("%.5g",thresholds.get(pos+1)) + ")";
-				row.set("nominal."+columnName, label);
+				row.set(newColName, label);
 			}
 			 
 			 progress = progress + step;
@@ -261,5 +255,18 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 		
 	}
 	
+	private String getUniqueColumnName(CyTable table, final String preferredName) {
+		if (table.getColumn(preferredName) == null)
+			return preferredName;
+
+		String newUniqueName;
+		int i = 0;
+		do {
+			++i;
+			newUniqueName = preferredName + "-" + i;
+		} while (table.getColumn(newUniqueName) != null);
+
+		return newUniqueName;
+	}
 	
 }
