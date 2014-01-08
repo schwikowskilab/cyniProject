@@ -61,9 +61,11 @@ public class CyniControlPanel extends JPanel implements CytoPanelComponent2 {
 				rootNetMgr,networkViewManager,tableManager,desktop,appMgr,taskManager,layoutManager,metricsManager,vmMgr,serviceRegistrar);
 		
 		JTabbedPane tabPane = new JTabbedPane(JTabbedPane.BOTTOM);
-		tabPane.addTab(inferPanel.getName(), null, inferPanel,inferPanel.getToolTipText());
 		tabPane.addTab(imputePanel.getName(), null, imputePanel, imputePanel.getToolTipText());
 		tabPane.addTab(discretePanel.getName(), null, discretePanel, discretePanel.getToolTipText());
+		tabPane.addTab(inferPanel.getName(), null, inferPanel,inferPanel.getToolTipText());
+		
+		tabPane.setSelectedIndex(2);
 		
 		setLayout(new BorderLayout());
 		add(tabPane, BorderLayout.CENTER);
