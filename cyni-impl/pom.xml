@@ -3,18 +3,17 @@
 
   <parent>
     <groupId>org.cytoscape</groupId>
-    <artifactId>cyniApp-parent</artifactId>
+    <artifactId>parent</artifactId>
     <version>1.0-beta6</version>
+    <relativePath>../parent</relativePath>
   </parent>
 
   <properties>
     <bundle.symbolicName>org.cytoscape.cyni-impl</bundle.symbolicName>
-    <cyni.api.version>1.0-beta3</cyni.api.version>
     <bundle.namespace>org.cytoscape.cyni</bundle.namespace>
   </properties>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.cytoscape</groupId>
   <artifactId>cyni-app</artifactId>
 
   <name>Cyni Toolbox</name>

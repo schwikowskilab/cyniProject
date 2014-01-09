@@ -2,17 +2,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
     <parent>
-		<artifactId>cyniApp-parent</artifactId>
+	<artifactId>parent</artifactId>
         <groupId>org.cytoscape</groupId>
         <version>1.0-beta6</version>
+        <relativePath>../parent</relativePath>
     </parent>
 
-    <properties>
-        <cyni.api.version>1.0-beta3</cyni.api.version>
-    </properties>
-
-	<groupId>org.cytoscape</groupId>
-	<artifactId>cyniApp-feature</artifactId>
+	<artifactId>cyni-app-feature</artifactId>
 	<packaging>jar</packaging>
 	<name>CyNI App Feature</name>
 
