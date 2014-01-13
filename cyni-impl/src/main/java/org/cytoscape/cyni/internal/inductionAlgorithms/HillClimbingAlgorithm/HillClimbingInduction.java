@@ -57,7 +57,7 @@ public class HillClimbingInduction extends AbstractCyniAlgorithm {
 	 * Creates a new BasicInduction object.
 	 */
 	public HillClimbingInduction() {
-		super("HC","Bayesian - Hill Climbing", true, CyniCategory.INDUCTION);
+		super("HC.cyni","Bayesian - Hill Climbing", true, CyniCategory.INDUCTION);
 	
 	}
 

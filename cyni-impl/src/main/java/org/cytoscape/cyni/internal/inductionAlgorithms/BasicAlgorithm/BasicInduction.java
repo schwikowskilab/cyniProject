@@ -56,7 +56,7 @@ public class BasicInduction extends AbstractCyniAlgorithm {
 	 * Creates a new BasicInduction object.
 	 */
 	public BasicInduction() {
-		super("basic","Basic Correlation Inference", true, CyniCategory.INDUCTION);
+		super("basic.cyni","Basic Correlation Inference", true, CyniCategory.INDUCTION);
 	
 	}
 

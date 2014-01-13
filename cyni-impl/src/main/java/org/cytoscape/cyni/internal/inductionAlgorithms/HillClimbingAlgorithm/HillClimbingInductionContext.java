@@ -66,6 +66,10 @@ public class HillClimbingInductionContext extends CyniAlgorithmContext implement
 		if(attributes.size() > 0)
 		{
 			attributeList = new  ListMultipleSelection<String>(attributes);
+			List<String> temp = new ArrayList<String>( attributes);
+			temp.remove(table.getPrimaryKey().getName());
+			if(!temp.isEmpty())
+				attributeList.setSelectedValues(temp);
 		}
 		else
 		{

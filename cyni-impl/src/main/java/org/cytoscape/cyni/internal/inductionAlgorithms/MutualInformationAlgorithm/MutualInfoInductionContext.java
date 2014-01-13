@@ -24,6 +24,7 @@
 package org.cytoscape.cyni.internal.inductionAlgorithms.MutualInformationAlgorithm;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import org.cytoscape.work.util.*;
 import org.cytoscape.model.CyTable;
@@ -42,9 +43,17 @@ public class MutualInfoInductionContext extends CyniAlgorithmContext implements 
 	@Tunable(description="Use selected nodes only", groups="Parameters if a network associated to table data")
 	public boolean selectedOnly = false;
 	
-	@Tunable(description="Data Attributes", groups="Sources for Network Inference")
 	public ListMultipleSelection<String> attributeList;
+	@Tunable(description="Data Attributes", groups="Sources for Network Inference")
+	public ListMultipleSelection<String> getAttributeList()
+	{
+		return attributeList;
+	}
 
+	public void setAttributeList(ListMultipleSelection<String> input)
+	{
+		attributeList = input;
+	}
 	
 	private List<String> attributes;
 	
@@ -54,6 +63,10 @@ public class MutualInfoInductionContext extends CyniAlgorithmContext implements 
 		if(attributes.size() > 0)
 		{
 			attributeList = new  ListMultipleSelection<String>(attributes);
+			List<String> temp = new ArrayList<String>( attributes);
+			temp.remove(table.getPrimaryKey().getName());
+			if(!temp.isEmpty())
+				attributeList.setSelectedValues(temp);
 		}
 		else
 		{

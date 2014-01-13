@@ -55,11 +55,12 @@ public class K2InductionContext extends CyniAlgorithmContext implements TunableV
 	}
 	public void setMeasures(ListSingleSelection<CyCyniMetric> mes)
 	{
+		measures = mes;
 	}
 	
 	public ListMultipleSelection<String> attributeList;
 	@Tunable(description="Data Attributes", groups="Sources for Network Inference",listenForChange={"Measures"})
-	public ListMultipleSelection<String> getA()
+	public ListMultipleSelection<String> getAttributeList()
 	{
 		List<String>  tagList ;
 		if(measures.getPossibleValues().size()==0)
@@ -81,6 +82,10 @@ public class K2InductionContext extends CyniAlgorithmContext implements TunableV
 				{
 					attributes = getAllAttributesStrings(selectedTable);
 					attributeList = new  ListMultipleSelection<String>(attributes);
+					List<String> temp = new ArrayList<String>( attributes);
+					temp.remove(selectedTable.getPrimaryKey().getName());
+					if(!temp.isEmpty())
+						attributeList.setSelectedValues(temp);
 					currentType =  CyniMetricTags.INPUT_STRINGS.toString();
 				}
 				else
@@ -93,8 +98,9 @@ public class K2InductionContext extends CyniAlgorithmContext implements TunableV
 		
 		return attributeList;
 	}
-	public void setA(ListMultipleSelection<String> input)
+	public void setAttributeList(ListMultipleSelection<String> input)
 	{
+		attributeList = input;
 	}
 	
 	private List<String> attributes;

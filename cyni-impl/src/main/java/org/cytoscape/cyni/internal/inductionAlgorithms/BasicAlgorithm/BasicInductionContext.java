@@ -60,6 +60,7 @@ public class BasicInductionContext extends CyniAlgorithmContext implements Tunab
 		if(attributes.size() > 0)
 		{
 			attributeList = new  ListMultipleSelection<String>(attributes);
+			attributeList.setSelectedValues(attributeList.getPossibleValues());
 		}
 		else
 		{
