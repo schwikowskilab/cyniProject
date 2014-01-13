@@ -1,5 +1,6 @@
 cyni-api/target/
 cyni-impl/target/
 feature/target/
+cyni-integration-test/target/
 .DS_Store
 *.swp

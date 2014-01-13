@@ -9,13 +9,31 @@
 	<name>Cyni App Project POM</name>
 	<packaging>pom</packaging>
 
-	
-	<modules>
-		<module>parent</module>
-		<module>cyni-api</module>
-		<module>cyni-impl</module>
-		<module>feature</module>
-	</modules>
-
-		
+	<profiles>
+		<profile>
+			<id>develop</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>parent</module>
+				<module>cyni-api</module>
+				<module>cyni-impl</module>
+				<module>feature</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>test</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>parent</module>
+				<module>cyni-api</module>
+				<module>cyni-impl</module>
+				<module>feature</module>
+				<module>cyni-integration-test</module>
+			</modules>
+		</profile>
+	</profiles>
 </project>
