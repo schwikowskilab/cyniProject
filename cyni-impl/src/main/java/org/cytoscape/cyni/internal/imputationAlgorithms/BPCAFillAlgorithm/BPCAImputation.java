@@ -53,7 +53,7 @@ public class BPCAImputation extends AbstractCyniAlgorithm {
 	 * Creates a new BasicInduction object.
 	 */
 	public BPCAImputation() {
-		super("bpca","BPCA Imputation", true, CyniCategory.IMPUTATION);
+		super("bpca.cyni","BPCA Imputation", true, CyniCategory.IMPUTATION);
 	
 	}
 

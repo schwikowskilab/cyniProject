@@ -53,6 +53,7 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 	private final CyTable mytable;
 	private final List<String> attributeArray;
 	private ArrayList<Double> thresholds;
+	private List<String> columnsNames;
 	
 	
 	
@@ -69,7 +70,6 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 		this.mytable = selectedTable;
 		for(int i=1;i<bins;i++)
 			thresholds.add(context.mapTh.get("th"+(bins-1)+""+i).getValue());
-		
 		
 		Collections.sort(thresholds);
 	}
@@ -89,9 +89,12 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 		int pos = 0;
 		CyColumn column;
 		String newColName;
+		
+		columnsNames = new ArrayList<String>();
    
         step = 1.0 /  attributeArray.size();
         
+        taskMonitor.setTitle("Cyni - Manual Discretization Algorithm ");
         taskMonitor.setStatusMessage("Discretizating data...");
 		taskMonitor.setProgress(progress);
 		
@@ -104,6 +107,7 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 			column = mytable.getColumn(columnName);
 			
 			mytable.createColumn(newColName, String.class, false);
+			columnsNames.add(newColName);
 			
 			for ( CyRow row : mytable.getAllRows() ) 
 			{
@@ -155,6 +159,16 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 			 taskMonitor.setProgress(progress);
 		 }
 
+		if(!columnsNames.isEmpty())
+		{
+			taskMonitor.setStatusMessage("Data discretized: New columns " + columnsNames.toString()+" created. ");
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Data discretized: New columns " + columnsNames.toString()+" created. ", "Results", JOptionPane.INFORMATION_MESSAGE);
+				}
+			});
+		}
 		
 		taskMonitor.setProgress(1.0d);
 		
@@ -173,6 +187,20 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 		} while (table.getColumn(newUniqueName) != null);
 
 		return newUniqueName;
+	}
+	
+	@Override
+	public Object getResults(Class requestedType) {
+		if(columnsNames == null)
+			return "Ok";
+	
+		if(requestedType.equals(List.class))
+			return columnsNames;
+		else if(requestedType.equals(String.class))
+			return columnsNames.toString();
+		
+		
+		return "Ok";
 	}
 	
 }

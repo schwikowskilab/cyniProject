@@ -117,7 +117,7 @@ public class RAVGImputationTask extends AbstractCyniTask {
         
 		step = 1.0 /  mytable.getColumns().size();
         
-		taskMonitor.setTitle("Row Average Impute Data");
+		taskMonitor.setTitle("Cyni - Row Average Impute Data Algorithm");
         taskMonitor.setStatusMessage("Estimating missing data...");
 		taskMonitor.setProgress(progress);
 		
@@ -172,13 +172,13 @@ public class RAVGImputationTask extends AbstractCyniTask {
 			 taskMonitor.setProgress(progress);
 		 }
 		
+		taskMonitor.setStatusMessage("Number of estimated missing entries: " + founds );
 		taskMonitor.setProgress(1.0d);
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				JOptionPane
-				.showMessageDialog(null, "Number of missing entries: " + numElements + 
-						"\nNumber of estimated missing entries: " + founds, "Information", JOptionPane.INFORMATION_MESSAGE);
+				.showMessageDialog(null, "Number of estimated missing entries: " + founds, "Information", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 	}

@@ -41,7 +41,7 @@ public class EqualDiscretizationContext extends CyniAlgorithmContext implements 
 	public Boolean freq = false;
 	
 	@Tunable(description="Apply same discretization thresholds for all selected attributes")
-	public Boolean all = false;
+	public Boolean all = true;
 
 	@Tunable(description="Numerical Attributes", groups="Attributes to discretize")
 	public ListMultipleSelection<String> attributeList;

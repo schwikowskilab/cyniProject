@@ -55,6 +55,7 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 	private final List<String> attributeArray;
 	private final Boolean freq;
 	private final Boolean all;
+	private List<String> columnsNames;
 	
 	
 	
@@ -91,9 +92,11 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 		String newColName;
 		List<Object> values;
 		List<Double> thresholds = new ArrayList<Double>();
+		columnsNames = new ArrayList<String>();
    
         step = 1.0 /  attributeArray.size();
         
+        taskMonitor.setTitle("Cyni - Equal Width/Freq Discretization Algorithm ");
         taskMonitor.setStatusMessage("Discretizating data...");
 		taskMonitor.setProgress(progress);
 		if(all)
@@ -122,6 +125,8 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 			values =  column.getValues(column.getType());
 			newColName = "nominal."+columnName;
 			newColName = getUniqueColumnName(mytable,newColName);
+			
+			columnsNames.add(newColName);
 			
 			mytable.createColumn(newColName, String.class, false);
 			
@@ -167,6 +172,17 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 			 progress = progress + step;
 			 taskMonitor.setProgress(progress);
 		 }
+		
+		if(!columnsNames.isEmpty())
+		{
+			taskMonitor.setStatusMessage("Data discretized: New columns " + columnsNames.toString()+" created. ");
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Data discretized: New columns " + columnsNames.toString()+" created. ", "Results", JOptionPane.INFORMATION_MESSAGE);
+				}
+			});
+		}
 
 		
 		taskMonitor.setProgress(1.0d);
@@ -267,6 +283,20 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 		} while (table.getColumn(newUniqueName) != null);
 
 		return newUniqueName;
+	}
+	
+	@Override
+	public Object getResults(Class requestedType) {
+		if(columnsNames == null)
+			return "Ok";
+	
+		if(requestedType.equals(List.class))
+			return columnsNames;
+		else if(requestedType.equals(String.class))
+			return columnsNames.toString();
+		
+		
+		return "Ok";
 	}
 	
 }

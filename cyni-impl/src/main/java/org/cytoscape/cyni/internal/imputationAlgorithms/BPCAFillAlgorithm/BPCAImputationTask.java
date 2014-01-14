@@ -124,7 +124,7 @@ public class BPCAImputationTask extends AbstractCyniTask {
         
         step = 1.0 / maxEpoch;
         
-        taskMonitor.setTitle("BPCA Impute Data ");
+        taskMonitor.setTitle("Cyni- BPCA Impute Data Algorithm");
         taskMonitor.setStatusMessage("Estimating missing data...");
 		taskMonitor.setProgress(progress);
 		
@@ -174,12 +174,12 @@ public class BPCAImputationTask extends AbstractCyniTask {
 		{
 			saveData(mytable,getMatrixResult());
 			taskMonitor.setProgress(1.0d);
-			taskMonitor.setProgress(1.0d);
+			taskMonitor.setStatusMessage("Number of estimated missing entries: " + listPositions.size() );
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					JOptionPane.showMessageDialog(null, "Number of missing entries: " + listPositions.size() + 
-							"\nNumber of estimated missing entries: " + listPositions.size(), "Results", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane
+					.showMessageDialog(null, "Number of estimated missing entries: " + listPositions.size(), "Information", JOptionPane.INFORMATION_MESSAGE);
 				}
 			});
 		}

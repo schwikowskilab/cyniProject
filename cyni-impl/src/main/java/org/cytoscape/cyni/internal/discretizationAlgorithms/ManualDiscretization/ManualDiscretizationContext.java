@@ -274,6 +274,31 @@ public class ManualDiscretizationContext extends CyniAlgorithmContext implements
 		th98 = new BoundedDouble(minValue -1, mean, maxValue +1,false, false);
 		th99 = new BoundedDouble(minValue -1, mean, maxValue +1,false, false);
 		mapTh = new HashMap<String ,BoundedDouble>();
+		updateMapThresholds();
+		
+	}
+	
+	@Override
+	public ValidationState getValidationState(final Appendable errMsg) {
+		if ( attributeList.getPossibleValues().get(0).matches("No sources available")  || attributeList.getSelectedValues().size() ==0)
+		{
+			try {
+				
+				if(attributeList.getSelectedValues().size() == 0)
+					errMsg.append("There are no numerical attributes selected to apply the Discretization Algorithm. Please, select them.\n");
+				else if(attributeList.getSelectedValues().get(0).matches("No sources available"))
+					errMsg.append("There are no numerical attributes available to apply the Discretization Algorithm.\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+				return ValidationState.INVALID;
+			}
+			return ValidationState.INVALID;
+		}
+		return ValidationState.OK;
+	}
+	
+	public void updateMapThresholds()
+	{
 		mapTh.put("th11", th11);
 		mapTh.put("th21", th21);
 		mapTh.put("th22", th22);
@@ -320,24 +345,5 @@ public class ManualDiscretizationContext extends CyniAlgorithmContext implements
 		mapTh.put("th98", th98);
 		mapTh.put("th99", th99);
 		
-	}
-	
-	@Override
-	public ValidationState getValidationState(final Appendable errMsg) {
-		if ( attributeList.getPossibleValues().get(0).matches("No sources available")  || attributeList.getSelectedValues().size() ==0)
-		{
-			try {
-				
-				if(attributeList.getSelectedValues().size() == 0)
-					errMsg.append("There are no numerical attributes selected to apply the Discretization Algorithm. Please, select them.\n");
-				else if(attributeList.getSelectedValues().get(0).matches("No sources available"))
-					errMsg.append("There are no numerical attributes available to apply the Discretization Algorithm.\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-				return ValidationState.INVALID;
-			}
-			return ValidationState.INVALID;
-		}
-		return ValidationState.OK;
 	}
 }

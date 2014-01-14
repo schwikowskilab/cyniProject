@@ -114,7 +114,7 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 		newNetwork = netFactory.createNetwork();
 		networkSelected = netUtils.getNetworkAssociatedToTable(table);
 		
-		taskMonitor.setTitle("Mutual Information Inference");
+		taskMonitor.setTitle("Cyni - Mutual Information Inference Algorithm");
 		taskMonitor.setStatusMessage("Generating network inference...");
 		taskMonitor.setProgress(progress);
 		mapRowNodes = new HashMap<Object,CyNode>();
@@ -247,6 +247,7 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 		{
 			/*if(removeNodes)
 				removeNodesWithoutEdges(newNetwork);*/
+			taskMonitor.setStatusMessage("New network " +  newNetwork.getRow(newNetwork).get(CyNetwork.NAME, String.class)+ " created");
 			newNetworkView = netUtils.displayNewNetwork(newNetwork,networkSelected, false);
 			taskMonitor.setProgress(1.0d);
 			layout = layoutManager.getDefaultLayout();

@@ -104,7 +104,7 @@ public class ZeroImputationTask extends AbstractCyniTask {
    
         step = 1.0 /  mytable.getColumns().size();
         
-        taskMonitor.setTitle("Zero Impute Data ");
+        taskMonitor.setTitle("Cyni - Zero Impute Data Algorithm");
         taskMonitor.setStatusMessage("Estimating missing data...");
 		taskMonitor.setProgress(progress);
 		
@@ -159,11 +159,13 @@ public class ZeroImputationTask extends AbstractCyniTask {
 		
 		
 		taskMonitor.setProgress(1.0d);
+		taskMonitor.setStatusMessage("Number of estimated missing entries: " + founds );
+		taskMonitor.setProgress(1.0d);
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				JOptionPane.showMessageDialog(null, "Number of missing entries: " + founds + 
-						"\nNumber of estimated missing entries: " + founds, "Results", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane
+				.showMessageDialog(null, "Number of estimated missing entries: " + founds, "Information", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 	}

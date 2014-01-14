@@ -142,7 +142,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		newNetwork = netFactory.createNetwork();
 		networkSelected = netUtils.getNetworkAssociatedToTable(table);
 		
-		taskMonitor.setTitle("K2 Bayesian Inference");
+		taskMonitor.setTitle("Cyni - K2 Bayesian Inference Algorithm");
 		taskMonitor.setStatusMessage("Generating K2 network bayesian inference...");
 		taskMonitor.setProgress(progress);
 		mapRowNodes = new HashMap<Object,CyNode>();
@@ -317,6 +317,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		{
 			if(removeNodes)
 				netUtils.removeNodesWithoutEdges(newNetwork);
+			taskMonitor.setStatusMessage("New network " +  newNetwork.getRow(newNetwork).get(CyNetwork.NAME, String.class)+ " created");
 			newNetworkView = netUtils.displayNewNetwork(newNetwork, networkSelected,true);
 			taskMonitor.setProgress(1.0d);
 			layout = layoutManager.getDefaultLayout();

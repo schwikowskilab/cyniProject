@@ -53,7 +53,7 @@ public class ZeroImputation extends AbstractCyniAlgorithm {
 	 * Creates a new BasicInduction object.
 	 */
 	public ZeroImputation() {
-		super("zero","Zero Imputation",true, CyniCategory.IMPUTATION);
+		super("zero.cyni","Zero Imputation",true, CyniCategory.IMPUTATION);
 	
 	}
 

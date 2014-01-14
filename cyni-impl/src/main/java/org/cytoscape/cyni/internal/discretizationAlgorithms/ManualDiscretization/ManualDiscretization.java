@@ -52,7 +52,7 @@ public class ManualDiscretization extends AbstractCyniAlgorithm {
 	 * Creates a new EqualDiscretization object.
 	 */
 	public ManualDiscretization() {
-		super("manual","Manual Discretization",true,CyniCategory.DISCRETIZATION);
+		super("manual.cyni","Manual Discretization",true,CyniCategory.DISCRETIZATION);
 	
 	}
 
@@ -68,7 +68,10 @@ public class ManualDiscretization extends AbstractCyniAlgorithm {
 		selectedTable = table;
 		context = new ManualDiscretizationContext(table);
 		if(mparams != null && !mparams.isEmpty())
+		{
 			tunableSetter.applyTunables(context, mparams);
+			((ManualDiscretizationContext)context).updateMapThresholds();
+		}
 		return context;
 	}
 	

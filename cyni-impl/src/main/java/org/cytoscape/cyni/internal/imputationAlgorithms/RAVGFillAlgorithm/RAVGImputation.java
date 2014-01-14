@@ -52,7 +52,7 @@ public class RAVGImputation extends AbstractCyniAlgorithm {
 	 * Creates a new BasicInduction object.
 	 */
 	public RAVGImputation() {
-		super("ravg","Row Average Imputation",true, CyniCategory.IMPUTATION);
+		super("ravg.cyni","Row Average Imputation",true, CyniCategory.IMPUTATION);
 	
 	}
 

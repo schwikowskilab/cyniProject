@@ -148,7 +148,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 		networkSelected = netUtils.getNetworkAssociatedToTable(table);
 		
-		taskMonitor.setTitle("Hill Climbing Inference");
+		taskMonitor.setTitle("Cyni - Hill Climbing Inference Algorithm");
 		taskMonitor.setStatusMessage("Generating Hill Climbing Inference...");
 		taskMonitor.setProgress(progress);
 		
@@ -413,6 +413,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			netTable.getRow(newNetwork.getSUID()).set("Reversed Edges", reversed);
 			if(removeNodes)
 				netUtils.removeNodesWithoutEdges(newNetwork);
+			taskMonitor.setStatusMessage("New network " +  newNetwork.getRow(newNetwork).get(CyNetwork.NAME, String.class)+ " created");
 			newNetworkView = netUtils.displayNewNetwork(newNetwork,networkSelected, true);
 			taskMonitor.setProgress(1.0d);
 			layout = layoutManager.getDefaultLayout();

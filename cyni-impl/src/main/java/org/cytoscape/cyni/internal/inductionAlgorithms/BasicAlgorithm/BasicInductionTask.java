@@ -118,7 +118,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		newNetwork = netFactory.createNetwork();
 		networkSelected = netUtils.getNetworkAssociatedToTable(table);
 		
-		taskMonitor.setTitle("Correlation Inference");
+		taskMonitor.setTitle("Cyni - Basic Correlation Inference Algorithm");
 		taskMonitor.setStatusMessage("Generating network inference...");
 		taskMonitor.setProgress(progress);
 		mapRowNodes = new HashMap<Object,CyNode>();
@@ -225,6 +225,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		
 		if (!cancelled)
 		{
+			taskMonitor.setStatusMessage("New network " +  newNetwork.getRow(newNetwork).get(CyNetwork.NAME, String.class)+ " created");
 			if(removeNodes)
 				netUtils.removeNodesWithoutEdges(newNetwork);
 			newNetworkView = netUtils.displayNewNetwork(newNetwork,networkSelected, false);
