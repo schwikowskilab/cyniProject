@@ -128,9 +128,9 @@ public class CyniAlgorithmContext {
 			i++;
 		}
 		for (i = 0; i < names.length; i++) {
-			if (type == String.class)
+			if (type == String.class || type == List.class)
 			{
-				if (table.getColumn(names[i]).getType() == String.class)
+				if (table.getColumn(names[i]).getType() == type)
 				{
 					attributeList.add(prefix+names[i]);
 				}
@@ -156,7 +156,23 @@ public class CyniAlgorithmContext {
 		if(table != null)
 		{
 			getAttributesList(attributeList, table,"", String.class);
-			Collections.sort(attributeList);
+			//Collections.sort(attributeList);
+		}
+		return attributeList;
+	}
+	
+	/**
+	 * Returns a list of the names of the columns that contains strings
+	 * 
+	 * @param table The CyTable to get the names of attributes.
+	 * @return The list of column names
+	 */
+	public List<String> getAllAttributesLists(CyTable table) {
+		List<String> attributeList = new ArrayList<String>();
+		if(table != null)
+		{
+			getAttributesList(attributeList, table,"", List.class);
+			//Collections.sort(attributeList);
 		}
 		return attributeList;
 	}
@@ -172,7 +188,7 @@ public class CyniAlgorithmContext {
 		if(table != null)
 		{
 			getAttributesList(attributeList, table,"", null);
-			Collections.sort(attributeList);
+			//Collections.sort(attributeList);
 		}
 		return attributeList;
 	}

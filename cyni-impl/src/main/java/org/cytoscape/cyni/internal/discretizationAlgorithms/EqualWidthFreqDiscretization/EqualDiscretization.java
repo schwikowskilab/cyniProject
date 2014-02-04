@@ -53,7 +53,7 @@ public class EqualDiscretization extends AbstractCyniAlgorithm {
 	 * Creates a new EqualDiscretization object.
 	 */
 	public EqualDiscretization() {
-		super("equal.cyni","Equal Width/Frequency Discretization",true,CyniCategory.DISCRETIZATION);
+		super("equal_discrete","Equal Width/Frequency Discretization",true,CyniCategory.DISCRETIZATION);
 	
 	}
 

@@ -669,6 +669,8 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 			// If this is a String, we don't want to allow selection.  If this is
 			// index 0, we want to set the font 
 			Font f = getFont();
+			if(value == null)
+				return this;
 
 			if (value.getClass() == String.class) {
 				setFont(f.deriveFont(Font.PLAIN));

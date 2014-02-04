@@ -52,7 +52,7 @@ public class ManualDiscretization extends AbstractCyniAlgorithm {
 	 * Creates a new EqualDiscretization object.
 	 */
 	public ManualDiscretization() {
-		super("manual.cyni","Manual Discretization",true,CyniCategory.DISCRETIZATION);
+		super("manual_discrete","Manual Discretization",true,CyniCategory.DISCRETIZATION);
 	
 	}
 

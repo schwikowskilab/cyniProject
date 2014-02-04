@@ -56,7 +56,7 @@ public class MutualInfoInduction extends AbstractCyniAlgorithm {
 	 * Creates a new BasicInduction object.
 	 */
 	public MutualInfoInduction() {
-		super("mutualInfo.cyni","Mutual Information Inference", true, CyniCategory.INDUCTION);
+		super("mutualInfo","Mutual Information Inference", true, CyniCategory.INDUCTION);
 	
 	}
 

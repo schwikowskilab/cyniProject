@@ -124,7 +124,7 @@ public class BPCAImputationTask extends AbstractCyniTask {
         
         step = 1.0 / maxEpoch;
         
-        taskMonitor.setTitle("Cyni- BPCA Impute Data Algorithm");
+        taskMonitor.setTitle("Cyni - BPCA Impute Data Algorithm");
         taskMonitor.setStatusMessage("Estimating missing data...");
 		taskMonitor.setProgress(progress);
 		

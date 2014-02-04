@@ -56,7 +56,7 @@ public class K2Induction extends AbstractCyniAlgorithm {
 	 * Creates a new BasicInduction object.
 	 */
 	public K2Induction() {
-		super("k2.cyni","Bayesian - K2", true, CyniCategory.INDUCTION);
+		super("k2","Bayesian - K2", true, CyniCategory.INDUCTION);
 	
 	}
 
