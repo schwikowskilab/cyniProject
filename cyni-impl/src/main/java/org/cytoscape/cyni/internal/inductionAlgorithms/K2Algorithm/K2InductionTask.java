@@ -150,7 +150,6 @@ public class K2InductionTask extends AbstractCyniTask {
 
 		// Create the CyniTable
 		CyniTable data = selectedMetric.getCyniTable(table,attributeArray.toArray(new String[0]), false, false, selectedOnly);
-		selectedMetric.resetParameters();
 		
 		if(selectedMetric.getName() == "Entropy.cyni")
 		{
@@ -159,6 +158,8 @@ public class K2InductionTask extends AbstractCyniTask {
 			params.put("LogBase", "log10");
 			selectedMetric.setParameters(params);
 		}
+		selectedMetric.initMetric();
+		
 		if(selectedMetric.getName() == "Entropy.cyni" || selectedMetric.getName() == "AIC.cyni" || selectedMetric.getName() == "MDL.cyni")
 			changeSign = true;
 		

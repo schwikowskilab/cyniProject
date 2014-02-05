@@ -98,7 +98,7 @@ public class K2Test extends BasicIntegrationTest {
 		tm.execute(ti);
 		
 		oldNetwork =  applicationManager.getCurrentNetwork();
-		cyniAlgorithm = cyniManager.getCyniAlgorithm("k2.cyni",CyniCategory.INDUCTION);
+		cyniAlgorithm = cyniManager.getCyniAlgorithm("k2",CyniCategory.INDUCTION);
 		assertEquals(1, tableManager.getGlobalTables().size());
 		globalTable = tableManager.getGlobalTables().iterator().next();
 		assertNotNull(cyniAlgorithm);

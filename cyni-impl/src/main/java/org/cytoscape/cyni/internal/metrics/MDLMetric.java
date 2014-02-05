@@ -48,7 +48,7 @@ public class MDLMetric extends AbstractCyniMetric {
 		
 	}
 	
-	public void resetParameters()
+	public void initMetric()
 	{
 		if(!mapStringValues.isEmpty())
 			mapStringValues.clear();

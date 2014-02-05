@@ -36,7 +36,7 @@ import org.cytoscape.model.CyTable;
  */
 public interface CyCyniMetric {
 	/**
-	 * The implementation of the metric
+	 * The implementation of the metric. This method takes two sets of data and calculate a measurement.
 	 * @param table1 The cyniTable where there is the first element to compare.
 	 * @param table2 The cyniTable where there is the second element to compare.
 	 * @param indexBase The index of the element in the first CyniTable that will be compared.
@@ -67,10 +67,11 @@ public interface CyCyniMetric {
 	public  CyniTable getCyniTable( CyTable table, String[] attributes, boolean transpose, boolean ignoreMissing, boolean selectedOnly);
 	
 	/**
-	 * It resets the metric and leaves the default metric's parameters
+	 * It initializes the metric and after this method the method is ready to start calculating measurements.
+	 * If there are parameters to be set, they should be set before calling this method.
 	 * 
 	 */
-	public  void resetParameters();
+	public  void initMetric();
 	
 	/**
 	 * It sets the  metric's parameters

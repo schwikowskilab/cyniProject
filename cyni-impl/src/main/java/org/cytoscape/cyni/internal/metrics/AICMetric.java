@@ -48,7 +48,7 @@ public class AICMetric extends AbstractCyniMetric {
 		mapStringValues =  new HashMap<String,Integer>();
 	}
 	
-	public void resetParameters()
+	public void initMetric()
 	{
 		if(!mapStringValues.isEmpty())
 			mapStringValues.clear();

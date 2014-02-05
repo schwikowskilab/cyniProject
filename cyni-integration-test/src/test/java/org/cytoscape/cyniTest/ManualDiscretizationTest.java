@@ -98,7 +98,7 @@ public class ManualDiscretizationTest extends BasicIntegrationTest {
 		tm.execute(ti);
 		
 		oldNetwork =  applicationManager.getCurrentNetwork();
-		cyniAlgorithm = cyniManager.getCyniAlgorithm("manual.cyni",CyniCategory.DISCRETIZATION);
+		cyniAlgorithm = cyniManager.getCyniAlgorithm("manual_discrete",CyniCategory.DISCRETIZATION);
 		assertEquals(1, tableManager.getGlobalTables().size());
 		globalTable = tableManager.getGlobalTables().iterator().next();
 		assertNotNull(cyniAlgorithm);

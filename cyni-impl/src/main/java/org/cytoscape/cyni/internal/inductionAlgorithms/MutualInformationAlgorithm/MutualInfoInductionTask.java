@@ -121,7 +121,6 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 		index.add(0);
 		// Create the CyniTable
 		CyniTable data = selectedMetric.getCyniTable(table,attributeArray.toArray(new String[0]), false, false, selectedOnly);
-		selectedMetric.resetParameters();
 		
 		if(selectedMetric.getName() == "Entropy.cyni")
 		{
@@ -130,6 +129,7 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 			params.put("LogBase", "log2");
 			selectedMetric.setParameters(params);
 		}
+		selectedMetric.initMetric();
 		
 		nRows = data.nRows();
 		step = 1.0 / nRows;

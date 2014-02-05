@@ -51,7 +51,7 @@ public class BayesianMetric extends AbstractCyniMetric {
 		mapFactorial.put(1.0,1.0);
 	}
 	
-	public void resetParameters()
+	public void initMetric()
 	{
 		if(!mapStringValues.isEmpty())
 			mapStringValues.clear();

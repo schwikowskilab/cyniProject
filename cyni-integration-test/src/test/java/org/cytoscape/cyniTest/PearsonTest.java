@@ -98,7 +98,7 @@ public class PearsonTest extends BasicIntegrationTest {
 		tm.execute(ti);
 		
 		oldNetwork =  applicationManager.getCurrentNetwork();
-		cyniAlgorithm = cyniManager.getCyniAlgorithm("basic.cyni",CyniCategory.INDUCTION);
+		cyniAlgorithm = cyniManager.getCyniAlgorithm("basic",CyniCategory.INDUCTION);
 		assertEquals(1, tableManager.getGlobalTables().size());
 		globalTable = tableManager.getGlobalTables().iterator().next();
 		assertNotNull(cyniAlgorithm);

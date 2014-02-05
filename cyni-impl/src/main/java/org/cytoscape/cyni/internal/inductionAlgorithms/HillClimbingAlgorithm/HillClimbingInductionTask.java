@@ -296,8 +296,6 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 
 		scoreOperations = new Operation [nRows][nRows];
 		
-		selectedMetric.resetParameters();
-		
 		if(selectedMetric.getName() == "Entropy.cyni")
 		{
 			Map<String,Object> params = new HashMap<String,Object>();
@@ -305,6 +303,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			params.put("LogBase", "log10");
 			selectedMetric.setParameters(params);
 		}
+		
+		selectedMetric.initMetric();
 		
 		taskMonitor.setStatusMessage("Initializing Cache..." );
 		initCache(data, selectedMetric, taskMonitor);

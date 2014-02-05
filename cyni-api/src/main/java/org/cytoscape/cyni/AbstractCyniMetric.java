@@ -106,10 +106,11 @@ public abstract class AbstractCyniMetric implements CyCyniMetric {
 	}
 
 	/**
-	 * It resets the metric and leaves the default metric's parameters
+	 * It initializes the metric and after this method the method is ready to start calculating measurements.
+	 * If there are parameters to be set, they should be set before calling this method.
 	 * 
 	 */
-	public void resetParameters(){
+	public void initMetric(){
 		
 	}
 	

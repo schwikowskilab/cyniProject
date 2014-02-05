@@ -55,15 +55,14 @@ public class EntropyMetric extends AbstractCyniMetric {
 		log10 = new LogBase10();
 		loge = new LogBaseE();
 		log = log2;
-		
+		conditional = false;		
 	}
 	
-	public void resetParameters()
+	public void initMetric()
 	{
 		if(!mapStringValues.isEmpty())
 			mapStringValues.clear();
-		conditional = false;
-		log = log2;
+		
 	}
 
 	

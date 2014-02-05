@@ -34,21 +34,21 @@ import org.cytoscape.work.TunableValidator;
 
 public class K2InductionContext extends CyniAlgorithmContext implements TunableValidator {
 	
-	@Tunable(description="Maximum number of parents")
+	@Tunable(description="Maximum number of parents", gravity=1.0)
 	public int maxNumParents = 5;
-	@Tunable(description="Output Only Nodes with Edges")
+	@Tunable(description="Output Only Nodes with Edges", gravity=2.0)
 	public boolean removeNodes = false;
 	
-	@Tunable(description="Row order", groups="Row order options")
+	@Tunable(description="Row order", groups="Row order options", gravity=3.0)
 	public ListSingleSelection<String> ordering = new ListSingleSelection<String>("Default Cytoscape Order", "Random Order", "Use Column");
-	@Tunable(description="Use this column to order rows",dependsOn="ordering=Use Column", groups="Row order options")
+	@Tunable(description="Use this column to order rows",dependsOn="ordering=Use Column", groups="Row order options", gravity=4.0)
 	public ListSingleSelection<String> selectedColumn;
 	
-	@Tunable(description="Use selected nodes only", groups="Parameters if a network associated to table data")
+	@Tunable(description="Use selected nodes only", groups="Parameters if a network associated to table data", gravity=5.0)
 	public boolean selectedOnly = false;
 	
 	public ListSingleSelection<CyCyniMetric> measures;
-	@Tunable(description="Metric")
+	@Tunable(description="Metric", gravity=6.0)
 	public ListSingleSelection<CyCyniMetric> getMeasures()
 	{
 		return measures;
@@ -59,7 +59,7 @@ public class K2InductionContext extends CyniAlgorithmContext implements TunableV
 	}
 	
 	public ListMultipleSelection<String> attributeList;
-	@Tunable(description="Data Attributes", groups="Sources for Network Inference",listenForChange={"Measures"})
+	@Tunable(description="Data Attributes", groups="Sources for Network Inference",listenForChange={"Measures"}, gravity=7.0)
 	public ListMultipleSelection<String> getAttributeList()
 	{
 		List<String>  tagList ;

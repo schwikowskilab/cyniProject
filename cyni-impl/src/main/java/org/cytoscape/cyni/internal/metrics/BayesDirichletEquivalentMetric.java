@@ -49,7 +49,7 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 		mapValues =  new HashMap<Double,Double>();
 	}
 	
-	public void resetParameters()
+	public void initMetric()
 	{
 		if(!mapStringValues.isEmpty())
 			mapStringValues.clear();
