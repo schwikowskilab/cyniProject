@@ -28,7 +28,7 @@ import org.cytoscape.event.AbstractCyEvent;
 
 
 /**
- * This event will be fired when new Cyni Algorithm is deleted from {@link CyCyniAlgorithmManager}.
+ * This event will be fired when a Cyni Algorithm is deleted from {@link CyCyniAlgorithmManager}.
  * @CyAPI.Final.Class
  * @CyAPI.InModule cyni-api
  */

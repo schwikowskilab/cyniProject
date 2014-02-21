@@ -67,7 +67,7 @@ public interface CyCyniMetric {
 	public  CyniTable getCyniTable( CyTable table, String[] attributes, boolean transpose, boolean ignoreMissing, boolean selectedOnly);
 	
 	/**
-	 * It initializes the metric and after this method the method is ready to start calculating measurements.
+	 * It initializes the metric and after this method the metric is ready to start calculating measurements.
 	 * If there are parameters to be set, they should be set before calling this method.
 	 * 
 	 */

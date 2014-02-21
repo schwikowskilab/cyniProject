@@ -61,7 +61,7 @@ public abstract class AbstractCyniMetric implements CyCyniMetric {
 	}
 	
 	/**
-	 * A computer readable name used to to differentiate the metrics.
+	 * A computer readable name used to differentiate the metrics.
 	 * 
 	 * @return a computer readable name used to differentiate the metrics.
 	 */
@@ -97,7 +97,7 @@ public abstract class AbstractCyniMetric implements CyCyniMetric {
 	}
 	
 	/**
-	 * The list of types of this metric
+	 * The list of tags of this metric
 	 * 
 	 * @return the list of types
 	 */
@@ -106,7 +106,7 @@ public abstract class AbstractCyniMetric implements CyCyniMetric {
 	}
 
 	/**
-	 * It initializes the metric and after this method the method is ready to start calculating measurements.
+	 * It initializes the metric and after this method the metric is ready to start calculating measurements.
 	 * If there are parameters to be set, they should be set before calling this method.
 	 * 
 	 */

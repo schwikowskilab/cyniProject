@@ -58,7 +58,7 @@ public class CyniAlgorithmContext {
 	
 	/**
 	 * This method tells cytoscape if this algorithm provides its own swing Panel to display 
-	 * the context parameters. So it does not use Cytoscape tunables.
+	 * the context parameters. If so, it will not use Cytoscape tunables.
 	 * 
 	 * @return True if the panel is provided by the algorithm
 	 */
@@ -162,7 +162,7 @@ public class CyniAlgorithmContext {
 	}
 	
 	/**
-	 * Returns a list of the names of the columns that contains strings
+	 * Returns a list of the names of the columns that contains list of strings
 	 * 
 	 * @param table The CyTable to get the names of attributes.
 	 * @return The list of column names

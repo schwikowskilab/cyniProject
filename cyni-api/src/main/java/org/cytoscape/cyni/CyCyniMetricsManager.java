@@ -54,7 +54,7 @@ public interface CyCyniMetricsManager {
 	ArrayList<CyCyniMetric> getAllCyniMetrics();
 	
 	/**
-	 * Returns the list of metrics that contains at least the same types that are passed as input parameter.
+	 * Returns the list of metrics that contains at least the same tags that are passed as input parameter.
 	 * 
 	 * @param tags The list of tags that the metrics need to support
 	 * @return the list of metrics.

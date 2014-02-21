@@ -113,7 +113,7 @@ public class CyniNetworkUtils  {
 	
 	/**
 	 * Copy the columns from a table to the edge table of a network.
-	 * Basically, allows copying all columns from one table to another one.
+	 * Basically, allows copying all columns from one table to an edge table.
 	 * 
 	 * @param newNet The new network
 	 * @param origTable The original table
@@ -135,8 +135,7 @@ public class CyniNetworkUtils  {
 	}
 	
 	/**
-	 * Copy the columns from a table to the edge table of a network.
-	 * Basically, allows copying all columns from one table to another one.
+	 * Sets the name of the network
 	 * 
 	 * @param newNet The network
 	 * @param name The name of the network
@@ -156,8 +155,7 @@ public class CyniNetworkUtils  {
 	 * default value for the column will be null.
 	 * If the column already exists, the column will not be created.
 	 * @param newNetwork The network where the new column will be created
-	 * @param <T> The generic type of the column.
-	 * @param columnName The name identifying the attribute.
+	 * @param columnName The name of the new column.
 	 * @param type The type of the column.
 	 * @param isImmutable  if true, this column can never be deleted
 	 */
@@ -176,8 +174,7 @@ public class CyniNetworkUtils  {
 	 * default value for the column will be null.
 	 * If the column already exists, the column will not be created.
 	 * @param newNetwork The network where the new column will be created
-	 * @param <T> The generic type of the column.
-	 * @param columnName The name identifying the attribute.
+	 * @param columnName The name of the new column.
 	 * @param type The type of the column.
 	 * @param isImmutable  if true, this column can never be deleted
 	 */
@@ -196,8 +193,7 @@ public class CyniNetworkUtils  {
 	 * default value for the column will be null.
 	 * If the column already exists, the column will not be created.
 	 * @param newNetwork The network where the new column will be created
-	 * @param <T> The generic type of the column.
-	 * @param columnName The name identifying the attribute.
+	 * @param columnName The name of the new column.
 	 * @param type The type of the column.
 	 * @param isImmutable  if true, this column can never be deleted
 	 */
@@ -213,11 +209,11 @@ public class CyniNetworkUtils  {
 	 * Add columns that belong to a table associated to a network to a new table associated to a new network.
 	 * Basically, allows copying all columns from one table to another one
 	 * 
-	 * @param origNet The original network
+	 * @param origNet The original network(it can be null if original table does not belong to a network)
 	 * @param newNet The new network
 	 * @param origTable The original table
-	 * @param tableType The type of the table
-	 * @param namespace The namespace of the table
+	 * @param tableType The type of the table (Node, edge or network table)
+	 * @param namespace The namespace of the network table
 	 */
 	public void addColumns(final CyNetwork origNet,final CyNetwork newNet, final CyTable origTable,
 		final Class<? extends CyIdentifiable> tableType,final String namespace) {
@@ -294,7 +290,7 @@ public class CyniNetworkUtils  {
 	}
 	
 	/**
-	 * Clone the row data to the row corresponding to a node
+	 * Clone the row data to the row corresponding to a node of the specified network
 	 * 
 	 * @param newNet The network where the node belongs
 	 * @param sourceRow The source row
@@ -321,7 +317,7 @@ public class CyniNetworkUtils  {
 	}
 	
 	/**
-	 * Clone the row data to the row corresponding to an edge
+	 * Clone the row data to the row corresponding to an edge of the specified network
 	 * 
 	 * @param newNet The network where the node belongs
 	 * @param sourceRow The source row
@@ -348,35 +344,7 @@ public class CyniNetworkUtils  {
 	}
 	
 	/**
-	 * Clone a row to be added to a new network
-	 * 
-	 * @param newNet The new network.
-	 * @param tableType The type of the table.
-	 * @param from The source row
-	 * @param to The target row
-	 */
-	public void cloneRow(final CyNetwork newNet, final Class<? extends CyIdentifiable> tableType, final CyRow from,
-			final CyRow to) {
-		final CyRootNetwork newRoot = rootNetMgr.getRootNetwork(newNet);
-		Map<String, CyTable> rootTables = netTableMgr.getTables(newRoot, tableType);
-		
-		for (final CyColumn col : to.getTable().getColumns()){
-			final String name = col.getName();
-			
-			if (name.equals(CyIdentifiable.SUID))
-				continue;
-			
-			final VirtualColumnInfo info = col.getVirtualColumnInfo();
-			
-			// If it's a virtual column whose source table is assigned to the new root-network,
-			// then we have to set the value, because the rows of the new root table may not have been copied yet
-			if (!info.isVirtual() || rootTables.containsValue(info.getSourceTable()))
-				to.set(name, from.getRaw(name));
-		}
-	}
-	
-	/**
-	 * Checks if the table is associated to a network, if so it return the associated network otherwise it returns null
+	 * Checks if the table is associated to a network, if so it returns the associated network otherwise it returns null
 	 * 
 	 * @param table The table to check
 	 * @return null if no network is associated to the table or the network associated

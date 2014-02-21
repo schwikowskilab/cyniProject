@@ -10,8 +10,8 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<cytoscape.api.version>3.1.0-SNAPSHOT</cytoscape.api.version>
-		<cytoscape.core.version>3.1.0-SNAPSHOT</cytoscape.core.version>
+		<cytoscape.api.version>3.1.0</cytoscape.api.version>
+		<cytoscape.core.version>3.1.0</cytoscape.core.version>
 		<osgi.api.version>4.2.0</osgi.api.version>
 		<cyni.api.version>1.0-beta3</cyni.api.version>
 		<cyni.app.version>${project.version}</cyni.app.version>

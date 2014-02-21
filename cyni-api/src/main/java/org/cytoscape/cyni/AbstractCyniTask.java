@@ -71,7 +71,7 @@ public abstract class AbstractCyniTask extends AbstractTask implements Observabl
 	protected int nThreads;
 	
 	/**
-	 * This variable holds the new network that will be created if an infer algorithm is executed.
+	 * This variable holds the new network that will be created if an inference algorithm is executed.
 	 */
 	protected CyNetwork newNetwork = null;
 

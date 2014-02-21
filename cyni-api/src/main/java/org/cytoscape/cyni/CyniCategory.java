@@ -29,7 +29,7 @@ package org.cytoscape.cyni;
  */
 public enum CyniCategory {
 	/** 
-	* Cyni Algorithm is a Network Induction Algorithm
+	* Cyni Algorithm is a Network Inference Algorithm
 	*/ 
 	INDUCTION, 
 	

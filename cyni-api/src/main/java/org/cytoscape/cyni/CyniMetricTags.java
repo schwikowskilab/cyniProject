@@ -24,7 +24,7 @@
 package org.cytoscape.cyni;
 
 /**
- * An enum that captures the types of the default Cyni Metrics available
+ * An enum that captures the tags of the Cyni Metrics available
  * @CyAPI.Enum.Class
  */
 public enum CyniMetricTags {
