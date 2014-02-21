@@ -134,7 +134,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		CyNetwork networkSelected = null;
 		boolean okToProceed = false;
 		ArrayList<Integer> parents = new ArrayList<Integer>();
-		double pOld,pNew;
+		double pNew;
 		ArrayList<Integer> parentsToIndex;
 		double threadResults[] ;
 		int threadIndex[] ;
@@ -218,7 +218,6 @@ public class K2InductionTask extends AbstractCyniTask {
 				break;
 			taskMonitor.setStatusMessage("K2 network bayesian induction(Nodes " + nRows + "). Searching parents for node " + (row+1) );
 			parents.clear();
-			pOld = 0.0;
 			pNew = 0.0;
 			node1 = newNetwork.addNode();
 			netUtils.cloneNodeRow(newNetwork,table.getRow(data.getRowLabel(row)), node1);
@@ -240,10 +239,9 @@ public class K2InductionTask extends AbstractCyniTask {
 			}
 			parentsToIndex.clear();
 			parentsToIndex.add(row);
-			pOld = selectedMetric.getMetric(data, data, row, parentsToIndex);
+			pNew = selectedMetric.getMetric(data, data, row, parentsToIndex);
 			if(changeSign)
-				pOld = -1.0*pOld;
-			pNew = pOld;
+				pNew = -1.0*pNew;
 			threadNumber = 0;
 						
 			while (okToProceed && (parents.size() < maxNumParents))
