@@ -30,6 +30,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyTable;
@@ -47,6 +50,8 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ContainsTunables;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
+import org.cytoscape.work.TunableValidator;
+import org.cytoscape.work.TunableValidator.ValidationState;
 import org.cytoscape.cyni.*;
 
 
@@ -88,7 +93,20 @@ public class CyniWrapperTask extends AbstractTask {
 	@Override
 	public void run(final TaskMonitor taskMonitor) {
 		
-	
+		/*************************************************************************************************************/
+		/* Needs to be removed when the bug in cytoscape about validating the input parameters will be fixed         */
+		if (cyniContext instanceof TunableValidator) {
+			StringBuilder errors = new StringBuilder();
+			final ValidationState validationState = ((TunableValidator) cyniContext).getValidationState(errors);
+			if(validationState != ValidationState.OK)
+			{
+				JOptionPane.showMessageDialog(new JFrame(), errors.toString(),
+					      "Input Validation Problem",
+					      JOptionPane.ERROR_MESSAGE);
+				return ;
+			}
+		}
+		/**************************************************************************************************************/
 		insertTasksAfterCurrentTask(algorithm.createTaskIterator((CyniAlgorithmContext)cyniContext,table,netFactory, viewFactory,netMgr,
 				netTableMgr,rootNetMgr,vmMgr, viewMgr,layoutManager,metricsManager));
 
@@ -96,8 +114,6 @@ public class CyniWrapperTask extends AbstractTask {
 	
 	public void setCyniContext(CyTable table)
 	{
-		if(table != null)
-			System.out.println("setting cyni contexte: " + table.getTitle());
 		cyniContext = algorithm.createCyniContext(table, metricsManager, null, null);
 		this.table = table;
 	}

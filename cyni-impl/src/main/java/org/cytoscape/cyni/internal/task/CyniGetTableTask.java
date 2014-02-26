@@ -58,16 +58,14 @@ public class CyniGetTableTask extends AbstractTask {
 	@Tunable(description="Data Table", gravity=-2000.0, context="nogui")
 	public CyTable getTable()
 	{
-		if(table != null)
-			System.out.println("table: " + table.getTitle());
+		
 		return  table;
 	}
 	
 	public void setTable(CyTable tempTable)
 	{
 		table = tempTable;
-		if(table != null)
-			System.out.println("Settable: " + table.getTitle());
+		
 		
 	}
 
