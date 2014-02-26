@@ -119,7 +119,7 @@ public abstract class AbstractCyniTask extends AbstractTask implements Observabl
 			return "Ok";
 	
 		if(requestedType.equals(String.class))
-			return newNetwork.NAME;
+			return newNetwork.getRow(newNetwork).get(CyNetwork.NAME, String.class);
 		if(requestedType.equals(CyNetwork.class))
 			return newNetwork;
 		
