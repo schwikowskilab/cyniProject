@@ -308,7 +308,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 		taskMonitor.setStatusMessage("Initializing Cache..." );
 		initCache(data, selectedMetric, taskMonitor);
-		taskMonitor.setStatusMessage("Cache Initialized\n Looking for optimal solution..." );
+		taskMonitor.setStatusMessage("Cache Initialized" );
 		netUtils.createEdgeColumn(newNetwork,"Metric", String.class, false);	
 		netUtils.createEdgeColumn(newNetwork,"Score", Double.class, false);	
 		netUtils.createNetworkColumn(newNetwork,"Added Edges", Integer.class, false);	
@@ -327,8 +327,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			operationAdd.resetParameters();
 			operationDelete.resetParameters();
 			operationReverse.resetParameters();
-			taskMonitor.setStatusMessage("Cache Initialized\nLooking for optimal solution by performing the following operations:\n" +
-					"Added edges: " + added + "\nRemoved edges: " + removed + "\nReversed edges: " + reversed  );
+			taskMonitor.setStatusMessage("Optimal solution search. Added edges: " + added + " Removed edges: " + removed + " Reversed edges: " + reversed  );
 			
 			chosenOperation=findBestOperation(data, operationAdd);
 			

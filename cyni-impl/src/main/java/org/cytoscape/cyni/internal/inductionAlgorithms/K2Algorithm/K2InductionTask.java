@@ -216,7 +216,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		for (row = 0; row < nRows; row++) {
 			if (cancelled)
 				break;
-			taskMonitor.setStatusMessage("K2 network bayesian induction(Nodes " + nRows + "). Searching parents for node " + (row+1) );
+			taskMonitor.setStatusMessage("K2 bayesian inference(Nodes " + nRows + "). Searching parents for node " + (row+1) );
 			parents.clear();
 			pNew = 0.0;
 			node1 = newNetwork.addNode();

@@ -119,7 +119,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		networkSelected = netUtils.getNetworkAssociatedToTable(table);
 		
 		taskMonitor.setTitle("Cyni - Basic Correlation Inference Algorithm");
-		taskMonitor.setStatusMessage("Generating network inference...");
+		taskMonitor.setStatusMessage("Applying correlation network inference to all possible node pairs...");
 		taskMonitor.setProgress(progress);
 		mapRowNodes = new HashMap<Object,CyNode>();
 		index.add(0);

@@ -114,6 +114,20 @@ public class K2InductionContext extends CyniAlgorithmContext implements TunableV
 		ArrayList<String> tempList = new ArrayList<String>(getAllAttributesNumbers(selectedTable));
 		tempList.addAll(getAllAttributesStrings(selectedTable));
 		
+		attributes = getAllAttributesStrings(selectedTable);
+		if(attributes.size() > 0)
+		{
+			attributeList = new  ListMultipleSelection<String>(attributes);
+			List<String> temp = new ArrayList<String>( attributes);
+			temp.remove(table.getPrimaryKey().getName());
+			if(!temp.isEmpty())
+				attributeList.setSelectedValues(temp);
+		}
+		else
+		{
+			attributeList = new  ListMultipleSelection<String>("No sources available");
+		}
+		
 		if(metrics.size() > 0)
 		{
 			measures = new  ListSingleSelection<CyCyniMetric>(metrics);

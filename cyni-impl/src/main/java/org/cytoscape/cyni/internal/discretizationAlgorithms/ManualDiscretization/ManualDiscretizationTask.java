@@ -161,11 +161,11 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 
 		if(!columnsNames.isEmpty())
 		{
-			taskMonitor.setStatusMessage("Data discretized: New columns " + columnsNames.toString()+" created. ");
+			taskMonitor.setStatusMessage("Discretization successful: " + columnsNames.size() + " new columns created with prefix nominal. in column name");
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					JOptionPane.showMessageDialog(null, "Data discretized: New columns " + columnsNames.toString()+" created. ", "Results", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Discretization successful: " + columnsNames.size() + " new columns created with prefix nominal. in column name", "Results", JOptionPane.INFORMATION_MESSAGE);
 				}
 			});
 		}
