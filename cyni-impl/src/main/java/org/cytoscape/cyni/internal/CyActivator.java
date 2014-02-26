@@ -129,7 +129,7 @@ public class CyActivator extends AbstractCyActivator {
 		/******************************************************************************************************************************************/
 		/**This code is temporal and it will be removed when cy3 allows loading tables without mapping them to other elements as nodes or networks*/
 		
-		LoadAttributesFileTaskFactoryImpl loadAttrsFileTaskFactory = new LoadAttributesFileTaskFactoryImpl(cyDataTableReaderManagerServiceRef, 
+		/*LoadAttributesFileTaskFactoryImpl loadAttrsFileTaskFactory = new LoadAttributesFileTaskFactoryImpl(cyDataTableReaderManagerServiceRef, 
 				tunableSetterServiceRef,cyNetworkManagerServiceRef, cyTableServiceRef, rootNetworkManagerServiceRef );
 		LoadAttributesURLTaskFactoryImpl loadAttrsURLTaskFactory = new LoadAttributesURLTaskFactoryImpl(cyDataTableReaderManagerServiceRef, 
 				tunableSetterServiceRef, cyNetworkManagerServiceRef, cyTableServiceRef, rootNetworkManagerServiceRef);
@@ -145,7 +145,7 @@ public class CyActivator extends AbstractCyActivator {
 		loadAttrsFileTaskFactoryProps.setProperty(TITLE,"File...");
 		
 		registerService(bc,loadAttrsFileTaskFactory,TaskFactory.class, loadAttrsFileTaskFactoryProps);
-		registerService(bc,loadAttrsURLTaskFactory,TaskFactory.class, loadAttrsURLTaskFactoryProps);
+		registerService(bc,loadAttrsURLTaskFactory,TaskFactory.class, loadAttrsURLTaskFactoryProps);*/
 		
 		/******************************************************************************************************************************************/
 		
@@ -184,7 +184,7 @@ public class CyActivator extends AbstractCyActivator {
 		registerService(bc,cyniControlPanel,CytoPanelComponent.class, new Properties());
 		registerService(bc,controlPanelAction,CyAction.class, new Properties());
 		
-		CyniAction inductionAction = new CyniAction("Infer Network...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
+		/*CyniAction inductionAction = new CyniAction("Infer Network...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
                 cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
                 cyNetworkManagerServiceRef,cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef,panelTaskManagerServiceRef,
                 cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,
@@ -204,7 +204,7 @@ public class CyActivator extends AbstractCyActivator {
 		
 		registerService(bc, inductionAction, CyAction.class, new Properties());
 		registerService(bc,imputationAction,CyAction.class, new Properties());
-		registerService(bc,discretizationAction,CyAction.class, new Properties());
+		registerService(bc,discretizationAction,CyAction.class, new Properties());*/
 		
 		
 

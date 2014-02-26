@@ -20,7 +20,7 @@ public class CyniControlPanelAction extends AbstractCyAction {
 			CyniControlPanel myCytoPanel){
 		// Add a menu item -- Apps->sample02
 		super("Cyni Toolbox");
-		setPreferredMenu("Tools");
+		setPreferredMenu("Apps");
 
 		this.desktopApp = desktopApp;
 		
