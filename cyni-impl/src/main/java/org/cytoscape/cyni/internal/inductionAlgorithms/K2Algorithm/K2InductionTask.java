@@ -87,6 +87,7 @@ public class K2InductionTask extends AbstractCyniTask {
 	private boolean removeNodes;
 	private boolean changeSign;
 	private CyniNetworkUtils netUtils;
+	private static int iteration = 0;
 
 	/**
 	 * Creates a new K2InductionTask object.
@@ -109,6 +110,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		this.removeNodes = context.removeNodes;
 		this.selectedMetric = context.measures.getSelectedValue();
 		this.netUtils = new CyniNetworkUtils(networkViewFactory,networkManager,networkViewManager,netTableMgr,rootNetMgr,vmMgr);
+		iteration++;
 		
 	}
 
@@ -201,7 +203,7 @@ public class K2InductionTask extends AbstractCyniTask {
 			}
 		}
 		
-		netUtils.setNetworkName(newNetwork, "K2 Inference " + newNetwork.getSUID());
+		netUtils.setNetworkName(newNetwork, "K2 Inference " + iteration);
 		
 		
 		//netUtils.addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);

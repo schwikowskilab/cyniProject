@@ -70,6 +70,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 	private CyCyniMetricsManager metricsManager;
 	private CyCyniMetric selectedMetric;
 	private CyniNetworkUtils netUtils;
+	private static int iteration = 0;
 
 	/**
 	 * Creates a new BasicInduction object.
@@ -90,6 +91,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		this.attributeArray = context.attributeList.getSelectedValues();
 		this.table = selectedTable;
 		this.netUtils = new CyniNetworkUtils(networkViewFactory,networkManager,networkViewManager,netTableMgr,rootNetMgr,vmMgr);
+		iteration++;
 		
 	}
 
@@ -133,7 +135,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		threadIndex = new int[nRows];
 		Arrays.fill(threadResults, 0.0);
 		
-		netUtils.setNetworkName(newNetwork, "Correlation Inference " + newNetwork.getSUID());
+		netUtils.setNetworkName(newNetwork, "Correlation Inference " + iteration);
 		
 		
 		//netUtils.addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);

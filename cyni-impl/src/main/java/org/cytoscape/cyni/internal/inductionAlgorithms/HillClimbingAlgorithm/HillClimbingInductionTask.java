@@ -85,6 +85,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 	private boolean changeSign;
 	private CyniBayesianUtils bayesUtils;
 	private Map<Integer, ArrayList<Integer>> nodeParents;
+	private static int iteration = 0;
 
 
 	/**
@@ -115,6 +116,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		nodeParents = new HashMap<Integer, ArrayList<Integer>>();
 		this.netUtils = new CyniNetworkUtils(networkViewFactory,networkManager,networkViewManager,netTableMgr,rootNetMgr,vmMgr);
 		this.bayesUtils = new CyniBayesianUtils(nodeParents);
+		iteration++;
 		
 	}
 
@@ -152,7 +154,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		taskMonitor.setStatusMessage("Generating Hill Climbing Inference...");
 		taskMonitor.setProgress(progress);
 		
-		netUtils.setNetworkName(newNetwork, "HC Inference " + newNetwork.getSUID());
+		netUtils.setNetworkName(newNetwork, "HC Inference " + iteration);
 		
 		if(selectedMetric.getName() == "Entropy.cyni" || selectedMetric.getName() == "AIC.cyni" || selectedMetric.getName() == "MDL.cyni")
 			changeSign = true;

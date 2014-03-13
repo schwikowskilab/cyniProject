@@ -64,6 +64,7 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 	private CyCyniMetricsManager metricsManager;
 	private CyCyniMetric selectedMetric;
 	private CyniNetworkUtils netUtils;
+	private static int iteration = 0;
 
 	/**
 	 * Creates a new MutualInfoInductionTask object.
@@ -83,6 +84,7 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 		this.attributeArray = context.attributeList.getSelectedValues();
 		this.table = selectedTable;
 		this.netUtils = new CyniNetworkUtils(networkViewFactory,networkManager,networkViewManager,netTableMgr,rootNetMgr,vmMgr);
+		iteration++;
 		
 	}
 
@@ -139,7 +141,7 @@ public class MutualInfoInductionTask extends AbstractCyniTask {
 		threadIndex = new int[nRows];
 		Arrays.fill(threadResults, 0.0);
 		
-		netUtils.setNetworkName(newNetwork, "Mutual Info Inference " + newNetwork.getSUID());
+		netUtils.setNetworkName(newNetwork, "Mutual Info Inference " + iteration);
 		
 		//netUtils.addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
 		netUtils.copyNodeColumns(newNetwork, table);
