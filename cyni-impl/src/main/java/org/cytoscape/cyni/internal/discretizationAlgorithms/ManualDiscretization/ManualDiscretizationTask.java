@@ -161,11 +161,11 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 
 		if(!columnsNames.isEmpty())
 		{
-			taskMonitor.setStatusMessage("Discretization successful: " + columnsNames.size() + " new columns created with prefix nominal. in column name");
+			taskMonitor.setStatusMessage("Discretization successful: " + columnsNames.size() + " new columns created in the chosen table. Their name has the prefix nominal. ");
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					JOptionPane.showMessageDialog(null, "Discretization successful: " + columnsNames.size() + " new columns created with prefix nominal. in column name", "Results", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Discretization successful: " + columnsNames.size() + " new columns created in the chosen table. Their name has the prefix nominal. ", "Results", JOptionPane.INFORMATION_MESSAGE);
 				}
 			});
 		}
