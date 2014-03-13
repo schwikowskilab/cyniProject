@@ -105,6 +105,41 @@ public class CyniTable {
 			columnLabels = new DenseObjectMatrix1D(attributes.length);
 			rowLabels = new DenseObjectMatrix1D(internalTable.getAllRows().size());
 		}
+		
+		i = 0;
+		String primaryKey = internalTable.getPrimaryKey().getName();
+		List<CyRow> rowList = internalTable.getAllRows();
+		if(internalTable.getColumn(CyTable.SUID) != null)
+		{
+			Collections.sort(rowList,new Comparator<CyRow>() {
+				 public int compare(CyRow row1, CyRow row2) {
+					 if(row1.get(CyTable.SUID, Long.class) > row2.get(CyTable.SUID, Long.class))
+						 return 1;
+					 else
+						 return -1;
+				 }
+			});
+		}
+		for ( CyRow row :  rowList) 
+		{
+			if (selectedOnly && row.isSet(CyNetwork.SELECTED))
+			{
+				if(!row.get(CyNetwork.SELECTED, Boolean.class))
+				continue;
+			}
+			if (transpose) {
+				columnLabels.setQuick(i++, row.getRaw(primaryKey));
+				mapColLabels.put(row.getRaw(primaryKey), i-1);
+				nColumns++;
+			}
+			else
+			{
+				mapRowOrder.put(i, i);
+				rowLabels.setQuick(i++, row.getRaw(primaryKey));
+				mapRowLabels.put(row.getRaw(primaryKey), i-1);
+				nRows++;
+			}
+		}
 
 		if (attributes.length >= 1 ) 
 		{
@@ -114,6 +149,7 @@ public class CyniTable {
 				if (transpose) {
 					rowLabels.setQuick(i,  attributes[i]);
 					mapRowLabels.put(attributes[i], i);
+					mapRowOrder.put(i, i);
 					nRows++;
 				}
 				else
@@ -123,39 +159,7 @@ public class CyniTable {
 					nColumns++;
 				}
 			}
-			i = 0;
-			String primaryKey = internalTable.getPrimaryKey().getName();
-			List<CyRow> rowList = internalTable.getAllRows();
-			if(internalTable.getColumn(CyTable.SUID) != null)
-			{
-				Collections.sort(rowList,new Comparator<CyRow>() {
-					 public int compare(CyRow row1, CyRow row2) {
-						 if(row1.get(CyTable.SUID, Long.class) > row2.get(CyTable.SUID, Long.class))
-							 return 1;
-						 else
-							 return -1;
-					 }
-				});
-			}
-			for ( CyRow row :  rowList) 
-			{
-				if (selectedOnly && row.isSet(CyNetwork.SELECTED))
-				{
-					if(!row.get(CyNetwork.SELECTED, Boolean.class))
-					continue;
-				}
-				if (transpose) {
-					columnLabels.setQuick(i++, row.getRaw(primaryKey));
-					mapColLabels.put(row.getRaw(primaryKey), i-1);
-					nColumns++;
-				}
-				else
-				{
-					rowLabels.setQuick(i++, row.getRaw(primaryKey));
-					mapRowLabels.put(row.getRaw(primaryKey), i-1);
-					nRows++;
-				}
-			}
+			
 			
 			if (transpose) {
 				colNumStringsDiff = new int[nRows];
@@ -182,6 +186,11 @@ public class CyniTable {
 			//If columns contain Strings, all possible values found in these columns are store for a future use
 			for ( i = 0; i < attributes.length; i++) 
 			{
+				if(internalTable.getColumn(attributes[i]) == null)
+				{
+					nColumns--;
+					continue;
+				}
 				indexToTypes[i] = internalTable.getColumn(attributes[i]).getType();
 				if(indexToTypes[i] == String.class)
 				{
@@ -214,7 +223,6 @@ public class CyniTable {
 			this.data = new DenseObjectMatrix2D(nRows,nColumns);//Object[nRows][nColumns];
 			for(i=0;i<nRows;i++)
 			{
-				mapRowOrder.put(i, i);
 				for(j=0;j<nColumns;j++)
 				{
 					if (transpose) 
