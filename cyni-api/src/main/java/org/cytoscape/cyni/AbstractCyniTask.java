@@ -73,12 +73,12 @@ public abstract class AbstractCyniTask extends AbstractTask implements Observabl
 	/**
 	 * This variable holds the new network that will be created if an inference algorithm is executed.
 	 */
-	protected CyNetwork newNetwork = null;
+	protected CyNetwork newNetwork;
 	
 	/**
 	 * This variable holds the message that will be shown after task is done
 	 */
-	protected String outputMessage ;
+	protected String outputMessage;
 
 	/**
 	 * Constructor.
@@ -107,6 +107,8 @@ public abstract class AbstractCyniTask extends AbstractTask implements Observabl
 		this.netTableMgr = netTableMgr;
 		this.rootNetMgr = rootNetMgr;
 		this.vmMgr = visualMapperManager;
+		newNetwork = null;
+		outputMessage = "";
 		nThreads = Runtime.getRuntime().availableProcessors()-1;
 
 	}
