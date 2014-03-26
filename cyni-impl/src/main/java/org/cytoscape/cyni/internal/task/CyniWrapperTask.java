@@ -48,6 +48,7 @@ import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ContainsTunables;
+import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableValidator;
@@ -55,7 +56,7 @@ import org.cytoscape.work.TunableValidator.ValidationState;
 import org.cytoscape.cyni.*;
 
 
-public class CyniWrapperTask extends AbstractTask {
+public class CyniWrapperTask extends AbstractTask implements ObservableTask{
 	private final CyNetworkFactory netFactory;
 	private final CyNetworkViewFactory viewFactory;
 	private final CyNetworkManager netMgr;
@@ -68,6 +69,7 @@ public class CyniWrapperTask extends AbstractTask {
 	private final CyCyniAlgorithm algorithm;
 	
 	CyTable table;
+	String outputMessage ;
 
 	@ContainsTunables
 	public Object cyniContext;
@@ -100,9 +102,13 @@ public class CyniWrapperTask extends AbstractTask {
 			final ValidationState validationState = ((TunableValidator) cyniContext).getValidationState(errors);
 			if(validationState != ValidationState.OK)
 			{
-				JOptionPane.showMessageDialog(new JFrame(), errors.toString(),
-					      "Input Validation Problem",
-					      JOptionPane.ERROR_MESSAGE);
+				if(((CyniAlgorithmContext) cyniContext).getParentSwingComponent() == null)
+					outputMessage = "[ERROR] " + errors.toString();
+				else
+				{
+					JOptionPane.showMessageDialog( ((CyniAlgorithmContext) cyniContext).getParentSwingComponent(), errors.toString(),
+						      "Input Validation Problem",JOptionPane.ERROR_MESSAGE);
+				}
 				return ;
 			}
 		}
@@ -116,6 +122,10 @@ public class CyniWrapperTask extends AbstractTask {
 	{
 		cyniContext = algorithm.createCyniContext(table, metricsManager, null, null);
 		this.table = table;
+	}
+	
+	public Object getResults(Class requestedType) {
+		return outputMessage;
 	}
 
 }

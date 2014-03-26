@@ -25,6 +25,7 @@ package org.cytoscape.cyni.internal.imputationAlgorithms.RAVGFillAlgorithm;
 
 
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -57,6 +58,7 @@ public class RAVGImputationTask extends AbstractCyniTask {
 	private final CyTable mytable;
 	private int founds = 0;
 	private int numElements = 0;
+	private Component parent;
 	
 	private Map<Object,Double> rowMeansMap;
 	private MissingValueDefinition missDef;
@@ -75,6 +77,7 @@ public class RAVGImputationTask extends AbstractCyniTask {
 		missValueUp = context.missValueUp;
 		missValueLarge = context.missValueLarger;
 		missValueLow = context.missValueLower;
+		parent = context.getParentSwingComponent();
 		
 		if(context.chooser.getSelectedValue().matches("By a double Threshold"))
 			missDef = MissingValueDefinition.DOUBLE_THRESHOLD;
@@ -172,15 +175,19 @@ public class RAVGImputationTask extends AbstractCyniTask {
 			 taskMonitor.setProgress(progress);
 		 }
 		
-		taskMonitor.setStatusMessage("Number of estimated missing entries: " + founds );
 		taskMonitor.setProgress(1.0d);
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				JOptionPane
-				.showMessageDialog(null, "Number of estimated missing entries: " + founds, "Information", JOptionPane.INFORMATION_MESSAGE);
-			}
-		});
+		outputMessage = "Number of estimated missing entries: " + founds;
+		taskMonitor.setStatusMessage(outputMessage );
+		if(parent != null)
+		{
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane
+					.showMessageDialog(parent, outputMessage, "Information", JOptionPane.INFORMATION_MESSAGE);
+				}
+			});
+		}
 	}
 	
 	

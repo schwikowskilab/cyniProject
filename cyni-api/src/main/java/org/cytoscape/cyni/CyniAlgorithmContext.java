@@ -25,6 +25,7 @@ package org.cytoscape.cyni;
 
 import java.util.*;
 import javax.swing.JPanel;
+import java.awt.Component;
 
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
@@ -46,6 +47,11 @@ public class CyniAlgorithmContext {
 	 * Indicates that there is the possibility to use only selected rows.
 	 */
 	private boolean supportsSelectedOnly;
+	
+	/**
+	 * Indicates the parent of the context UI if a panel has been created
+	 */
+	private Component parent;
 
 
 	/**
@@ -53,7 +59,30 @@ public class CyniAlgorithmContext {
 	 */
 	public CyniAlgorithmContext(boolean supportsSelectedOnly) {
 		this.supportsSelectedOnly = supportsSelectedOnly;
+		parent = null;
 		
+	}
+	
+	/**
+	 * Sets the parent component of this context so the context knows whether
+	 * a swing UI has been created for this context
+	 * 
+	 * @param parent The swing component parent for this context 
+	 */
+	public void setParentSwingComponent(Component parent)
+	{
+		this.parent = parent;
+	}
+	
+	/**
+	 * Returns the swing parent component of this context 
+	 * 
+	 * @return The swing parent component, if null means the context
+	 * does not have a corresponding UI
+	 */
+	public Component getParentSwingComponent()
+	{
+		return parent;
 	}
 	
 	/**

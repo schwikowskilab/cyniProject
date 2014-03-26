@@ -33,6 +33,7 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import java.awt.Component;
 
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNode;
@@ -69,6 +70,7 @@ public class BPCAImputationTask extends AbstractCyniTask {
     private double previousTau;
     private double convergenceThreshold;
     private MissingValueHandler missing;
+    private Component parent;
 	
 
 	/**
@@ -83,6 +85,7 @@ public class BPCAImputationTask extends AbstractCyniTask {
 		missValueLarge = context.missValueLarger;
 		missValueLow = context.missValueLower;
 		chooser = context.chooser.getSelectedValue();
+		parent = context.getParentSwingComponent();
 		int i = 0;
 		this.mytable = selectedTable;
 		rowIndexToPrimaryKey = new Object[selectedTable.getAllRows().size()]; 
@@ -174,14 +177,18 @@ public class BPCAImputationTask extends AbstractCyniTask {
 		{
 			saveData(mytable,getMatrixResult());
 			taskMonitor.setProgress(1.0d);
-			taskMonitor.setStatusMessage("Number of estimated missing entries: " + listPositions.size() );
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					JOptionPane
-					.showMessageDialog(null, "Number of estimated missing entries: " + listPositions.size(), "Information", JOptionPane.INFORMATION_MESSAGE);
-				}
-			});
+			outputMessage = "Number of estimated missing entries: " + listPositions.size();
+			taskMonitor.setStatusMessage(outputMessage );
+			if(parent != null)
+			{
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane
+						.showMessageDialog(parent, outputMessage, "Information", JOptionPane.INFORMATION_MESSAGE);
+					}
+				});
+			}
 		}
 	}
 	

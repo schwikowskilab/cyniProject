@@ -25,6 +25,7 @@ package org.cytoscape.cyni.internal.inductionAlgorithms.HillClimbingAlgorithm;
 
 
 
+import java.awt.Component;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -85,6 +86,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 	private boolean changeSign;
 	private CyniBayesianUtils bayesUtils;
 	private Map<Integer, ArrayList<Integer>> nodeParents;
+	private Component parent;
 	private static int iteration = 0;
 
 
@@ -114,6 +116,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		orig2NewNodeMap = new WeakHashMap<CyNode, CyNode>();
 		new2OrigNodeMap = new WeakHashMap<CyNode, CyNode>();
 		nodeParents = new HashMap<Integer, ArrayList<Integer>>();
+		parent = context.getParentSwingComponent();
 		this.netUtils = new CyniNetworkUtils(networkViewFactory,networkManager,networkViewManager,netTableMgr,rootNetMgr,vmMgr);
 		this.bayesUtils = new CyniBayesianUtils(nodeParents);
 		iteration++;
@@ -194,13 +197,17 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 		if(data.hasAnyMissingValue())
 		{
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					JOptionPane.showMessageDialog(null, "The data selected contains missing values.\n " +
-							"Therefore, this algorithm can not proceed with these conditions.", "Warning", JOptionPane.WARNING_MESSAGE);
-				}
-			});
+			outputMessage = "The data selected contains missing values.\n " +
+					"Therefore, this algorithm can not proceed with these conditions.";
+			if(parent != null)
+			{
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(parent,outputMessage , "Warning", JOptionPane.WARNING_MESSAGE);
+					}
+				});
+			}
 			newNetwork.dispose();
 			return;
 		}
@@ -261,13 +268,17 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 					}
 					if(!newDirected )
 					{
-						SwingUtilities.invokeLater(new Runnable() {
-							@Override
-							public void run() {
-								JOptionPane.showMessageDialog(null, "The data selected belongs to a network that is not directed.\n " +
-										"Therefore, this algorithm is not able to proceed with parameters requested", "Warning", JOptionPane.WARNING_MESSAGE);
-							}
-						});
+						outputMessage = "The data selected belongs to a network that is not directed.\n " +
+								"Therefore, this algorithm is not able to proceed with parameters requested";
+						if(parent != null)
+						{
+							SwingUtilities.invokeLater(new Runnable() {
+								@Override
+								public void run() {
+									JOptionPane.showMessageDialog(parent, outputMessage, "Warning", JOptionPane.WARNING_MESSAGE);
+								}
+							});
+						}
 						newNetwork.dispose();
 						return;
 					}
@@ -282,13 +293,17 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			for ( i = 0; i< nRows; i++) {	
 				if(bayesUtils.isGraphCyclic( i))
 				{
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							JOptionPane.showMessageDialog(null, "The data selected belongs to a network that is not acyclic.\n " +
-									"This algorithm is a bayesian network algorithm and requires a Directed Acyclic Graph(DAG) to perform", "Warning", JOptionPane.WARNING_MESSAGE);
-						}
-					});
+					outputMessage = "The data selected belongs to a network that is not acyclic.\n " +
+							"This algorithm is a bayesian network algorithm and requires a Directed Acyclic Graph(DAG) to perform";
+					if(parent != null)
+					{
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								JOptionPane.showMessageDialog(parent,outputMessage , "Warning", JOptionPane.WARNING_MESSAGE);
+							}
+						});
+					}
 					newNetwork.dispose();
 					return;
 				}

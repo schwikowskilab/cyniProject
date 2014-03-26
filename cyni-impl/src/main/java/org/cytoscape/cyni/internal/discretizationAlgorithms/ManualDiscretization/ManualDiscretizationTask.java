@@ -25,6 +25,7 @@ package org.cytoscape.cyni.internal.discretizationAlgorithms.ManualDiscretizatio
 
 
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,7 +55,7 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 	private final List<String> attributeArray;
 	private ArrayList<Double> thresholds;
 	private List<String> columnsNames;
-	
+	private Component parent;
 	
 	
 
@@ -66,6 +67,7 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 		super(name, context,null,null,null, null,null,null,null);
 		bins = Integer.parseInt(context.interval.getSelectedValue());
 		this.attributeArray = context.attributeList.getSelectedValues();
+		parent = context.getParentSwingComponent();
 		thresholds = new ArrayList<Double>();
 		this.mytable = selectedTable;
 		for(int i=1;i<bins;i++)
@@ -161,13 +163,17 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 
 		if(!columnsNames.isEmpty())
 		{
-			taskMonitor.setStatusMessage("Discretization successful: " + columnsNames.size() + " new columns created in the chosen table. Their name has the prefix nominal. ");
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					JOptionPane.showMessageDialog(null, "Discretization successful: " + columnsNames.size() + " new columns created in the chosen table. Their name has the prefix nominal. ", "Results", JOptionPane.INFORMATION_MESSAGE);
-				}
-			});
+			outputMessage = "Discretization successful: " + columnsNames.size() + " new columns created in the chosen table. Their name has the prefix nominal. ";
+			taskMonitor.setStatusMessage(outputMessage);
+			if(parent != null)
+			{
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(parent, outputMessage, "Results", JOptionPane.INFORMATION_MESSAGE);
+					}
+				});
+			}
 		}
 		
 		taskMonitor.setProgress(1.0d);
@@ -192,15 +198,15 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 	@Override
 	public Object getResults(Class requestedType) {
 		if(columnsNames == null)
-			return "Ok";
+			return "FAILED";
 	
 		if(requestedType.equals(List.class))
 			return columnsNames;
 		else if(requestedType.equals(String.class))
-			return columnsNames.toString();
+			return outputMessage;
 		
 		
-		return "Ok";
+		return "OK";
 	}
 	
 }

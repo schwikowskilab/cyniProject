@@ -25,6 +25,7 @@ package org.cytoscape.cyni.internal.inductionAlgorithms.K2Algorithm;
 
 
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -88,6 +89,7 @@ public class K2InductionTask extends AbstractCyniTask {
 	private boolean changeSign;
 	private CyniNetworkUtils netUtils;
 	private static int iteration = 0;
+	private Component parent;
 
 	/**
 	 * Creates a new K2InductionTask object.
@@ -109,6 +111,7 @@ public class K2InductionTask extends AbstractCyniTask {
 		this.changeSign = false;
 		this.removeNodes = context.removeNodes;
 		this.selectedMetric = context.measures.getSelectedValue();
+		parent = context.getParentSwingComponent();
 		this.netUtils = new CyniNetworkUtils(networkViewFactory,networkManager,networkViewManager,netTableMgr,rootNetMgr,vmMgr);
 		iteration++;
 		
@@ -167,13 +170,17 @@ public class K2InductionTask extends AbstractCyniTask {
 		
 		if(data.hasAnyMissingValue())
 		{
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					JOptionPane.showMessageDialog(null, "The data selected contains missing values.\n " +
-							"Therefore, this algorithm can not proceed with these conditions.", "Warning", JOptionPane.WARNING_MESSAGE);
-				}
-			});
+			outputMessage = "The data selected contains missing values.\n " +
+					"Therefore, this algorithm can not proceed with these conditions.";
+			if(parent != null)
+			{
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(parent, outputMessage, "Warning", JOptionPane.WARNING_MESSAGE);
+					}
+				});
+			}
 			newNetwork.dispose();
 			return;
 		}
@@ -318,7 +325,8 @@ public class K2InductionTask extends AbstractCyniTask {
 		{
 			if(removeNodes)
 				netUtils.removeNodesWithoutEdges(newNetwork);
-			taskMonitor.setStatusMessage("New network " +  newNetwork.getRow(newNetwork).get(CyNetwork.NAME, String.class)+ " created");
+			outputMessage = "New network " +  newNetwork.getRow(newNetwork).get(CyNetwork.NAME, String.class)+ " created";
+			taskMonitor.setStatusMessage(outputMessage);
 			newNetworkView = netUtils.displayNewNetwork(newNetwork, networkSelected,true);
 			taskMonitor.setProgress(1.0d);
 			layout = layoutManager.getDefaultLayout();

@@ -74,6 +74,11 @@ public abstract class AbstractCyniTask extends AbstractTask implements Observabl
 	 * This variable holds the new network that will be created if an inference algorithm is executed.
 	 */
 	protected CyNetwork newNetwork = null;
+	
+	/**
+	 * This variable holds the message that will be shown after task is done
+	 */
+	protected String outputMessage ;
 
 	/**
 	 * Constructor.
@@ -116,14 +121,23 @@ public abstract class AbstractCyniTask extends AbstractTask implements Observabl
 	
 	public Object getResults(Class requestedType) {
 		if(newNetwork == null)
-			return "Ok";
+		{
+			if(!outputMessage.isEmpty())
+				return outputMessage;
+			return "FAILED";
+		}
 	
 		if(requestedType.equals(String.class))
-			return newNetwork.getRow(newNetwork).get(CyNetwork.NAME, String.class);
+		{
+			if(outputMessage.isEmpty())
+				return newNetwork.getRow(newNetwork).get(CyNetwork.NAME, String.class);
+			else
+				return outputMessage;
+		}
 		if(requestedType.equals(CyNetwork.class))
 			return newNetwork;
 		
-		return "Ok";
+		return "OK";
 	}
 	
 	/**

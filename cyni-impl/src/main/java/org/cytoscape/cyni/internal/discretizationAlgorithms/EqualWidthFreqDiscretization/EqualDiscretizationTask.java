@@ -25,6 +25,7 @@ package org.cytoscape.cyni.internal.discretizationAlgorithms.EqualWidthFreqDiscr
 
 
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +57,7 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 	private final Boolean freq;
 	private final Boolean all;
 	private List<String> columnsNames;
-	
+	private Component parent;
 	
 	
 
@@ -72,6 +73,7 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 		this.mytable = selectedTable;
 		this.freq = context.freq;
 		this.all = context.all;
+		parent = context.getParentSwingComponent();
 		
 	}
 
@@ -175,13 +177,17 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 		
 		if(!columnsNames.isEmpty())
 		{
-			taskMonitor.setStatusMessage("Discretization successful: " + columnsNames.size() + " new columns created in the chosen table. Their name has the prefix nominal. ");
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					JOptionPane.showMessageDialog(null, "Discretization successful: " + columnsNames.size() + " new columns created in the chosen table. Their name has the prefix nominal. ", "Results", JOptionPane.INFORMATION_MESSAGE);
-				}
-			});
+			outputMessage = "Discretization successful: " + columnsNames.size() + " new columns created in the chosen table. Their name has the prefix nominal. ";
+			taskMonitor.setStatusMessage(outputMessage);
+			if(parent != null)
+			{
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(parent, outputMessage, "Results", JOptionPane.INFORMATION_MESSAGE);
+					}
+				});
+			}
 		}
 
 		
@@ -288,15 +294,15 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 	@Override
 	public Object getResults(Class requestedType) {
 		if(columnsNames == null)
-			return "Ok";
+			return "FAILED";
 	
 		if(requestedType.equals(List.class))
 			return columnsNames;
 		else if(requestedType.equals(String.class))
-			return columnsNames.toString();
+			return outputMessage;
 		
 		
-		return "Ok";
+		return "OK";
 	}
 	
 }

@@ -616,6 +616,8 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 				{
 					
 					context =  newCyni.createCyniContext(newTable, metricsManager,null,null);
+					if(context != null)
+						context.setParentSwingComponent(getParent());
 					if(contextMap.get(newCyni) == null)
 						contextMap.put(newCyni, new HashMap<CyTable, CyniAlgorithmContext>());
 					contextMap.get(newCyni).put(newTable, context);

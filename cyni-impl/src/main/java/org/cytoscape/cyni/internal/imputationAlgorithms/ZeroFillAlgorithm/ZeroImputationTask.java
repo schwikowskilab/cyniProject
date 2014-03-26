@@ -25,6 +25,7 @@ package org.cytoscape.cyni.internal.imputationAlgorithms.ZeroFillAlgorithm;
 
 
 
+import java.awt.Component;
 import java.util.*;
 
 import javax.swing.JOptionPane;
@@ -52,6 +53,7 @@ public class ZeroImputationTask extends AbstractCyniTask {
 	private int founds = 0;
 	private final CyTable mytable;
 	private MissingValueDefinition missDef;
+	private Component parent;
 	
 	 
 	private enum MissingValueDefinition { SINGLE_VALUE, MAX_THRESHOLD, MIN_THRESHOLD, DOUBLE_THRESHOLD};
@@ -69,6 +71,7 @@ public class ZeroImputationTask extends AbstractCyniTask {
 		missValueUp = context.missValueUp;
 		missValueLarge = context.missValueLarger;
 		missValueLow = context.missValueLower;
+		parent = context.getParentSwingComponent();
 		
 		if(context.chooser.getSelectedValue().matches("By a double Threshold"))
 			missDef = MissingValueDefinition.DOUBLE_THRESHOLD;
@@ -159,15 +162,18 @@ public class ZeroImputationTask extends AbstractCyniTask {
 		
 		
 		taskMonitor.setProgress(1.0d);
-		taskMonitor.setStatusMessage("Number of estimated missing entries: " + founds );
-		taskMonitor.setProgress(1.0d);
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				JOptionPane
-				.showMessageDialog(null, "Number of estimated missing entries: " + founds, "Information", JOptionPane.INFORMATION_MESSAGE);
-			}
-		});
+		outputMessage = "Number of estimated missing entries: " + founds;
+		taskMonitor.setStatusMessage(outputMessage );
+		if(parent != null)
+		{
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JOptionPane
+					.showMessageDialog(parent, outputMessage, "Information", JOptionPane.INFORMATION_MESSAGE);
+				}
+			});
+		}
 	}
 	
 	public  boolean isMissing(double data)
