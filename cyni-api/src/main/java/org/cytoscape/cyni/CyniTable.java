@@ -28,20 +28,20 @@ import java.util.*;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
-import cern.colt.matrix.tobject.impl.*;
-import cern.colt.matrix.tdouble.impl.*;
+import cern.colt.matrix.tobject.*;
+import cern.colt.matrix.tdouble.*;
 
 
 
 public class CyniTable {
 	protected int nRows;
 	protected int nColumns;
-	protected DenseObjectMatrix2D data;
+	protected ObjectMatrix2D data;
 	protected CyTable internalTable;
-	protected DenseDoubleMatrix1D colWeights;
-	protected DenseDoubleMatrix1D rowWeights;
-	protected DenseObjectMatrix1D rowLabels;
-	protected DenseObjectMatrix1D columnLabels;
+	protected DoubleMatrix1D colWeights;
+	protected DoubleMatrix1D rowWeights;
+	protected ObjectMatrix1D rowLabels;
+	protected ObjectMatrix1D columnLabels;
 	protected boolean transpose;
 	protected boolean anyMissing;
 	protected boolean ignoreMissing;
@@ -97,13 +97,13 @@ public class CyniTable {
 		
 		if (transpose) 
 		{
-			rowLabels = new DenseObjectMatrix1D(attributes.length);
-			columnLabels = new DenseObjectMatrix1D(internalTable.getAllRows().size());
+			rowLabels = ObjectFactory1D.dense.make(attributes.length);
+			columnLabels = ObjectFactory1D.dense.make(internalTable.getAllRows().size());
 		}
 		else
 		{
-			columnLabels = new DenseObjectMatrix1D(attributes.length);
-			rowLabels = new DenseObjectMatrix1D(internalTable.getAllRows().size());
+			columnLabels = ObjectFactory1D.dense.make(attributes.length);
+			rowLabels = ObjectFactory1D.dense.make(internalTable.getAllRows().size());
 		}
 		
 		i = 0;
@@ -220,7 +220,7 @@ public class CyniTable {
 			setUniformWeights();
 			
 			//Fill in the internal table
-			this.data = new DenseObjectMatrix2D(nRows,nColumns);//Object[nRows][nColumns];
+			this.data = ObjectFactory2D.dense.make(nRows,nColumns);
 			for(i=0;i<nRows;i++)
 			{
 				for(j=0;j<nColumns;j++)
@@ -296,11 +296,11 @@ public class CyniTable {
 	public CyniTable(CyniTable duplicate) {
 		this.nRows = duplicate.nRows();
 		this.nColumns = duplicate.nColumns();
-		this.data =  new DenseObjectMatrix2D(nRows,nColumns);
-		this.colWeights = new DenseDoubleMatrix1D(nColumns);
-		this.rowWeights = new DenseDoubleMatrix1D(nRows);
-		this.columnLabels = new DenseObjectMatrix1D(nColumns);
-		this.rowLabels = new DenseObjectMatrix1D(nRows);
+		this.data =  ObjectFactory2D.dense.make(nRows,nColumns);
+		this.colWeights = DoubleFactory1D.sparse.make(nColumns);
+		this.rowWeights = DoubleFactory1D.sparse.make(nRows);
+		this.columnLabels = ObjectFactory1D.dense.make(nColumns);
+		this.rowLabels = ObjectFactory1D.dense.make(nRows);
 		this.ignoreMissing = duplicate.ignoreMissing;
 		this.selectedOnly = duplicate.selectedOnly;
 		this.internalTable = duplicate.internalTable;
@@ -383,11 +383,11 @@ public class CyniTable {
 	public CyniTable(int rows, int cols) {
 		this.nRows = rows;
 		this.nColumns = cols;
-		this.data =  new DenseObjectMatrix2D(nRows,nColumns);
-		this.colWeights = new DenseDoubleMatrix1D(cols);
-		this.rowWeights = new DenseDoubleMatrix1D(rows);
-		this.columnLabels = new DenseObjectMatrix1D(cols);
-		this.rowLabels = new DenseObjectMatrix1D(rows);
+		this.data =  ObjectFactory2D.dense.make(nRows,nColumns);
+		this.colWeights = DoubleFactory1D.sparse.make(cols);
+		this.rowWeights = DoubleFactory1D.sparse.make(rows);
+		this.columnLabels = ObjectFactory1D.dense.make(cols);
+		this.rowLabels = ObjectFactory1D.dense.make(rows);
 		this.transpose = false;
 		this.ignoreMissing = false;
 		this.anyMissing = false;
@@ -688,8 +688,8 @@ public class CyniTable {
 	 */
 	public void setUniformWeights() {
 		if (colWeights == null || rowWeights == null) {
-			colWeights = new DenseDoubleMatrix1D(nColumns);
-			rowWeights = new DenseDoubleMatrix1D(nRows);
+			colWeights = DoubleFactory1D.sparse.make(nColumns);
+			rowWeights = DoubleFactory1D.sparse.make(nRows);
 		}
 		colWeights.assign(1.0);
 		rowWeights.assign(1.0);
@@ -738,7 +738,7 @@ public class CyniTable {
 	 */
 	public void setRowWeight(int row, double value) {
 		if (rowWeights == null) {
-			rowWeights = new DenseDoubleMatrix1D(nRows);
+			rowWeights = DoubleFactory1D.sparse.make(nRows);
 		}
 		rowWeights.setQuick(mapRowOrder.get(row), value);
 	}
@@ -750,7 +750,7 @@ public class CyniTable {
 	 */
 	public void setColWeight(int col, double value) {
 		if (colWeights == null) {
-			colWeights = new DenseDoubleMatrix1D(nColumns);
+			colWeights = DoubleFactory1D.sparse.make(nColumns);
 		}
 		colWeights.setQuick(col,  value);
 	}
