@@ -60,9 +60,9 @@ import org.cytoscape.view.model.CyNetworkViewManager;
  * the default Induction for Cytoscape data readers.
  */
 public class BasicInductionTask extends AbstractCyniTask {
-	private final double thresholdAddEdge;
+	private double thresholdAddEdge;
 	private boolean removeNodes = false;
-	private boolean useAbsolut;
+	private boolean useAbsolut,useNegative;
 	private final List<String> attributeArray;
 	private final CyTable table;
 	
@@ -86,7 +86,14 @@ public class BasicInductionTask extends AbstractCyniTask {
 		this.layoutManager = layoutManager;
 		this.metricsManager = metricsManager;
 		//this.removeNodes = context.removeNodes;
-		this.useAbsolut = context.useAbsolut;
+		if(context.type.getSelectedValue().matches(BasicInductionContext.NEGATIVE_AND_POSITIVE))
+			this.useAbsolut = true;
+		else
+			this.useAbsolut = false;
+		if(context.type.getSelectedValue().matches(BasicInductionContext.NEGATIVE))
+			this.useNegative = true;
+		else
+			this.useNegative = false;
 		this.selectedMetric = context.measures.getSelectedValue();
 		this.attributeArray = context.attributeList.getSelectedValues();
 		this.table = selectedTable;
@@ -144,6 +151,9 @@ public class BasicInductionTask extends AbstractCyniTask {
 		netUtils.createEdgeColumn(newNetwork,"Metric", String.class, false);	
 		netUtils.createEdgeColumn(newNetwork,"Distance", Double.class, false);	
 		
+		if(useNegative)
+			thresholdAddEdge = -1*thresholdAddEdge;
+		
 		// Create the thread pools
 		ExecutorService executor = Executors.newFixedThreadPool(nThreads);
 
@@ -173,6 +183,8 @@ public class BasicInductionTask extends AbstractCyniTask {
 				result = threadResults[pool];
 				if(useAbsolut)
 					result = Math.abs(threadResults[pool]);
+				if(useNegative)
+					result = -1*result;
 				if(result > thresholdAddEdge)
 				{
 					if(!mapRowNodes.containsKey(data.getRowLabel(i)))

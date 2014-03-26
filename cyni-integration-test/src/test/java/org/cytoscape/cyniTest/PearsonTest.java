@@ -106,6 +106,9 @@ public class PearsonTest extends BasicIntegrationTest {
 		assertNotNull(oldNetwork);
 		Map<String, Object> mparams = new HashMap<String, Object> ();
 		mparams.put("thresholdAddEdge",0.1);
+		ListSingleSelection<String> type = new ListSingleSelection<String>("Negative & Positive");
+		type.setSelectedValue("Negative & Positive");
+		mparams.put("type",type);
 		ListSingleSelection metrics = new ListSingleSelection<CyCyniMetric> (metricsManager.getCyniMetric("Correlation.cyni"));
 		metrics.setSelectedValue (metricsManager.getCyniMetric("Correlation.cyni"));
 		mparams.put("measures",metrics);

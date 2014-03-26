@@ -36,8 +36,8 @@ public class BasicInductionContext extends CyniAlgorithmContext implements Tunab
 	@Tunable(description="Threshold to add new edge")
 	public double thresholdAddEdge = 0.5;
 	
-	@Tunable(description="Use only absolute values for correlation")
-	public boolean useAbsolut = true;
+	@Tunable(description="Type of correlation")
+	public ListSingleSelection<String> type = new ListSingleSelection<String>(POSITIVE,NEGATIVE,NEGATIVE_AND_POSITIVE);
 
 	//@Tunable(description="Output Only Nodes with Edges")
 	//public boolean removeNodes = false;
@@ -53,6 +53,9 @@ public class BasicInductionContext extends CyniAlgorithmContext implements Tunab
 
 	
 	private List<String> attributes;
+	public static String NEGATIVE = "Negative";
+	public static String POSITIVE = "Positive";
+	public static String NEGATIVE_AND_POSITIVE = "Negative & Positive";
 	
 	public BasicInductionContext(boolean supportsSelectedOnly, CyTable table,  List<CyCyniMetric> metrics) {
 		super(supportsSelectedOnly);
@@ -79,10 +82,21 @@ public class BasicInductionContext extends CyniAlgorithmContext implements Tunab
 	@Override
 	public ValidationState getValidationState(final Appendable errMsg) {
 		setSelectedOnly(selectedOnly);
-		if (thresholdAddEdge < 0.0 && useAbsolut)
+		if (thresholdAddEdge < 0.0 && type.getSelectedValue().matches(POSITIVE))
 		{
 			try {
 				errMsg.append("Threshold needs to be greater than 0.0!!!!");
+			} catch (IOException e) {
+				e.printStackTrace();
+				return ValidationState.INVALID;
+			}
+			return ValidationState.INVALID;
+		}
+		
+		if (thresholdAddEdge > 0.0 && type.getSelectedValue().matches(NEGATIVE))
+		{
+			try {
+				errMsg.append("Threshold needs to be lower or equal than 0.0!!!!");
 			} catch (IOException e) {
 				e.printStackTrace();
 				return ValidationState.INVALID;
