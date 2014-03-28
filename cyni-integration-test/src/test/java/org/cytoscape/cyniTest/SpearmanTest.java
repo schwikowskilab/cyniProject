@@ -111,7 +111,7 @@ public class SpearmanTest extends BasicIntegrationTest {
 		mparams.put("type",type);
 		ListSingleSelection metrics = new ListSingleSelection<CyCyniMetric> (metricsManager.getCyniMetric("RankCorrelation.cyni"));
 		metrics.setSelectedValue (metricsManager.getCyniMetric("RankCorrelation.cyni"));
-		mparams.put("measures",metrics);
+		mparams.put("Measures",metrics);
 		cyniContext = cyniAlgorithm.createCyniContext(globalTable,metricsManager,tunableSetter,mparams);
 		assertNotNull(cyniContext);
 		ti = cyniAlgorithm.createTaskIterator(cyniContext, globalTable, networkFactory, netViewFactory, networkManager, networkTableManager,

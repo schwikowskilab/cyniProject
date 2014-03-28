@@ -24,6 +24,7 @@
 package org.cytoscape.cyni.internal.inductionAlgorithms.BasicAlgorithm;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import org.cytoscape.work.util.*;
 import org.cytoscape.model.CyTable;
@@ -33,26 +34,83 @@ import org.cytoscape.work.Tunable;
 import org.cytoscape.work.TunableValidator;
 
 public class BasicInductionContext extends CyniAlgorithmContext implements TunableValidator {
-	@Tunable(description="Threshold to add new edge")
+	@Tunable(description="Threshold to add new edge", gravity=1.0)
 	public double thresholdAddEdge = 0.5;
 	
-	@Tunable(description="Type of correlation")
+	@Tunable(description="Type of correlation", gravity=2.0)
 	public ListSingleSelection<String> type = new ListSingleSelection<String>(POSITIVE,NEGATIVE,NEGATIVE_AND_POSITIVE);
-
-	//@Tunable(description="Output Only Nodes with Edges")
-	//public boolean removeNodes = false;
 	
-	@Tunable(description="Use selected nodes only", groups="Parameters if a network associated to table data")
+	@Tunable(description="Use selected nodes only", groups="Parameters if a network associated to table data", gravity=3.0)
 	public boolean selectedOnly = false;
 	
-	@Tunable(description="Metric")
 	public ListSingleSelection<CyCyniMetric> measures;
+	@Tunable(description="Metric", gravity=4.0)
+	public ListSingleSelection<CyCyniMetric> getMeasures()
+	{
+		return measures;
+	}
+	public void setMeasures(ListSingleSelection<CyCyniMetric> mes)
+	{
+		measures = mes;
+	}
 	
-	@Tunable(description="Data Attributes", groups="Sources for Network Inference")
 	public ListMultipleSelection<String> attributeList;
+	@Tunable(description="Data Attributes", groups="Sources for Network Inference",listenForChange={"Measures"}, gravity=5.0)
+	public ListMultipleSelection<String> getAttributeList()
+	{
+		List<String>  tagList ;
+		if(measures.getPossibleValues().size()==0)
+		{
+			attributeList = new  ListMultipleSelection<String>("No sources available");
+		}
+		else
+		{
+			tagList = measures.getSelectedValue().getTagsList();
+			if(tagList.contains(CyniMetricTags.INPUT_NUMBERS.toString())  &&  !currentType.matches(CyniMetricTags.INPUT_NUMBERS.toString()))
+			{
+				attributes = getAllAttributesNumbers(selectedTable);
+				if(attributes.size() > 0)
+				{
+					attributeList = new  ListMultipleSelection<String>(attributes);
+					attributeList.setSelectedValues(attributeList.getPossibleValues());
+				}
+				else
+				{
+					attributeList = new  ListMultipleSelection<String>("No sources available");
+				}
+				currentType = CyniMetricTags.INPUT_NUMBERS.toString();
+			}
+			else
+			{
+				if(tagList.contains(CyniMetricTags.INPUT_STRINGS.toString())  &&  !currentType.matches(CyniMetricTags.INPUT_STRINGS.toString()))
+				{
+					attributes = getAllAttributesStrings(selectedTable);
+					attributeList = new  ListMultipleSelection<String>(attributes);
+					List<String> temp = new ArrayList<String>( attributes);
+					temp.remove(selectedTable.getPrimaryKey().getName());
+					if(!temp.isEmpty())
+						attributeList.setSelectedValues(temp);
+					currentType =  CyniMetricTags.INPUT_STRINGS.toString();
+				}
+				else
+				{
+					if(currentType.isEmpty())
+						attributeList = new  ListMultipleSelection<String>("No sources available");
+				}
+			}
+		}
+		
+		return attributeList;
+	}
+	public void setAttributeList(ListMultipleSelection<String> input)
+	{
+		attributeList = input;
+	}
 
 	
 	private List<String> attributes;
+	private String currentType ;
+	private CyTable selectedTable;
 	public static String NEGATIVE = "Negative";
 	public static String POSITIVE = "Positive";
 	public static String NEGATIVE_AND_POSITIVE = "Negative & Positive";
@@ -60,6 +118,8 @@ public class BasicInductionContext extends CyniAlgorithmContext implements Tunab
 	public BasicInductionContext(boolean supportsSelectedOnly, CyTable table,  List<CyCyniMetric> metrics) {
 		super(supportsSelectedOnly);
 		attributes = getAllAttributesNumbers(table);
+		selectedTable = table;
+		currentType = "";
 		if(attributes.size() > 0)
 		{
 			attributeList = new  ListMultipleSelection<String>(attributes);

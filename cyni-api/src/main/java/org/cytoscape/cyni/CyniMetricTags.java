@@ -64,6 +64,11 @@ public enum CyniMetricTags {
 	BAYESIAN_METRIC ,
 	
 	/** 
+	* Cyni Metric that produces different values depending on the order, so metric(X,Y) might be different of metric(Y,X)
+	*/ 
+	DIRECTIONAL_METRIC ,
+	
+	/** 
 	* Cyni Metric based on searching for any statistical relationship between two sets of data
 	*/ 
 	CORRELATION_METRIC ;
