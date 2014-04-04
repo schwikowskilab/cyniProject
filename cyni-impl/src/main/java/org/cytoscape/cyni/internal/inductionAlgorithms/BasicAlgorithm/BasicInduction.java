@@ -72,7 +72,7 @@ public class BasicInduction extends AbstractCyniAlgorithm {
 		CyniAlgorithmContext context;
 		selectedTable = table;
 		List<String> listTags = new ArrayList<String>();
-		listTags.add(CyniMetricTags.INPUT_NUMBERS.toString());
+		//listTags.add(CyniMetricTags.INPUT_NUMBERS.toString());
 		listTags.add(CyniMetricTags.CORRELATION_METRIC.toString());
 		context = new BasicInductionContext(supportsSelectedOnly(), selectedTable, metricsManager.getAllCyniMetricsWithTags(listTags));
 		if(mparams != null && !mparams.isEmpty())

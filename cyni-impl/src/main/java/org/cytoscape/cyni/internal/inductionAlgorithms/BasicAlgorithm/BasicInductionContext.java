@@ -25,6 +25,7 @@ package org.cytoscape.cyni.internal.inductionAlgorithms.BasicAlgorithm;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.cytoscape.work.util.*;
 import org.cytoscape.model.CyTable;
@@ -69,14 +70,17 @@ public class BasicInductionContext extends CyniAlgorithmContext implements Tunab
 			if(tagList.contains(CyniMetricTags.INPUT_NUMBERS.toString())  &&  !currentType.matches(CyniMetricTags.INPUT_NUMBERS.toString()))
 			{
 				attributes = getAllAttributesNumbers(selectedTable);
-				if(attributes.size() > 0)
+				if(!Arrays.equals(attributes.toArray(),attributeList.getPossibleValues().toArray()))
 				{
-					attributeList = new  ListMultipleSelection<String>(attributes);
-					attributeList.setSelectedValues(attributeList.getPossibleValues());
-				}
-				else
-				{
-					attributeList = new  ListMultipleSelection<String>("No sources available");
+					if(attributes.size() > 0)
+					{
+						attributeList = new  ListMultipleSelection<String>(attributes);
+						attributeList.setSelectedValues(attributeList.getPossibleValues());
+					}
+					else
+					{
+						attributeList = new  ListMultipleSelection<String>("No sources available");
+					}
 				}
 				currentType = CyniMetricTags.INPUT_NUMBERS.toString();
 			}
@@ -85,12 +89,15 @@ public class BasicInductionContext extends CyniAlgorithmContext implements Tunab
 				if(tagList.contains(CyniMetricTags.INPUT_STRINGS.toString())  &&  !currentType.matches(CyniMetricTags.INPUT_STRINGS.toString()))
 				{
 					attributes = getAllAttributesStrings(selectedTable);
-					attributeList = new  ListMultipleSelection<String>(attributes);
-					List<String> temp = new ArrayList<String>( attributes);
-					temp.remove(selectedTable.getPrimaryKey().getName());
-					if(!temp.isEmpty())
-						attributeList.setSelectedValues(temp);
-					currentType =  CyniMetricTags.INPUT_STRINGS.toString();
+					if(!Arrays.equals(attributes.toArray(),attributeList.getPossibleValues().toArray()))
+					{
+						attributeList = new  ListMultipleSelection<String>(attributes);
+						List<String> temp = new ArrayList<String>( attributes);
+						temp.remove(selectedTable.getPrimaryKey().getName());
+						if(!temp.isEmpty())
+							attributeList.setSelectedValues(temp);
+						currentType =  CyniMetricTags.INPUT_STRINGS.toString();
+					}
 				}
 				else
 				{
@@ -117,9 +124,30 @@ public class BasicInductionContext extends CyniAlgorithmContext implements Tunab
 	
 	public BasicInductionContext(boolean supportsSelectedOnly, CyTable table,  List<CyCyniMetric> metrics) {
 		super(supportsSelectedOnly);
-		attributes = getAllAttributesNumbers(table);
 		selectedTable = table;
 		currentType = "";
+		if(metrics.size() > 0)
+		{
+			measures = new  ListSingleSelection<CyCyniMetric>(metrics);
+		}
+		else
+		{
+			measures = new  ListSingleSelection<CyCyniMetric>();//("No metrics available");
+			attributes = new ArrayList<String>();
+		}
+		if(!measures.getPossibleValues().isEmpty())
+		{
+			if(measures.getSelectedValue().getTagsList().contains(CyniMetricTags.INPUT_NUMBERS.toString()) )
+			{
+				attributes = getAllAttributesNumbers(table);
+				currentType = CyniMetricTags.INPUT_NUMBERS.toString();
+			}
+			else
+			{
+				attributes = getAllAttributesStrings(table);
+				currentType =  CyniMetricTags.INPUT_STRINGS.toString();
+			}
+		}
 		if(attributes.size() > 0)
 		{
 			attributeList = new  ListMultipleSelection<String>(attributes);
@@ -128,14 +156,6 @@ public class BasicInductionContext extends CyniAlgorithmContext implements Tunab
 		else
 		{
 			attributeList = new  ListMultipleSelection<String>("No sources available");
-		}
-		if(metrics.size() > 0)
-		{
-			measures = new  ListSingleSelection<CyCyniMetric>(metrics);
-		}
-		else
-		{
-			measures = new  ListSingleSelection<CyCyniMetric>();//("No metrics available");
 		}
 	}
 	
