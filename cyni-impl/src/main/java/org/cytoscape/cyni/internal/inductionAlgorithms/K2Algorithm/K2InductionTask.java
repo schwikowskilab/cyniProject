@@ -237,6 +237,8 @@ public class K2InductionTask extends AbstractCyniTask {
 				else
 					newNetwork.getRow(node1).set(CyNetwork.NAME, "Node " + numNodes);
 			}
+			if(newNetwork.getRow(node1).get(CyNetwork.SELECTED,Boolean.class ) == true)
+				newNetwork.getRow(node1).set(CyNetwork.SELECTED, false);
 			mapRowNodes.put(data.getRowLabel(row),node1);
 			
 			okToProceed = true;
