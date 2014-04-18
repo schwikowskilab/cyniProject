@@ -137,7 +137,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 		// Create the CyniTable
 		CyniTable data = selectedMetric.getCyniTable(table,attributeArray.toArray(new String[0]), false, false, selectedOnly);
 		
-		if(selectedMetric.getTagsList().contains(CyniMetricTags.DIRECTIONAL_METRIC))
+		if(selectedMetric.getTagsList().contains(CyniMetricTags.DIRECTIONAL_METRIC.toString()))
 			directional = true;
 		
 		nRows = data.nRows();
@@ -176,6 +176,8 @@ public class BasicInductionTask extends AbstractCyniTask {
 				if (cancelled)
 					break;
 				
+				if(i == j)
+					continue;
 				index.set(0, j);
 				executor.execute(new ThreadedGetMetric(data,i,index,threadNumber,threadResults));
 				threadIndex[threadNumber] = j;
@@ -229,7 +231,7 @@ public class BasicInductionTask extends AbstractCyniTask {
 						numNodes++;
 					}
 							
-					if(!newNetwork.containsEdge(mapRowNodes.get(data.getRowLabel(i)), mapRowNodes.get(data.getRowLabel(threadIndex[pool]))))
+					if(!newNetwork.containsEdge(mapRowNodes.get(data.getRowLabel(i)), mapRowNodes.get(data.getRowLabel(threadIndex[pool]))) || directional)
 					{
 						edge = newNetwork.addEdge(mapRowNodes.get(data.getRowLabel(i)), mapRowNodes.get(data.getRowLabel(threadIndex[pool])), directional);
 						newNetwork.getRow(edge).set("Distance", threadResults[pool]);
