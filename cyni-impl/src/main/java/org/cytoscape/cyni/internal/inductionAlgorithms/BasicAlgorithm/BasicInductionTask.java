@@ -159,6 +159,8 @@ public class BasicInductionTask extends AbstractCyniTask {
 		if(useNegative)
 			thresholdAddEdge = -1*thresholdAddEdge;
 		
+		selectedMetric.initMetric();
+		
 		// Create the thread pools
 		ExecutorService executor = Executors.newFixedThreadPool(nThreads);
 
