@@ -69,10 +69,27 @@ public enum CyniMetricTags {
 	DIRECTIONAL_METRIC ,
 	
 	/** 
-	* Cyni Metric based on searching for any statistical relationship between two sets of data
+	* Cyni Metric based on searching for any statistical relationship between two sets of data. All metrics with this tag
+	* will be available through Basic Correlation Inference algorithm
 	*/ 
-	CORRELATION_METRIC ;
+	CORRELATION_METRIC ,
 	
+	/** 
+	* All metrics with this tag will be available through K2 Bayesian Inference algorithm
+	*/ 
+	K2_METRIC ,
+	
+	/** 
+	* All metrics with this tag will be available through Hill Climbing Bayesian Inference algorithm
+	*/ 
+	HILL_CLIMBING_METRIC ,
+	
+	/** 
+	* Cyni Metric that produces a value that is significant if it is low. By default metrics output values are significant
+	* when the value is high. However, metrics containing this tag produce output values that are more significant when the output
+	* value is the lowest possible.
+	*/ 
+	LOW_METRIC ;
 	
 	
 	

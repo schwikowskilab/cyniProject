@@ -45,6 +45,8 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 		addTag(CyniMetricTags.INPUT_STRINGS.toString());
 		addTag(CyniMetricTags.LOCAL_METRIC_SCORE.toString());
 		addTag(CyniMetricTags.DISCRETE_VALUES.toString());
+		addTag(CyniMetricTags.K2_METRIC.toString());
+		addTag(CyniMetricTags.HILL_CLIMBING_METRIC.toString());
 		mapStringValues =  new HashMap<String,Integer>();
 		mapValues =  new HashMap<Double,Double>();
 	}

@@ -162,6 +162,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		if(selectedMetric.getName() == "Entropy.cyni" || selectedMetric.getName() == "AIC.cyni" || selectedMetric.getName() == "MDL.cyni")
 			changeSign = true;
 		
+		if(selectedMetric.getTagsList().contains(CyniMetricTags.LOW_METRIC.toString()))
+			changeSign = true;
 		//netUtils.addColumns(networkSelected,newNetwork,table,CyNode.class, CyNetwork.LOCAL_ATTRS);
 		
 		netUtils.copyNodeColumns(newNetwork, table);

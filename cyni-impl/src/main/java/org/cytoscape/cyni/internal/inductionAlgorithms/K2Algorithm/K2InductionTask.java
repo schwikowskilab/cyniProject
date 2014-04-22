@@ -168,6 +168,9 @@ public class K2InductionTask extends AbstractCyniTask {
 		if(selectedMetric.getName() == "Entropy.cyni" || selectedMetric.getName() == "AIC.cyni" || selectedMetric.getName() == "MDL.cyni")
 			changeSign = true;
 		
+		if(selectedMetric.getTagsList().contains(CyniMetricTags.LOW_METRIC.toString()))
+			changeSign = true;
+		
 		if(data.hasAnyMissingValue())
 		{
 			outputMessage = "The data selected contains missing values.\n " +
@@ -218,6 +221,8 @@ public class K2InductionTask extends AbstractCyniTask {
 				
 		netUtils.createEdgeColumn(newNetwork,"Metric", String.class, false);	
 		netUtils.createEdgeColumn(newNetwork,"Score", Double.class, false);	
+		
+		selectedMetric.initMetric();
 		
 		// Create the thread pools
 		ExecutorService executor = Executors.newFixedThreadPool(nThreads);
