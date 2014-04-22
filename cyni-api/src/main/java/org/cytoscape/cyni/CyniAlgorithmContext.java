@@ -146,7 +146,7 @@ public class CyniAlgorithmContext {
 	 * @param prefix The prefix that could be added to the name of columns
 	 * @param type The type of the columns
 	 */
-	public void getAttributesList(List<String> attributeList, CyTable table, String prefix, Object type) {
+	public void getListOfAttributes(List<String> attributeList, CyTable table, String prefix, Object type) {
 		if(table == null)
 			return;
 		String[] names = new String[table.getColumns().size()];
@@ -184,7 +184,7 @@ public class CyniAlgorithmContext {
 		List<String> attributeList = new ArrayList<String>();
 		if(table != null)
 		{
-			getAttributesList(attributeList, table,"", String.class);
+			getListOfAttributes(attributeList, table,"", String.class);
 			//Collections.sort(attributeList);
 		}
 		return attributeList;
@@ -200,7 +200,7 @@ public class CyniAlgorithmContext {
 		List<String> attributeList = new ArrayList<String>();
 		if(table != null)
 		{
-			getAttributesList(attributeList, table,"", List.class);
+			getListOfAttributes(attributeList, table,"", List.class);
 			//Collections.sort(attributeList);
 		}
 		return attributeList;
@@ -216,7 +216,7 @@ public class CyniAlgorithmContext {
 		List<String> attributeList = new ArrayList<String>();
 		if(table != null)
 		{
-			getAttributesList(attributeList, table,"", null);
+			getListOfAttributes(attributeList, table,"", null);
 			//Collections.sort(attributeList);
 		}
 		return attributeList;
