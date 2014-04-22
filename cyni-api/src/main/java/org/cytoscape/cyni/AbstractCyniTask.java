@@ -112,6 +112,20 @@ public abstract class AbstractCyniTask extends AbstractTask implements Observabl
 		nThreads = Runtime.getRuntime().availableProcessors()-1;
 
 	}
+	
+	/**
+	 * This Constructor can be used for Cyni tasks that don't need to create a new network 
+	 * such as Discretization or Imputation algorithms
+	 * 
+	 * @param name The name of the algorithm. 
+	 * @param context The context with the parameters to apply the algorithm
+	 */
+	public AbstractCyniTask(String name, final CyniAlgorithmContext context) {
+
+		this(name,context,null,null,null,null,null,null,null);
+		
+
+	}
 
 	@Override
 	public final void run(final TaskMonitor taskMonitor) {

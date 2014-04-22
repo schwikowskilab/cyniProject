@@ -66,7 +66,7 @@ public class EqualDiscretizationTask extends AbstractCyniTask {
 	 */
 	public EqualDiscretizationTask(final String name, final EqualDiscretizationContext context, CyTable selectedTable)
 	{
-		super(name, context,null,null,null, null,null,null,null);
+		super(name, context);
 		bins = context.bins;
 		this.attributeArray = context.attributeList.getSelectedValues();
 		

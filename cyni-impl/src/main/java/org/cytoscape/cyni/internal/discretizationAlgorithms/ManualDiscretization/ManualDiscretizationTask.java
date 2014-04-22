@@ -64,7 +64,7 @@ public class ManualDiscretizationTask extends AbstractCyniTask {
 	 */
 	public ManualDiscretizationTask(final String name, final ManualDiscretizationContext context, CyTable selectedTable)
 	{
-		super(name, context,null,null,null, null,null,null,null);
+		super(name, context);
 		bins = Integer.parseInt(context.interval.getSelectedValue());
 		this.attributeArray = context.attributeList.getSelectedValues();
 		parent = context.getParentSwingComponent();
