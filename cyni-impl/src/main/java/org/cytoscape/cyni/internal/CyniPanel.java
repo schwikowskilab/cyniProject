@@ -586,8 +586,10 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 				}
 				currentCyni = factory;
 				//CyniPanel.this.pack();
-				revalidate();
-				//repaint();
+				if(firstTime)
+					revalidate();
+				else
+					repaint();
 			}
 		}
 	}
