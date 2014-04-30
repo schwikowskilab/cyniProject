@@ -120,7 +120,7 @@ public class BasicInductionContext extends CyniAlgorithmContext implements Tunab
 	private CyTable selectedTable;
 	public static String NEGATIVE = "Negative";
 	public static String POSITIVE = "Positive";
-	public static String NEGATIVE_AND_POSITIVE = "Negative & Positive";
+	public static String NEGATIVE_AND_POSITIVE = "Absolute value";
 	
 	public BasicInductionContext(boolean supportsSelectedOnly, CyTable table,  List<CyCyniMetric> metrics) {
 		super(supportsSelectedOnly);
