@@ -497,6 +497,7 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 		// Populate the algorithm selector
 		algorithmPanel.removeAll();
 		algorithmSelector.removeAllItems();
+		executeButton.setEnabled(false);
 		
 		// Add the "instructions"
 		algorithmSelector.setRenderer(new MyItemRenderer());
@@ -586,10 +587,14 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 				}
 				currentCyni = factory;
 				//CyniPanel.this.pack();
-				if(firstTime)
-					revalidate();
-				else
-					repaint();
+				
+				repaint();
+			}
+			else
+			{
+				executeButton.setEnabled(false);
+				algorithmPanel.removeAll();
+				repaint();
 			}
 		}
 	}
