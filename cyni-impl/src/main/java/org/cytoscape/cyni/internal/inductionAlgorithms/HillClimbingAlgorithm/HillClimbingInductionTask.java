@@ -144,7 +144,6 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		CyNetwork networkSelected = null;
 		boolean okToProceed = true;
 		Operation operationAdd = new Operation("Add");
-		Operation operationDelete = new Operation("Delete");
 		Operation operationReverse = new Operation("Reverse");
 		Operation chosenOperation;
 		Operation lastOperation = new Operation("");
@@ -168,7 +167,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 		netUtils.copyNodeColumns(newNetwork, table);
 		
-		for (CyRow origRow : table.getAllRows()) {
+		for (CyRow origRow : table.getAllRows()) 
+		{
 			if(selectedOnly)
 			{
 				if(networkSelected != null && !origRow.get(CyNetwork.SELECTED, Boolean.class))
@@ -198,7 +198,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		netTable = newNetwork.getDefaultNetworkTable();
 		
 		// Create the CyniTable
-		CyniTable data = selectedMetric.getCyniTable(nodeTable,attributeArray.toArray(new String[0]), false, false, selectedOnly);
+		CyniTable data = selectedMetric.getCyniTable(nodeTable,attributeArray.toArray(new String[0]), false, false, false);
 		
 		if(data.hasAnyMissingValue())
 		{
@@ -223,13 +223,13 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		progress = progress + step;
 		taskMonitor.setProgress(progress);
 		
-		for (i = 0; i< nRows;i++){
+		for (i = 0; i< nRows;i++)
+		{
 			nodeParents.put(i, new ArrayList<Integer>());
-			/*if(!data.rowHasMissingValue(i))
-			{*/
-				mapNodeIndex.put( newNetwork.getNode(nodeTable.getRow(data.getRowLabel(i)).get(CyNetwork.SUID, Long.class)) ,i);
-				mapIndexNode.put(  i, newNetwork.getNode(nodeTable.getRow(data.getRowLabel(i)).get(CyNetwork.SUID, Long.class)));
-			//}
+			
+			mapNodeIndex.put( newNetwork.getNode(nodeTable.getRow(data.getRowLabel(i)).get(CyNetwork.SUID, Long.class)) ,i);
+			mapIndexNode.put(  i, newNetwork.getNode(nodeTable.getRow(data.getRowLabel(i)).get(CyNetwork.SUID, Long.class)));
+			
 		}
 		
 		scoreTree = new TreeSet<Operation>( new Comparator<Operation>() {
@@ -256,11 +256,19 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		
 		if(networkSelected != null && useNetworkAsInitialSearch)
 		{
-			netUtils.addColumns(networkSelected,newNetwork,table,CyEdge.class, CyNetwork.LOCAL_ATTRS);
-			for (final CyEdge origEdge : networkSelected.getEdgeList()) {
+			netUtils.copyEdgeColumns(newNetwork,networkSelected.getDefaultEdgeTable());
+			for (final CyEdge origEdge : networkSelected.getEdgeList()) 
+			{
 				
 				final CyNode newSource = orig2NewNodeMap.get(origEdge.getSource());
 				final CyNode newTarget = orig2NewNodeMap.get(origEdge.getTarget());
+				if(mapNodeIndex.get(newTarget) == null || mapNodeIndex.get(newSource) == null)
+					continue;
+				if(selectedOnly)
+				{
+					if(!networkSelected.getRow(origEdge).get(CyNetwork.SELECTED, Boolean.class))
+						continue;
+				}
 				if(newSource != null && newTarget != null)
 				{
 					final boolean newDirected = origEdge.isDirected();
@@ -271,6 +279,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 						if(networkSelected.getRow(origEdge, CyNetwork.LOCAL_ATTRS).get(CyNetwork.SELECTED, Boolean.class))
 							edgeBlocked[mapNodeIndex.get(newSource)][mapNodeIndex.get(newTarget)] = true;
 					}
+					if(newNetwork.getRow(newEdge).get(CyNetwork.SELECTED,Boolean.class ) == true)
+						newNetwork.getRow(newEdge).set(CyNetwork.SELECTED, false);
 					if(!newDirected )
 					{
 						outputMessage = "The data selected belongs to a network that is not directed.\n " +
@@ -316,6 +326,21 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			
 		}
 
+		if(newNetwork.getNodeCount() == 0)
+		{
+			outputMessage = "There are no nodes selected in the associated network. Therefore, the algorithm can not proceed.";
+			if(parent != null)
+			{
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(parent,outputMessage , "Warning", JOptionPane.WARNING_MESSAGE);
+					}
+				});
+			}
+			newNetwork.dispose();
+			return;
+		}
 		scoreOperations = new Operation [nRows][nRows];
 		
 		if(selectedMetric.getName() == "Entropy.cyni")
@@ -331,8 +356,10 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 		taskMonitor.setStatusMessage("Initializing Cache..." );
 		initCache(data, selectedMetric, taskMonitor);
 		taskMonitor.setStatusMessage("Cache Initialized" );
-		netUtils.createEdgeColumn(newNetwork,"Metric", String.class, false);	
-		netUtils.createEdgeColumn(newNetwork,"Score", Double.class, false);	
+		if(newNetwork.getDefaultEdgeTable().getColumn("Metric") == null)
+			netUtils.createEdgeColumn(newNetwork,"Metric", String.class, false);	
+		if(newNetwork.getDefaultEdgeTable().getColumn("Score") == null)
+			netUtils.createEdgeColumn(newNetwork,"Score", Double.class, false);	
 		netUtils.createNetworkColumn(newNetwork,"Added Edges", Integer.class, false);	
 		netUtils.createNetworkColumn(newNetwork,"Removed Edges", Integer.class, false);	
 		netUtils.createNetworkColumn(newNetwork,"Reversed Edges", Integer.class, false);	
@@ -347,26 +374,25 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			if (cancelled)
 				break;
 			operationAdd.resetParameters();
-			operationDelete.resetParameters();
 			operationReverse.resetParameters();
 			taskMonitor.setStatusMessage("Optimal solution search. Added edges: " + added + " Removed edges: " + removed + " Reversed edges: " + reversed  );
 			
 			chosenOperation=findBestOperation(data, operationAdd);
 			
 			if(reversalOption)
-				findBestReverseEdge(data, operationReverse);
-			
-			
-			if(reversalOption)
 			{
+				findBestReverseEdge(data, operationReverse);
+				
 				if(operationReverse.score > chosenOperation.score)
 				{
-					chosenOperation = operationReverse;
+					//Only accept reverse option if it is not producing a loop
 					if(lastOperation.type == "Reverse")
 					{
-						if(lastOperation.nodeChild == chosenOperation.nodeParent &&  lastOperation.nodeParent == chosenOperation.nodeChild)
-							loopFound = true;
+						if(lastOperation.nodeChild != operationReverse.nodeParent ||  lastOperation.nodeParent != operationReverse.nodeChild)
+							chosenOperation = operationReverse;
 					}
+					else
+						chosenOperation = operationReverse;
 				}
 				
 			}
@@ -415,8 +441,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 				lastOperation.type = chosenOperation.type;
 				lastOperation.nodeParent = chosenOperation.nodeParent;
 				lastOperation.nodeChild = chosenOperation.nodeChild;
-				if(loopFound)
-					okToProceed = false;
+				
 				
 			}
 			else
@@ -451,6 +476,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 	private void initParentsMap(CyNetwork network)
 	{
 		for ( CyEdge edge : network.getEdgeList()) {
+			if(mapNodeIndex.get(edge.getTarget()) == null || mapNodeIndex.get(edge.getSource()) == null)
+				continue;
 			nodeParents.get(mapNodeIndex.get(edge.getTarget())).add(Integer.valueOf(mapNodeIndex.get(edge.getSource())));
 			nodeParentsMatrix[mapNodeIndex.get(edge.getTarget())][mapNodeIndex.get(edge.getSource())] = true;
 		}
@@ -545,7 +572,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 
         step = 1.0 / (nRows*2.0);
         
-        for(i = 0;i<nRows;i++) {
+        for(i = 0;i<nRows;i++) 
+        {
 			nodeIndex =i;
 			parents.clear();
 			if(nodeParents.get(nodeIndex).size() > 0)
@@ -555,7 +583,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			baseScores[nodeIndex] = metric.getMetric(data, data, nodeIndex,parents);
 		}
 
-        for (int nodeStart = 0; nodeStart < nRows; nodeStart++) {
+        for (int nodeStart = 0; nodeStart < nRows; nodeStart++) 
+        {
             for (int nodeEnd = 0; nodeEnd < nRows; nodeEnd++) 
             {
                 if (nodeStart != nodeEnd) 
@@ -658,6 +687,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			tempList = (ArrayList<Integer>)nodeParents.get(nodeChild).clone();
 			for (Iterator<Integer> it = tempList.iterator(); it.hasNext();) {
 				nodeParent = it.next();
+				if(scoreOperations[nodeParent][nodeChild] == null || scoreOperations[nodeChild][nodeParent] == null)
+					continue;//The option to add an edge is not possible because maximum reached
 				if((scoreOperations[nodeParent][nodeChild].score + scoreOperations[nodeChild][nodeParent].score) > operation.score)
 				{	
 					nodeParents.get(nodeChild).remove(Integer.valueOf(nodeParent));
