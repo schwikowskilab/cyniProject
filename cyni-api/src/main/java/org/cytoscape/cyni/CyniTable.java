@@ -76,6 +76,7 @@ public class CyniTable {
 		int i,j,index;
 		Set tempSet = new HashSet<String>();
 		ArrayList<String> stringRow = new ArrayList<String>();
+		boolean selectedColumn = false;
 		
 		mapRowLabels =  new HashMap<Object,Integer>();
 		mapColLabels =  new HashMap<Object,Integer>();
@@ -120,12 +121,16 @@ public class CyniTable {
 				 }
 			});
 		}
+		if(internalTable.getColumn(CyNetwork.SELECTED) != null)
+			selectedColumn = true;
 		for ( CyRow row :  rowList) 
 		{
-			if (selectedOnly && row.isSet(CyNetwork.SELECTED))
+			if (selectedOnly && selectedColumn)
 			{
+				if(!row.isSet(CyNetwork.SELECTED))
+					continue;
 				if(!row.get(CyNetwork.SELECTED, Boolean.class))
-				continue;
+					continue;
 			}
 			if (transpose) {
 				columnLabels.setQuick(i++, row.getRaw(primaryKey));
@@ -210,6 +215,7 @@ public class CyniTable {
 				tempSet.addAll(stringValues);
 				stringValues.clear();
 				stringValues.addAll(tempSet);
+				Collections.sort(stringValues);
 			}
 			
 			//Initialize missing values variables and weights

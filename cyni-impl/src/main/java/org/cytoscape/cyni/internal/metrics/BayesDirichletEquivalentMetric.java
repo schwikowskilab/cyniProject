@@ -172,6 +172,8 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 			numTimes = 0;
 			for(j=0;j<numValues;j++)
 			{
+				if(nCounts[i*numValues+j] == 0)
+					continue;
 				result += gammaln(1.0/(double)(numValuesParents*numValuesSon)+(double)nCounts[i*numValues+j]);
 				result -=  temp1;
 				numTimes += nCounts[i*numValues+j];
@@ -186,11 +188,6 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 	private double gammaln(double xx)
 	{
 		Double fact;
-		/*synchronized(mapValues){
-			fact = mapValues.get(xx);
-		}
-		if(fact != null)
-			return fact;*/
 		
 		double x,y,tmp,ser;
 		int j;
@@ -206,9 +203,7 @@ public class BayesDirichletEquivalentMetric extends AbstractCyniMetric {
 		ser = 0.999999999999997092;
 		for (j=0;j<14;j++) ser += cof[j]/++y;
 		fact = tmp+Math.log(2.5066282746310005*ser/x);
-		/*synchronized(mapValues){
-			mapValues.put(xx, fact);
-		}*/
+		
 		return fact;
 
 	}

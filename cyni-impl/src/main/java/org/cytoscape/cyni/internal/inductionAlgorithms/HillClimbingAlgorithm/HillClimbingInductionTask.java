@@ -488,11 +488,12 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 	 */
 	private void updateAscendantsOfNode(int nodeToUpdate )
 	{
-		ArrayList<Integer> ascendantsList = new ArrayList<Integer>(nodeParents.size());
+		ArrayList<Integer> ascendantsList = new ArrayList<Integer>();
 		int pos = -1;
 		boolean [] nodeCheckList = new boolean [nodeParents.size()];
 		int nodeToCheck = nodeToUpdate;
 		
+		Arrays.fill(nodeAscendantsReach[nodeToUpdate], false);
 		nodeCheckList[nodeToUpdate] = true;
 		while(pos != ascendantsList.size())
 		{
@@ -648,7 +649,7 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 			opList.add(opTemp);
 			if(opTemp.type == "Add")
 			{
-				if (nodeParents.get(opTemp.nodeChild).size() <= maxNumParents && !nodeAscendantsReach[opTemp.nodeParent][opTemp.nodeChild]) 
+				if ((nodeParents.get(opTemp.nodeChild).size() < maxNumParents) && !nodeAscendantsReach[opTemp.nodeParent][opTemp.nodeChild]) 
 				{
 					operation = opTemp;
 					notFound = false;
@@ -689,6 +690,8 @@ public class HillClimbingInductionTask extends AbstractCyniTask {
 				nodeParent = it.next();
 				if(scoreOperations[nodeParent][nodeChild] == null || scoreOperations[nodeChild][nodeParent] == null)
 					continue;//The option to add an edge is not possible because maximum reached
+				if(nodeParents.get(nodeParent).size() >= maxNumParents || edgeBlocked[nodeParent][nodeChild])
+					continue;
 				if((scoreOperations[nodeParent][nodeChild].score + scoreOperations[nodeChild][nodeParent].score) > operation.score)
 				{	
 					nodeParents.get(nodeChild).remove(Integer.valueOf(nodeParent));

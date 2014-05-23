@@ -138,7 +138,7 @@ public class MutualInfoTest extends BasicIntegrationTest {
 				String name2 = row2.get(CyNetwork.NAME,String.class);
 				Double value2 = row2.get("Mutual Information",Double.class);
 				System.out.println("Old edge name: " + name2 + " dis: " + value2);
-				if((name1.equals(name2)) && (value1.equals(value2)))
+				if((name1.equals(name2)) && (Math.abs(value1 - value2) < 0.000001))
 				{
 					correctEdges++;
 					break;

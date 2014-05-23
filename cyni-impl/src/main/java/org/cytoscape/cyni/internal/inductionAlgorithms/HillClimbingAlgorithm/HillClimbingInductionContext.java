@@ -48,7 +48,7 @@ public class HillClimbingInductionContext extends CyniAlgorithmContext implement
 	@Tunable(description="Use selected nodes only", groups="Parameters if a network associated to table data")
 	public boolean selectedOnly = false;
 	
-	@Tunable(description="Keep selected edges", groups="Parameters if a network associated to table data")
+	@Tunable(description="Keep selected edges", groups="Parameters if a network associated to table data", dependsOn="useNetworkAsInitialSearch=true")
 	public boolean edgesBlocked = false;
 	
 	@Tunable(description="Metric")
