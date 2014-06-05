@@ -157,6 +157,8 @@ public class CyniAlgorithmContext {
 			i++;
 		}
 		for (i = 0; i < names.length; i++) {
+			if(names[i].equals(""))
+				continue;
 			if (type == String.class || type == List.class)
 			{
 				if (table.getColumn(names[i]).getType() == type)
