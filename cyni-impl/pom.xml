@@ -37,6 +37,7 @@
                         <Private-Package>${bundle.namespace}.internal.*</Private-Package>
                         <Bundle-Activator>${bundle.namespace}.internal.CyActivator</Bundle-Activator>
                         <Embed-Dependency>cyni-api;inline=true</Embed-Dependency>
+                        <Cytoscape-API-Compatibility>3.1</Cytoscape-API-Compatibility>
                         <Import-Package>*;resolution:=optional</Import-Package>
 					</instructions>
 				</configuration>
