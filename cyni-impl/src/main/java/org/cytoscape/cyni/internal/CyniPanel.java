@@ -262,6 +262,8 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 		{
 			if(mapTable.containsKey(e.getSource()))
 			{
+				if(category == CyniCategory.DISCRETIZATION && e.getSource().getColumn(e.getColumnName()).getType() == String.class)
+					return;
 				mapTable.remove(e.getSource());
 				if((tableSelector.getSelectedItem() instanceof CyTable) && e.getSource().equals(tableSelector.getSelectedItem()))
 					initialize();
@@ -275,6 +277,8 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 		{
 			if(mapTable.containsKey(e.getSource()))
 			{
+				if(category == CyniCategory.DISCRETIZATION && e.getSource().getColumn(e.getNewColumnName()).getType() == String.class)
+					return;
 				mapTable.remove(e.getSource());
 				if((tableSelector.getSelectedItem() instanceof CyTable) && e.getSource().equals(tableSelector.getSelectedItem()))
 					initialize();
@@ -466,7 +470,7 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 		//algorithmPanel.setLayout( new GridLayout(0,1));
 		selBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 		titleBorder = BorderFactory.createTitledBorder(selBorder, "Cyni Algorithm Settings");
-		titleBorder.setTitlePosition(TitledBorder.LEFT);
+		titleBorder.setTitleJustification(TitledBorder.CENTER);
 		titleBorder.setTitlePosition(TitledBorder.TOP);
 		algorithmPanel.setBorder(titleBorder);
 		JScrollPane scrollPane = new JScrollPane(algorithmPanel);
