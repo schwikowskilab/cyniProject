@@ -3,7 +3,7 @@
 
     <parent>
 	<artifactId>parent</artifactId>
-        <groupId>org.cytoscape</groupId>
+        <groupId>fr.systemsbiology</groupId>
         <version>1.0-beta6</version>
         <relativePath>../parent</relativePath>
     </parent>
@@ -45,12 +45,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.cytoscape</groupId>
+			<groupId>fr.systemsbiology</groupId>
 			<artifactId>cyni-api</artifactId>
 			<version>${cyni.api.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.cytoscape</groupId>
+			<groupId>fr.systemsbiology</groupId>
 			<artifactId>cyni-app</artifactId>
 			<version>${project.version}</version>
 		</dependency>

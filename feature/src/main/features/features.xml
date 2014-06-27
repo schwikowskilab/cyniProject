@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0" name="cyniApp-feature">
     <feature description="CyNI App Feature (cyniApp-feature)" version="3.0.0-alpha9-SNAPSHOT" name="cyniApp-feature">
-        <bundle>mvn:org.cytoscape/cyni-api/1.0.0</bundle>
-        <bundle>mvn:org.cytoscape/cyni-app/1.0-beta6</bundle>
+        <bundle>mvn:fr.systemsbiology/cyni-api/1.0.0</bundle>
+        <bundle>mvn:fr.systemsbiology/cyni-app/1.0-beta6</bundle>
     </feature>
 </features>

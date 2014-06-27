@@ -3,18 +3,21 @@
 
   <parent>
 	<artifactId>parent</artifactId>
-	<groupId>org.cytoscape</groupId>
+	<groupId>fr.systemsbiology</groupId>
 	<version>1.0-beta6</version>
 	<relativePath>../parent</relativePath>	
   </parent>
   <properties>
-    <bundle.symbolicName>org.cytoscape.cyni-api</bundle.symbolicName>
-    <bundle.namespace>org.cytoscape.cyni</bundle.namespace>
+    <bundle.symbolicName>fr.systemsbiology.cyni-api</bundle.symbolicName>
+    <bundle.namespace>fr.systemsbiology.cyni</bundle.namespace>
+    <cyni.api.version>1.0.0</cyni.api.version>
+    <cytoscape.api.version>3.1.0</cytoscape.api.version>
   </properties>
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cyni-api</artifactId>
-  <version>${cyni.api.version}</version>
+  <version>1.0.0</version>
+  <groupId>fr.systemsbiology</groupId>
 
   <name>CYNI App API </name>
 

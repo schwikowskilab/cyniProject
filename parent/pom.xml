@@ -3,7 +3,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.cytoscape</groupId>
+	<groupId>fr.systemsbiology</groupId>
 	<artifactId>parent</artifactId>
 	<version>1.0-beta6</version>
 	<name>Basic Cyni App POM Configuration</name>
