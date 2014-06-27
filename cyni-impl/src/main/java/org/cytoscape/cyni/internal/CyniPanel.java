@@ -470,7 +470,7 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 		//algorithmPanel.setLayout( new GridLayout(0,1));
 		selBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 		titleBorder = BorderFactory.createTitledBorder(selBorder, "Cyni Algorithm Settings");
-		titleBorder.setTitleJustification(TitledBorder.CENTER);
+		titleBorder.setTitleJustification(TitledBorder.LEFT);
 		titleBorder.setTitlePosition(TitledBorder.TOP);
 		algorithmPanel.setBorder(titleBorder);
 		JScrollPane scrollPane = new JScrollPane(algorithmPanel);
