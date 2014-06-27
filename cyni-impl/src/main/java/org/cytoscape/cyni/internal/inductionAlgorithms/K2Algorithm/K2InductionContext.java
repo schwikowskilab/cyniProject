@@ -41,7 +41,7 @@ public class K2InductionContext extends CyniAlgorithmContext implements TunableV
 	
 	@Tunable(description="Row order", groups="Row order options", gravity=3.0)
 	public ListSingleSelection<String> ordering = new ListSingleSelection<String>("Default Cytoscape Order", "Random Order", "Use Column");
-	@Tunable(description="Use this column to order rows",dependsOn="ordering=Use Column", groups="Row order options", gravity=4.0)
+	@Tunable(description="Column to order rows",dependsOn="ordering=Use Column", groups="Row order options", gravity=4.0)
 	public ListSingleSelection<String> selectedColumn;
 	
 	@Tunable(description="Use selected nodes only", groups="Parameters if a network associated to table data", gravity=5.0)
