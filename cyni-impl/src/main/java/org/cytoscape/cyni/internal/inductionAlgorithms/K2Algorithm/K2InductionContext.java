@@ -34,7 +34,7 @@ import org.cytoscape.work.TunableValidator;
 
 public class K2InductionContext extends CyniAlgorithmContext implements TunableValidator {
 	
-	@Tunable(description="Maximum number of parents", gravity=1.0)
+	@Tunable(description="Max. number of parents", gravity=1.0)
 	public int maxNumParents = 5;
 	@Tunable(description="Output Only Nodes with Edges", gravity=2.0)
 	public boolean removeNodes = false;
