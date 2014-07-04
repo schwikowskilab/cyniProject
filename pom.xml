@@ -3,8 +3,8 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.cytoscape</groupId>
-	<artifactId>project</artifactId>
+	<groupId>fr.systemsbiology</groupId>
+	<artifactId>cyni-project</artifactId>
 	<version>1.0-beta6</version>
 	<name>Cyni App Project POM</name>
 	<packaging>pom</packaging>
