@@ -2,17 +2,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
     <parent>
-		<artifactId>cyniApp-parent</artifactId>
-        <groupId>org.cytoscape</groupId>
-        <version>1.0-beta5</version>
+	<artifactId>parent</artifactId>
+        <groupId>fr.systemsbiology</groupId>
+        <version>1.0-beta6</version>
+        <relativePath>../parent</relativePath>
     </parent>
 
-    <properties>
-        <cyni.api.version>1.0-beta2</cyni.api.version>
-    </properties>
-
-	<groupId>org.cytoscape</groupId>
-	<artifactId>cyniApp-feature</artifactId>
+	<artifactId>cyni-app-feature</artifactId>
 	<packaging>jar</packaging>
 	<name>CyNI App Feature</name>
 
@@ -49,12 +45,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.cytoscape</groupId>
+			<groupId>fr.systemsbiology</groupId>
 			<artifactId>cyni-api</artifactId>
 			<version>${cyni.api.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.cytoscape</groupId>
+			<groupId>fr.systemsbiology</groupId>
 			<artifactId>cyni-app</artifactId>
 			<version>${project.version}</version>
 		</dependency>
