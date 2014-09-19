@@ -31,7 +31,7 @@ import javax.swing.JTabbedPane;
 
 public class CyniControlPanel extends JPanel implements CytoPanelComponent2 {
 	
-	private static final String ID = "org.cytoscape.Cyni";
+	private static final String ID = "fr.systemsbiology.cyni";
 	
 	String panelName;
 

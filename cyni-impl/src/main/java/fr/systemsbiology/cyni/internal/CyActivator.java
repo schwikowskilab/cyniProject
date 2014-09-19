@@ -126,28 +126,6 @@ public class CyActivator extends AbstractCyActivator {
 				cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef, visualMappingManagerServiceRef,
 				cyNetworkViewManagerServiceRef,cyLayoutsServiceRef,cyCyniMetrics,cyPropertyServiceRef,cyEventHelperServiceRef);
 		
-		/******************************************************************************************************************************************/
-		/**This code is temporal and it will be removed when cy3 allows loading tables without mapping them to other elements as nodes or networks*/
-		
-		/*LoadAttributesFileTaskFactoryImpl loadAttrsFileTaskFactory = new LoadAttributesFileTaskFactoryImpl(cyDataTableReaderManagerServiceRef, 
-				tunableSetterServiceRef,cyNetworkManagerServiceRef, cyTableServiceRef, rootNetworkManagerServiceRef );
-		LoadAttributesURLTaskFactoryImpl loadAttrsURLTaskFactory = new LoadAttributesURLTaskFactoryImpl(cyDataTableReaderManagerServiceRef, 
-				tunableSetterServiceRef, cyNetworkManagerServiceRef, cyTableServiceRef, rootNetworkManagerServiceRef);
-		
-		Properties loadAttrsURLTaskFactoryProps = new Properties();
-		loadAttrsURLTaskFactoryProps.setProperty(PREFERRED_MENU,"Tools.Cyni Tools.Add Table");
-		loadAttrsURLTaskFactoryProps.setProperty(MENU_GRAVITY,"8.0f");
-		loadAttrsURLTaskFactoryProps.setProperty(TITLE,"URL...");
-		
-		Properties loadAttrsFileTaskFactoryProps = new Properties();
-		loadAttrsFileTaskFactoryProps.setProperty(PREFERRED_MENU,"Tools.Cyni Tools.Add Table");
-		loadAttrsFileTaskFactoryProps.setProperty(MENU_GRAVITY,"7.0f");
-		loadAttrsFileTaskFactoryProps.setProperty(TITLE,"File...");
-		
-		registerService(bc,loadAttrsFileTaskFactory,TaskFactory.class, loadAttrsFileTaskFactoryProps);
-		registerService(bc,loadAttrsURLTaskFactory,TaskFactory.class, loadAttrsURLTaskFactoryProps);*/
-		
-		/******************************************************************************************************************************************/
 		
 		registerService(bc,cyInduction,CyCyniAlgorithmManager.class, new Properties());
 		registerServiceListener(bc,cyInduction,"addCyniAlgorithm","removeCyniAlgorithm",CyCyniAlgorithm.class);
@@ -183,28 +161,6 @@ public class CyActivator extends AbstractCyActivator {
 		
 		registerService(bc,cyniControlPanel,CytoPanelComponent.class, new Properties());
 		registerService(bc,controlPanelAction,CyAction.class, new Properties());
-		
-		/*CyniAction inductionAction = new CyniAction("Infer Network...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
-                cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
-                cyNetworkManagerServiceRef,cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef,panelTaskManagerServiceRef,
-                cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,
-                cyServiceRegistrarServiceRef,CyniCategory.INDUCTION);
-		
-		CyniAction imputationAction = new CyniAction("Impute Missing Data...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
-				cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
-                cyNetworkManagerServiceRef,cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef,panelTaskManagerServiceRef,
-                cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,
-                cyServiceRegistrarServiceRef,CyniCategory.IMPUTATION);
-		
-		CyniAction discretizationAction = new CyniAction("Discretize Data...",cyInduction,cyNetworkFactoryRef,cyNetworkViewFactoryServiceRef,cyTableServiceRef, cySwingApplicationServiceRef,
-				cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
-                cyNetworkManagerServiceRef,cyNetworkTableManagerServiceRef,rootNetworkManagerServiceRef,panelTaskManagerServiceRef,
-                cyLayoutsServiceRef,cyCyniMetrics,visualMappingManagerServiceRef,cyPropertyServiceRef, dynamicTaskFactoryProvisionerServiceRef,
-                cyServiceRegistrarServiceRef,CyniCategory.DISCRETIZATION);
-		
-		registerService(bc, inductionAction, CyAction.class, new Properties());
-		registerService(bc,imputationAction,CyAction.class, new Properties());
-		registerService(bc,discretizationAction,CyAction.class, new Properties());*/
 		
 		
 

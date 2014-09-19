@@ -370,14 +370,21 @@ public class CyniNetworkUtils  {
 	public void removeNodesWithoutEdges(CyNetwork network)
 	{
 		ArrayList<CyNode> list = new ArrayList<CyNode>();
+		ArrayList<Long> listIds = new ArrayList<Long>();
 		
 		for(CyNode node : network.getNodeList())
 		{
 			if(network.getAdjacentEdgeList(node, CyEdge.Type.ANY).size() == 0)
+			{
 				list.add(node);	
+				listIds.add(node.getSUID());
+			}
 		}
 		if(list.size() > 0)
+		{
 			network.removeNodes(list);
+			network.getDefaultNodeTable().deleteRows(listIds);
+		}
 	}
 	
 	
