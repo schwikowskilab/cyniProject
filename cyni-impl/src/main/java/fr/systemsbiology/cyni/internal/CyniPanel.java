@@ -26,34 +26,47 @@ package fr.systemsbiology.cyni.internal;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;import java.awt.Font;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.service.util.CyServiceRegistrar;
@@ -132,6 +145,7 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 	private CyniCategory category;
 	private String executeButtonName;
 	private String selectPanelName;
+	private JTextPane textPane;
 	/**
 	 *  Store the cyni context.
 	 */
@@ -177,20 +191,28 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 		this.metricsManager = metricsManager;
 		this.contextMap = new HashMap<CyCyniAlgorithm, Map<CyTable, CyniAlgorithmContext>>();
 		this.category = category;
+		String nameText = "";
+		String verbText = "";
 		switch(this.category){
 		case  INDUCTION:
 			executeButtonName = "Infer Network";
+			nameText = "network inference algorithm";
+			verbText = "infer the network";
 			selectPanelName = "Inference Algorithm";
 			setName("Infer Network");
 			break;
 		case IMPUTATION:
 			executeButtonName = "Impute Missing Data";
 			selectPanelName = "Imputation Algorithm";
+			nameText = "data imputation algorithm";
+			verbText = "estimate the data";
 			setName("Impute Data");
 			break;
 		case DISCRETIZATION:
 			executeButtonName = "Discretize Data";
 			selectPanelName = "Discretization Algorithm";
+			nameText = "data discretization algorithm";
+			verbText = "discretize the data";
 			setName("Discretize Data");
 			break;
 		default:
@@ -209,7 +231,31 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 		serviceRegistrar.registerService(this, CyniAlgorithmAddedListener.class, new Properties());
 		serviceRegistrar.registerService(this, NetworkAboutToBeDestroyedListener.class, new Properties());
 		
+		textPane = new UrlTextPane();
 		
+		URL imgURL = getClass().getResource("/logo.png");
+		File image = null;
+		try {
+			InputStream cpResource = this.getClass().getClassLoader().getResourceAsStream("/logo.png");
+			image = File.createTempFile("file", "png");
+			IOUtils.copy(cpResource,
+		            FileUtils.openOutputStream(image));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("image: " + image.getAbsolutePath());
+		image.deleteOnExit();
+		
+		String text = "";
+		text += "Welcome to the Cyni Toolbox,\n\n";
+		text += "Please, select a " + nameText + " and \nthe table data to " + verbText + " from.\n\n";
+		text += "If there is no table data available in the above list,\n ";
+		text += "the following " + createLinkHtmlCode("http://wiki.cytoscape.org/Cytoscape_3/UserManual#Cytoscape_3.2BAC8-UserManual.2BAC8-Columns.Import_Data_Table_Files", "documentation") ;
+		text += " contains all information\nto help you to bring your data into Cytoscape.\n\n";
+		text += "Documentation on how Cyni works \ncan also be found " + createLinkHtmlCode("http://www.proteomics.fr/Sysbio/CyniProject","here") + ".";
+		textPane.setText(text);
+		System.out.println("code: " + text);
 		initialize();
 
 		//initComponents();
@@ -502,6 +548,7 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 		algorithmPanel.removeAll();
 		algorithmSelector.removeAllItems();
 		executeButton.setEnabled(false);
+		algorithmPanel.add(textPane);
 		
 		// Add the "instructions"
 		algorithmSelector.setRenderer(new MyItemRenderer());
@@ -599,6 +646,7 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 			{
 				executeButton.setEnabled(false);
 				algorithmPanel.removeAll();
+				algorithmPanel.add(textPane);
 				repaint();
 			}
 		}
@@ -616,6 +664,59 @@ public class CyniPanel extends JPanel implements ColumnCreatedListener, ColumnDe
 				return cyniAlgorithm.createTaskIterator(cyniContext,table, netFactory,viewFactory,netMgr,netTableMgr, rootNetMgr,vmMgr,viewMgr, layoutManager, metricsManager);
 			}
 		};
+	}
+	
+	private String createLinkHtmlCode ( String link, String message)
+	{
+		String code = "";
+		
+		code = "<a href=\"" + link +"\"> "+ message + "</a>";
+		
+		return code;
+	}
+	
+	
+	public class UrlTextPane extends JTextPane {
+	
+		private static final long serialVersionUID = 1L;
+
+		public UrlTextPane() {
+		    this.setEditable(false);
+		    this.addHyperlinkListener(new UrlHyperlinkListener());
+		    this.setContentType("text/html");
+		}
+
+		private class UrlHyperlinkListener implements HyperlinkListener {
+		    @Override
+		    public void hyperlinkUpdate(final HyperlinkEvent event) {
+		        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+		            try {
+		                Desktop.getDesktop().browse(event.getURL().toURI());
+		            } catch (final IOException e) {
+		                throw new RuntimeException("Can't open URL", e);
+		            } catch (final URISyntaxException e) {
+		                throw new RuntimeException("Can't open URL", e);
+		            }
+		        }
+		    }
+		};
+
+		@Override
+		/**
+		 * Set the text, first translate it into HTML:
+		 */
+		public void setText(final String input) {
+
+		    final StringBuilder answer = new StringBuilder();
+		    //Remove if you want to see the white background
+		    setOpaque(false);
+		    setBackground(new Color(0,0,0,0));
+		    answer.append("<html><body style=\"font-size: 11px;font-family: Tahoma, sans-serif\">");
+		    
+		    answer.append(input);
+		    answer.append("</body></html>");
+		    super.setText(answer.toString().replace("\n", "<br />"));
+		}
 	}
 	
 	private class MyItemRenderer extends JLabel implements ListCellRenderer {

@@ -19,7 +19,7 @@
 				<module>parent</module>
 				<module>cyni-api</module>
 				<module>cyni-impl</module>
-				<module>feature</module>
+				<!--<module>feature</module>-->
 			</modules>
 		</profile>
 		<profile>
@@ -31,7 +31,7 @@
 				<module>parent</module>
 				<module>cyni-api</module>
 				<module>cyni-impl</module>
-				<module>feature</module>
+			<!--	<module>feature</module>-->
 				<module>cyni-integration-test</module>
 			</modules>
 		</profile>
